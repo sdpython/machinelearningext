@@ -36,5 +36,5 @@ script:
   - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP" }
 
 documentation:
-  - if [ ${NAME} == "UT" ] then $PYINT -c "from sphinx import build_main;build_main(['-j2','-v','-T','-b','html','-d','docs/doctrees','docs/source','docs/build'])" fi
-  - if [ ${NAME} == "UT" ] then cp -R -f docs/build/html dist/html fi
+  - if [ ${NAME} == "UT_CSHARP" ] then $PYINT -c "from sphinx import build_main;build_main(['-j2','-v','-T','-b','html','-d','docs/doctrees','docs/source','docs/build'])" fi
+  - if [ ${NAME} == "UT_CSHARP" ] then cp -R -f docs/build/html dist/html fi
