@@ -9,7 +9,8 @@ virtualenv:
   
 install:
   - git submodule update --init
-  - python -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper csharpy --extra-index-url=https://pypi.python.org/simple/\".split())"
+  - python -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
+  - python -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ csharpy --extra-index-url=https://pypi.python.org/simple/\".split())"
   - python -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
   - python --version
   - python -c "from pip._internal import main;main([\"freeze\"])"
