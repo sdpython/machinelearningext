@@ -5,6 +5,10 @@ bash build.sh -release
 bash build.sh -debug
 cd ..
 
+mkdir machinelearning/dist
+mkdir machinelearning/dist/Debug
+mkdir machinelearning/dist/Release
+
 echo
 echo [build.sh] copy release binaries
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Ensemble/netstandard2.0/*.dll machinelearning/dist/Release
