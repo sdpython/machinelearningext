@@ -11,18 +11,20 @@ install:
   - git submodule update --init --recursive
   - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
   - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ csharpy --extra-index-url=https://pypi.python.org/simple/\".split())"
-  - $PYINT -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
+  - $PYINT -c "from pip._internal import main;main(\"install -r docs/requirements.txt\".split())"
   - $PYINT --version
   - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
   - export DOTNET_CLI_TELEMETRY_OPTOUT=1
   # Build machinelearning
+  # if this part fails due to permission issue, it should be manually
+  # called on the jenkins server.
   - cd machinelearning
   - bash build.sh -Debug
   - bash build.sh -Release
   - cd ..
-  - mkdir machinelearning/dist
-  - mkdir machinelearning/dist/Debug
-  - mkdir machinelearning/dist/Release
+  - if [ ! -d machinelearning/dist ]; then mkdir machinelearning/dist; fi
+  - if [ ! -d machinelearning/dist/Debug ]; then mkdir machinelearning/dist/Debug; fi
+  - if [ ! -d machinelearning/dist/Release ]; then mkdir machinelearning/dist/Release; fi
   # machinelearning publish release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Ensemble/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.FastTree/netstandard2.0/*.dll machinelearning/dist/Release
