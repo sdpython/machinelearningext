@@ -1,4 +1,4 @@
 [submodule "machinelearning"]
 	path = machinelearning
-	url = https://github.com/xadupre/machinelearning.git
+	url = https://github.com/sdpython/machinelearning.git
 	branch = ext

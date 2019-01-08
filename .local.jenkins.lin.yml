@@ -75,7 +75,7 @@ install:
   - cd ..
 
 script:
-  - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP", CLEAN: 0 }
+  - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP", CLEAN: "0" }
 
 documentation:
   - if [ ${NAME} == "UT_CSHARP" ] then $PYINT -c "from sphinx import build_main;build_main(['-j2','-v','-T','-b','html','-d','docs/doctrees','docs/source','docs/build'])" fi
