@@ -4,10 +4,10 @@ resources:
     image: microsoft/dotnet-buildtools-prereqs:centos-7-b46d863-20180719033416
 
 phases:
-- template: /machinelearning/machinelearning/build/ci/phase-template.yml
+- template: /machinelearning/build/ci/phase-template.yml
   parameters:
     name: Linux
-    buildScript: ./machinelearning/machinelearning/build.sh
+    buildScript: ./machinelearning/build.sh
     queue:
       name: Hosted Ubuntu 1604
       container: LinuxContainer
