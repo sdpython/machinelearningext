@@ -34,7 +34,7 @@ using Scikit.ML.PipelineTransforms;
 using Scikit.ML.ProductionPrediction;
 using Scikit.ML.RandomTransforms;
 
-using TensorFlowTransform = Microsoft.ML.Transforms.TensorFlowTransform;
+using TensorFlowTransformer = Microsoft.ML.Transforms.TensorFlowTransformer;
 
 
 namespace Scikit.ML.ScikitAPI
@@ -72,7 +72,7 @@ namespace Scikit.ML.ScikitAPI
             res.Add(typeof(PcaModelParameters).Assembly);
             res.Add(typeof(SlidingWindowTransform).Assembly);
             res.Add(typeof(TextFeaturizingEstimator).Assembly);
-            res.Add(typeof(TensorFlowTransform).Assembly);
+            res.Add(typeof(TensorFlowTransformer).Assembly);
             res.Add(typeof(TrainCommand).Assembly);
             res.Add(typeof(ICanSaveOnnx).Assembly);
             res.Add(typeof(SweeperBase).Assembly);

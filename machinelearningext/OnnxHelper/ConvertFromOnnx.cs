@@ -3,7 +3,6 @@
 using System.IO;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model.Onnx;
 using Microsoft.ML.Transforms;
 
 
@@ -19,7 +18,7 @@ namespace Scikit.ML.OnnxHelper
         /// </summary>
         public static IDataTransform ReadOnnx(Stream fs, IDataView view)
         {
-            var args = new OnnxTransform.Arguments();
+            var args = new OnnxTransformer.Arguments();
             throw Contracts.ExceptNotImpl("Reading ONNX format is not implemented yet.");
         }
     }
