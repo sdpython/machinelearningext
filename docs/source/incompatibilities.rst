@@ -47,10 +47,3 @@ This is needed by the InfiniteLoopView cursor which outputs
 only one row each time.
 
 VBuffer
-=======
-
-Some removed accessors were added back to avoid
-changing the code while *machinelearning*'s API is still
-a work in progress:
-`Exposes more internal information from VBuffer <https://github.com/sdpython/machinelearning/commit/330a931b4a17ad4a4a787d88773f95dbce384313>`_.
-
