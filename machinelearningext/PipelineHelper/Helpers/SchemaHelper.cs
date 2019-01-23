@@ -716,5 +716,26 @@ namespace Scikit.ML.PipelineHelper
             else
                 return columnsNeeded;
         }
+
+        /// <summary>
+        /// Returns from superset inside subset.
+        /// </summary>
+        public static IEnumerable<Schema.Column> SchemaIntersection(IEnumerable<Schema.Column> subset, IEnumerable<Schema.Column> superset, int addition = -1)
+        {
+            var hash = new HashSet<Tuple<string, int>>(subset.Select(c => new Tuple<string, int>(c.Name, c.Index)).ToArray());
+            var auto = superset.Where(c => hash.Contains(new Tuple<string, int>(c.Name, c.Index))).ToList();
+            if (addition != -1)
+            {
+                var any = auto.Where(c => c.Index == addition).Any();
+                if (!any)
+                {
+                    var add = subset.Where(c => c.Index == addition).ToArray();
+                    if (add == null || add.Length != 1)
+                        throw Contracts.Except($"Missing column {addition}.");
+                    auto.Add(add[0]);
+                }
+            }
+            return auto.ToArray();
+        }
     }
 }

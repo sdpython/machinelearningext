@@ -93,7 +93,8 @@ namespace Scikit.ML.PipelineLambdaTransforms
         {
             if (columnsNeeded.Where(c => c.Index == _source.Schema.Count).Any())
             {
-                var cursor = _source.GetRowCursor(columnsNeeded, rand);
+                var only = SchemaHelper.SchemaIntersection(_source.Schema, columnsNeeded, _srcIndex);
+                var cursor = _source.GetRowCursor(only, rand);
                 return new LambdaCursor(this, cursor);
             }
             else
@@ -105,7 +106,8 @@ namespace Scikit.ML.PipelineLambdaTransforms
         {
             if (columnsNeeded.Where(c => c.Index == _source.Schema.Count).Any())
             {
-                var cursors = _source.GetRowCursorSet(columnsNeeded, n, rand);
+                var only = SchemaHelper.SchemaIntersection(_source.Schema, columnsNeeded, _srcIndex);
+                var cursors = _source.GetRowCursorSet(only, n, rand);
                 return cursors.Select(c => new LambdaCursor(this, c)).ToArray();
             }
             else

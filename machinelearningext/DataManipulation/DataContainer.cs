@@ -907,12 +907,12 @@ namespace Scikit.ML.DataManipulation
             // Fills values.
             if (nth == 1)
             {
-                using (var cursor = view.GetRowCursor(Schema))
+                using (var cursor = view.GetRowCursor(view.Schema))
                     FillValues(cursor, memory);
             }
             else
             {
-                var cursors = view.GetRowCursorSet(Schema, nth);
+                var cursors = view.GetRowCursorSet(view.Schema, nth);
                 // FillValues(cursors, memory);
                 throw new NotImplementedException();
             }
