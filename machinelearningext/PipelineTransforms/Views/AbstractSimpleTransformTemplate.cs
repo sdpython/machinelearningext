@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Model;
 using Microsoft.ML.Data;
@@ -138,7 +139,7 @@ namespace Scikit.ML.PipelineTransforms
             return _sourcePipe.GetRowCount();
         }
 
-        public virtual RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public virtual RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             _host.CheckValue(_sourceCtx, "_sourceCtx");
             if (!IsInitialized())
@@ -148,14 +149,14 @@ namespace Scikit.ML.PipelineTransforms
                         DelayedInitialisationLockFree();
             }
             _host.CheckValue(_sourcePipe, "_sourcePipe");
-            return _sourcePipe.GetRowCursor(predicate, rand);
+            return _sourcePipe.GetRowCursor(columnsNeeded, rand);
         }
 
-        public virtual RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public virtual RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_sourceCtx, "_sourceCtx");
             _host.AssertValue(_sourcePipe, "_sourcePipe");
-            return _sourcePipe.GetRowCursorSet(predicate, n, rand);
+            return _sourcePipe.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         public abstract void Save(ModelSaveContext ctx);

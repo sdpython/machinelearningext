@@ -36,7 +36,7 @@ namespace Scikit.ML.DataManipulation
 
         #region IDataView API
 
-        public Schema Schema => Schema.Create(_schema);
+        public Schema Schema => ExtendedSchema.Create(_schema);
         public ISchema SchemaI => _schema;
         public int ColumnCount => _columns == null ? _src.ColumnCount : _columns.Length;
 
@@ -85,22 +85,22 @@ namespace Scikit.ML.DataManipulation
             return SchemaHelper.GetColumnIndex(Schema, name);
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return _src.GetRowCursor(_rows, _columns, needCol, rand);
+            return _src.GetRowCursor(_rows, _columns, columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return _src.GetRowCursorSet(_rows, _columns, needCol, n, rand);
+            return _src.GetRowCursorSet(_rows, _columns, columnsNeeded, n, rand);
         }
 
-        public RowCursor GetRowCursor(int[] rows, int[] columns, Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             throw Contracts.ExceptNotSupp("Not applicable here, consider building a DataFrameView.");
         }
 
-        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             throw Contracts.ExceptNotSupp("Not applicable here, consider building a DataFrame.");
         }

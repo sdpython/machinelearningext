@@ -30,7 +30,7 @@ namespace TestMachineLearningExt
                 var tr = new DescribeTransform(env, args, data);
 
                 var values = new List<int>();
-                using (var cursor = tr.GetRowCursor(i => true))
+                using (var cursor = tr.GetRowCursor(tr.Schema))
                 {
                     var columnGetter = cursor.GetGetter<int>(1);
                     while (cursor.MoveNext())
@@ -151,7 +151,7 @@ namespace TestMachineLearningExt
 
                 var data = host.CreateStreamingDataView(inputs);
 
-                using (var cursor = data.GetRowCursor(i => true))
+                using (var cursor = data.GetRowCursor(data.Schema))
                 {
                     var sortedValues = new List<int>();
                     var sortColumnGetter = cursor.GetGetter<int>(1);
@@ -179,7 +179,7 @@ namespace TestMachineLearningExt
                         output.Y = input.Y;
                     }, (state) => { });
 
-                using (var cursor = sorted.GetRowCursor(i => true))
+                using (var cursor = sorted.GetRowCursor(sorted.OutputSchema))
                 {
                     var sortedValues = new List<int>();
                     var sortColumnGetter = cursor.GetGetter<int>(1);
@@ -210,7 +210,7 @@ namespace TestMachineLearningExt
 
                 var data = host.CreateStreamingDataView(inputs);
 
-                using (var cursor = data.GetRowCursor(i => true))
+                using (var cursor = data.GetRowCursor(data.Schema))
                 {
                     var sortedValues = new List<int>();
                     var sortColumnGetter = cursor.GetGetter<int>(1);
@@ -238,7 +238,7 @@ namespace TestMachineLearningExt
                         output.Y = input.Y;
                     }, (EnvHelper.EmptyState state) => { });
 
-                using (var cursor = lastTransform.GetRowCursor(i => true))
+                using (var cursor = lastTransform.GetRowCursor(data.Schema))
                 {
                     var sortedValues = new List<int>();
                     var sortColumnGetter = cursor.GetGetter<int>(1);

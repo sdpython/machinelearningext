@@ -205,17 +205,17 @@ namespace Scikit.ML.FeaturesTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             // Fun part we'll see later.
             _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursor(predicate, rand);
+            return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursorSet(predicate, n, rand);
+            return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion
@@ -312,7 +312,7 @@ namespace Scikit.ML.FeaturesTransforms
                     ch.Trace("PolynomialTransform {0}->{1}.", dim, size);
 
                     // We extend the input schema. The new type has the same type as the input.
-                    _schema = Schema.Create(new ExtendedSchema(input.Schema,
+                    _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                     new[] { column.Name },
                                                     new[] { new VectorType(type.AsVector().ItemType(), size) }));
                 }
@@ -330,41 +330,30 @@ namespace Scikit.ML.FeaturesTransforms
                 return _input.GetRowCount();
             }
 
-            /// <summary>
-            /// When the last column is requested, we also need the column used to compute it.
-            /// This function ensures that this column is requested when the last one is.
-            /// </summary>
-            bool PredicatePropagation(int col, Func<int, bool> predicate)
+            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
-                if (predicate(col))
-                    return true;
-                if (col == _inputCol)
-                    return predicate(Source.Schema.Count);
-                return predicate(col);
-            }
-
-            public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
-            {
-                if (predicate(_input.Schema.Count))
+                if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
                 {
-                    var cursor = _input.GetRowCursor(i => PredicatePropagation(i, predicate), rand);
-                    return new PolynomialCursor<TInput>(this, cursor, i => PredicatePropagation(i, predicate), _args, _inputCol, _multiplication);
+                    var newColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+                    var cursor = _input.GetRowCursor(newColumns, rand);
+                    return new PolynomialCursor<TInput>(this, cursor, newColumns, _args, _inputCol, _multiplication);
                 }
                 else
                     // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                    return new SameCursor(_input.GetRowCursor(predicate, rand), this.Schema);
+                    return new SameCursor(_input.GetRowCursor(columnsNeeded, rand), this.Schema);
             }
 
-            public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
-                if (predicate(_input.Schema.Count))
+                if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
                 {
-                    var cursors = _input.GetRowCursorSet(i => PredicatePropagation(i, predicate), n, rand);
-                    return cursors.Select(c => new PolynomialCursor<TInput>(this, c, i => PredicatePropagation(i, predicate), _args, _inputCol, _multiplication)).ToArray();
+                    var newColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+                    var cursors = _input.GetRowCursorSet(newColumns, n, rand);
+                    return cursors.Select(c => new PolynomialCursor<TInput>(this, c, newColumns, _args, _inputCol, _multiplication)).ToArray();
                 }
                 else
                     // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                    return _input.GetRowCursorSet(predicate, n, rand)
+                    return _input.GetRowCursorSet(columnsNeeded, n, rand)
                                  .Select(c => new SameCursor(c, this.Schema))
                                  .ToArray();
             }
@@ -383,21 +372,16 @@ namespace Scikit.ML.FeaturesTransforms
 
             ValueGetter<VBuffer<TInput>> _inputGetter;
 
-            public PolynomialCursor(PolynomialState<TInput> view, RowCursor cursor, Func<int, bool> predicate,
+            public PolynomialCursor(PolynomialState<TInput> view, RowCursor cursor, IEnumerable<Schema.Column> columnsNeeded,
                                     Arguments args, int column, Func<TInput, TInput, TInput> multiplication)
             {
-                if (!predicate(column))
+                if (!columnsNeeded.Where(c => c.Index == column).Any())
                     throw view.Host.ExceptValue("Required column is not generated by previous layers.");
                 _view = view;
                 _args = args;
                 _inputCursor = cursor;
                 _inputGetter = cursor.GetGetter<VBuffer<TInput>>(column);
                 _multiplication = multiplication;
-            }
-
-            public override RowCursor GetRootCursor()
-            {
-                return this;
             }
 
             public override bool IsColumnActive(int col)
@@ -416,7 +400,6 @@ namespace Scikit.ML.FeaturesTransforms
                 };
             }
 
-            public override CursorState State => _inputCursor.State; // No change.
             public override long Batch => _inputCursor.Batch;        // No change.
             public override long Position => _inputCursor.Position;  // No change.
             public override Schema Schema => _view.Schema;           // No change.
@@ -426,11 +409,6 @@ namespace Scikit.ML.FeaturesTransforms
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                return _inputCursor.MoveMany(count);
             }
 
             public override bool MoveNext()

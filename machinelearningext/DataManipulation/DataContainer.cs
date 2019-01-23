@@ -836,13 +836,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     if (_schemaCache == null || _schemaCache.Count != _schema.ColumnCount)
                     {
-                        _schemaCache = Schema.Create(_schema);
+                        _schemaCache = ExtendedSchema.Create(_schema);
                         return _schemaCache;
                     }
                     if (Enumerable.Range(0, _schema.ColumnCount).Where(i => _schema.GetColumnName(i) != _schemaCache[i].Name).Any() ||
                         Enumerable.Range(0, _schema.ColumnCount).Where(i => _schema.GetColumnType(i) != _schemaCache[i].Type).Any())
                     {
-                        _schemaCache = Schema.Create(_schema);
+                        _schemaCache = ExtendedSchema.Create(_schema);
                         return _schemaCache;
 
                     }
@@ -907,12 +907,12 @@ namespace Scikit.ML.DataManipulation
             // Fills values.
             if (nth == 1)
             {
-                using (var cursor = view.GetRowCursor(i => true))
+                using (var cursor = view.GetRowCursor(Schema))
                     FillValues(cursor, memory);
             }
             else
             {
-                var cursors = view.GetRowCursorSet(i => true, nth);
+                var cursors = view.GetRowCursorSet(Schema, nth);
                 // FillValues(cursors, memory);
                 throw new NotImplementedException();
             }
@@ -1399,31 +1399,31 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a cursor on the data.
         /// </summary>
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return new DataRowCursor(this, needCol, rand);
+            return new DataRowCursor(this, columnsNeeded, rand);
         }
 
         /// <summary>
         /// Returns a cursor on a subset of the data.
         /// </summary>
-        public DataRowCursor GetRowCursor(int[] rows, int[] columns, Func<int, bool> needCol, Random rand = null)
+        public DataRowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return new DataRowCursor(this, needCol, rand, rows: rows, columns: columns);
+            return new DataRowCursor(this, columnsNeeded, rand, rows: rows, columns: columns);
         }
 
         /// <summary>
         /// Returns a set of aliased cursors on the data.
         /// </summary>
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return GetRowCursorSet(null, null, predicate, n, rand);
+            return GetRowCursorSet(null, null, columnsNeeded, n, rand);
         }
 
         /// <summary>
         /// Returns a set of aliased cursors on the data.
         /// </summary>
-        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             var host = new ConsoleEnvironment().Register("Estimate n threads");
             n = DataViewUtils.GetThreadCount(host, n);
@@ -1431,12 +1431,12 @@ namespace Scikit.ML.DataManipulation
                 n = Length;
 
             if (n <= 1)
-                return new RowCursor[] { GetRowCursor(rows, columns, predicate, rand) };
+                return new RowCursor[] { GetRowCursor(rows, columns, columnsNeeded, rand) };
             else
             {
                 var cursors = new RowCursor[n];
                 for (int i = 0; i < cursors.Length; ++i)
-                    cursors[i] = new DataRowCursor(this, predicate, rand, n, i, rows: rows, columns: columns);
+                    cursors[i] = new DataRowCursor(this, columnsNeeded, rand, n, i, rows: rows, columns: columns);
                 return cursors;
             }
         }
@@ -1449,7 +1449,7 @@ namespace Scikit.ML.DataManipulation
             DataContainer _cont;
             public override long Batch => _first;
             Random _rand;
-            Func<int, bool> _needCol;
+            IEnumerable<Schema.Column> _columnsNeeded;
             long _inc;
             readonly long _first;
             long _position;
@@ -1460,7 +1460,7 @@ namespace Scikit.ML.DataManipulation
             Schema _schema;
             int[] _shuffled;
 
-            public DataRowCursor(DataContainer cont, Func<int, bool> needCol,
+            public DataRowCursor(DataContainer cont, IEnumerable<Schema.Column> columnsNeeded,
                              Random rand = null, int inc = 1, int first = 0,
                              int[] rows = null, int[] columns = null)
             {
@@ -1468,7 +1468,7 @@ namespace Scikit.ML.DataManipulation
                 _position = -1;
                 _inc = inc;
                 _first = first;
-                _needCol = needCol;
+                _columnsNeeded = columnsNeeded;
                 _rand = rand;
                 _rowsSet = rows;
                 _colsSet = columns;
@@ -1477,7 +1477,7 @@ namespace Scikit.ML.DataManipulation
                     _revColsSet = new Dictionary<int, int>();
                     for (int i = 0; i < columns.Length; ++i)
                         _revColsSet[columns[i]] = i;
-                    _schema = Schema.Create(new DataFrameViewSchema(_cont.Schema, columns));
+                    _schema = ExtendedSchema.Create(new DataFrameViewSchema(_cont.Schema, columns));
                 }
                 else
                     _schema = null;
@@ -1501,8 +1501,7 @@ namespace Scikit.ML.DataManipulation
             {
             }
 
-            public override RowCursor GetRootCursor() { return this; }
-            public override bool IsColumnActive(int col) { return _needCol(col); }
+            public override bool IsColumnActive(int col) { return Schema.Where(c => c.Index == col).Any(); }
             public override Schema Schema => _colsSet == null ? _cont.Schema : _schema;
 
             public override long Position => _rowsSet == null
@@ -1513,25 +1512,6 @@ namespace Scikit.ML.DataManipulation
                                                     ? _rowsSet[_shuffled[_position]]
                                                     : _position));
             int LastPosition => _rowsSet == null ? _cont.Length : _rowsSet.Length;
-
-            public override CursorState State
-            {
-                get
-                {
-                    if (_position == -1)
-                        return CursorState.NotStarted;
-                    return _position < LastPosition ? CursorState.Good : CursorState.Done;
-                }
-            }
-
-            public override bool MoveMany(long count)
-            {
-                if (_position == -1)
-                    _position = _inc * (count - 1) + _first;
-                else
-                    _position += count * _inc;
-                return _position < LastPosition;
-            }
 
             public override bool MoveNext()
             {

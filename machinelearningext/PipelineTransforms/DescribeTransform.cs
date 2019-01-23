@@ -191,18 +191,18 @@ namespace Scikit.ML.PipelineTransforms
             return Source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
-            return _input.GetRowCursor(predicate, rand);
+            return _input.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
-            return _input.GetRowCursorSet(predicate, n, rand);
+            return _input.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         private void ComputeStatistics()
@@ -259,7 +259,7 @@ namespace Scikit.ML.PipelineTransforms
                         // Computation
                         var required = new HashSet<int>(indexesCol);
                         var requiredIndexes = required.OrderBy(c => c).ToArray();
-                        using (var cur = _input.GetRowCursor(i => required.Contains(i)))
+                        using (var cur = _input.GetRowCursor(Schema.Where(i => required.Contains(i.Index))))
                         {
                             bool[] isText = requiredIndexes.Select(c => sch[c].Type == TextType.Instance).ToArray();
                             bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BoolType.Instance).ToArray();

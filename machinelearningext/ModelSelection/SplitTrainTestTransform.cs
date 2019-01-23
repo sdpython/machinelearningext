@@ -304,16 +304,16 @@ namespace Scikit.ML.ModelSelection
             return true;
         }
 
-        protected override RowCursor GetRowCursorCore(Func<int, bool> predicate, Random rand = null)
+        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
-            return _pipedTransform.GetRowCursor(predicate, rand);
+            return _pipedTransform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
-            return _pipedTransform.GetRowCursorSet(predicate, n, rand);
+            return _pipedTransform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion

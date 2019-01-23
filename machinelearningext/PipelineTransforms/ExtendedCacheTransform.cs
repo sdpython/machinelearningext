@@ -1,6 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.ML.Data;
@@ -225,16 +226,16 @@ namespace Scikit.ML.PipelineTransforms
             return true;
         }
 
-        protected override RowCursor GetRowCursorCore(Func<int, bool> needCol, Random rand = null)
+        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
-            return _pipedTransform.GetRowCursor(needCol, rand);
+            return _pipedTransform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
-            return _pipedTransform.GetRowCursorSet(needCol, n, rand);
+            return _pipedTransform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion

@@ -94,7 +94,7 @@ namespace Scikit.ML.ProductionPrediction
                                 : ApplyTransformUtils.ApplyAllTransformsToData(_computeEnv, _transform, inputView, _sourceToReplace);
 
             // We assume all columns are needed, otherwise they should be removed.
-            using (var cur = outputView.GetRowCursor(i => true))
+            using (var cur = outputView.GetRowCursor(outputView.Schema))
             {
                 var getRowFiller = DataFrame.GetRowFiller(cur);
 
@@ -107,7 +107,7 @@ namespace Scikit.ML.ProductionPrediction
                     dst.Resize(src.Length);
 
                     inputView.Set(src);
-                    for (int i = 0; i < src.Length;++i)
+                    for (int i = 0; i < src.Length; ++i)
                     {
                         cur.MoveNext();
                         getRowFiller(dst, i);

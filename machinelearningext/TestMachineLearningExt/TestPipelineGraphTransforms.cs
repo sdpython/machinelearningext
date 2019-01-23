@@ -104,7 +104,7 @@ namespace TestMachineLearningExt
             var schStr = SchemaHelper.ToString(chained.Schema);
             Assert.AreEqual(schStr, "X:Vec<R4,3>:0; X2:Vec<R4,3>:1; X3:Vec<R4,3>:2");
 
-                using (var cursor = chained.GetRowCursor(i => true))
+                using (var cursor = chained.GetRowCursor(chained.Schema))
                 {
                     var outValues0 = new List<float[]>();
                     var outValues1 = new List<float[]>();

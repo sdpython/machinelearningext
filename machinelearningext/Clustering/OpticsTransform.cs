@@ -164,7 +164,7 @@ namespace Scikit.ML.Clustering
             }
 
             args.newColumnsNumber = newColumnNames.Count() / 2;
-            _schema = Schema.Create(new ExtendedSchema(input.Schema, newColumnNames, newColumnTypes));
+            _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema, newColumnNames, newColumnTypes));
             _transform = CreateTemplatedTransform();
         }
 
@@ -193,7 +193,7 @@ namespace Scikit.ML.Clustering
             Host.CheckValue(ctx, "ctx");
             _args = new Arguments();
             _args.Read(ctx, Host);
-            _schema = Schema.Create(new ExtendedSchema(input.Schema, new string[] { _args.outCluster, _args.outScore },
+            _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema, new string[] { _args.outCluster, _args.outScore },
                                                        new ColumnType[] { NumberType.I4, NumberType.R4 }));
             _transform = CreateTemplatedTransform();
         }
@@ -217,21 +217,21 @@ namespace Scikit.ML.Clustering
         /// If the function returns null or true, the method GetRowCursorSet
         /// needs to be implemented.
         /// </summary>
-        protected override bool? ShouldUseParallelCursors(Func<int, bool> predicate)
+        protected override bool? ShouldUseParallelCursors(Func<int, bool> columnsNeeded)
         {
             return false;
         }
 
-        protected override RowCursor GetRowCursorCore(Func<int, bool> needCol, Random rand = null)
+        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             Host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursor(needCol, rand);
+            return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursorSet(needCol, n, rand);
+            return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion
@@ -307,7 +307,7 @@ namespace Scikit.ML.Clustering
 
                         // Caching data.
                         ch.Info(MessageSensitivity.None, "Caching the data.");
-                        using (var cursor = _input.GetRowCursor(i => i == index))
+                        using (var cursor = _input.GetRowCursor(_input.Schema.Where(c => c.Index == index)))
                         {
                             var getter = cursor.GetGetter<VBuffer<float>>(index);
                             var getterId = cursor.GetIdGetter();
@@ -463,19 +463,19 @@ namespace Scikit.ML.Clustering
                 return _input.GetRowCount();
             }
 
-            public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
                 TrainTransform();
                 _host.AssertValue(_Results, "_Results");
-                var cursor = _input.GetRowCursor(predicate, rand);
+                var cursor = _input.GetRowCursor(columnsNeeded, rand);
                 return new OpticsCursor(this, cursor, _args.newColumnsNumber);
             }
 
-            public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
                 TrainTransform();
                 _host.AssertValue(_Results, "_Results");
-                var cursors = _input.GetRowCursorSet(predicate, n, rand);
+                var cursors = _input.GetRowCursorSet(columnsNeeded, n, rand);
                 return cursors.Select(c => new OpticsCursor(this, c, _args.newColumnsNumber)).ToArray();
             }
 
@@ -498,11 +498,6 @@ namespace Scikit.ML.Clustering
                 _newColNumber = newColNumber;
             }
 
-            public override RowCursor GetRootCursor()
-            {
-                return this;
-            }
-
             public override bool IsColumnActive(int col)
             {
                 if (col < _inputCursor.Schema.Count)
@@ -519,7 +514,6 @@ namespace Scikit.ML.Clustering
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -529,11 +523,6 @@ namespace Scikit.ML.Clustering
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                return _inputCursor.MoveMany(count);
             }
 
             public override bool MoveNext()

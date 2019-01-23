@@ -110,7 +110,7 @@ namespace Scikit.ML.TimeSeries
                 Host.ExceptUserArg(nameof(_args.columns), "One column must be specified.");
             SchemaHelper.GetColumnIndex(input.Schema, args.timeColumn);
             SchemaHelper.GetColumnIndex(input.Schema, args.columns[0].Source);
-            _schema = Schema.Create(new ExtendedSchema(input.Schema,
+            _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                        new[] { _args.columns[0].Name },
                                                        new[] { NumberType.R4 /*input.Schema.GetColumnType(index)*/ }));
             _trend = null;
@@ -152,9 +152,9 @@ namespace Scikit.ML.TimeSeries
                 Host.ExceptUserArg(nameof(_args.columns), "One column must be specified.");
             int index = SchemaHelper.GetColumnIndex(input.Schema, _args.columns[0].Source);
 
-            _schema = Schema.Create(new ExtendedSchema(input.Schema,
-                                    new[] { _args.columns[0].Name },
-                                    new[] { NumberType.R4 /*input.Schema.GetColumnType(index)*/ }));
+            _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
+                                            new[] { _args.columns[0].Name },
+                                            new[] { NumberType.R4 /*input.Schema.GetColumnType(index)*/ }));
             _lock = new object();
             _transform = BuildTransform(_trend);
         }
@@ -179,7 +179,7 @@ namespace Scikit.ML.TimeSeries
             return null;
         }
 
-        protected override RowCursor GetRowCursorCore(Func<int, bool> needCol, Random rand = null)
+        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             if (_transform == null)
                 lock (_lock)
@@ -187,10 +187,10 @@ namespace Scikit.ML.TimeSeries
                         _transform = CreateTemplatedTransform();
             Host.AssertValue(_transform, "_transform");
             Host.AssertValue(_trend, "_trend");
-            return _transform.GetRowCursor(needCol, rand);
+            return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             if (_transform == null)
                 lock (_lock)
@@ -198,7 +198,7 @@ namespace Scikit.ML.TimeSeries
                         _transform = CreateTemplatedTransform();
             Host.AssertValue(_transform, "_transform");
             Host.AssertValue(_trend, "_trend");
-            return _transform.GetRowCursorSet(needCol, n, rand);
+            return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion

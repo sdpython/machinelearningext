@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -68,7 +69,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
             _columnSrc = src;
             _typeDst = typeDst;
             _typeSrc = typeSrc;
-            _newSchema = Schema.Create(new ExtendedSchema(_source.Schema, new[] { dst }, new[] { typeDst }));
+            _newSchema = ExtendedSchema.Create(new ExtendedSchema(_source.Schema, new[] { dst }, new[] { typeDst }));
             _srcIndex = SchemaHelper.GetColumnIndex(_source.Schema, _columnSrc);
             _host.Except("Unable to find column '{0}' in input schema.", _columnSrc);
         }
@@ -88,41 +89,28 @@ namespace Scikit.ML.PipelineLambdaTransforms
             return _source.GetRowCount();
         }
 
-        /// <summary>
-        /// When the last column is requested, we also need the column used to compute it.
-        /// This function ensures that this column is requested when the last one is.
-        /// </summary>
-        bool PredicatePropagation(int col, Func<int, bool> predicate)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            if (predicate(col))
-                return true;
-            if (col == _srcIndex)
-                return predicate(_source.Schema.Count);
-            return predicate(col);
-        }
-
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
-        {
-            if (predicate(_source.Schema.Count))
+            if (columnsNeeded.Where(c => c.Index == _source.Schema.Count).Any())
             {
-                var cursor = _source.GetRowCursor(i => PredicatePropagation(i, predicate), rand);
+                var cursor = _source.GetRowCursor(columnsNeeded, rand);
                 return new LambdaCursor(this, cursor);
             }
             else
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                return new SameCursor(_source.GetRowCursor(predicate, rand), Schema);
+                return new SameCursor(_source.GetRowCursor(columnsNeeded, rand), Schema);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            if (predicate(_source.Schema.Count))
+            if (columnsNeeded.Where(c => c.Index == _source.Schema.Count).Any())
             {
-                var cursors = _source.GetRowCursorSet(i => PredicatePropagation(i, predicate), n, rand);
+                var cursors = _source.GetRowCursorSet(columnsNeeded, n, rand);
                 return cursors.Select(c => new LambdaCursor(this, c)).ToArray();
             }
             else
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                return _source.GetRowCursorSet(predicate, n, rand)
+                return _source.GetRowCursorSet(columnsNeeded, n, rand)
                               .Select(c => new SameCursor(c, Schema))
                               .ToArray();
         }
@@ -136,11 +124,6 @@ namespace Scikit.ML.PipelineLambdaTransforms
             {
                 _view = view;
                 _inputCursor = cursor;
-            }
-
-            public override RowCursor GetRootCursor()
-            {
-                return this;
             }
 
             public override bool IsColumnActive(int col)
@@ -159,7 +142,6 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -169,11 +151,6 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                return _inputCursor.MoveMany(count);
             }
 
             public override bool MoveNext()

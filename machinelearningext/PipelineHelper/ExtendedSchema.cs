@@ -5,10 +5,78 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Internal.Utilities;
 
 
 namespace Scikit.ML.PipelineHelper
 {
+    /// <summary>
+    /// Legacy interface for schema information.
+    /// Please avoid implementing this interface, use <see cref="Schema"/>.
+    /// </summary>
+    public interface ISchema
+    {
+        /// <summary>
+        /// Number of columns.
+        /// </summary>
+        int ColumnCount { get; }
+
+        /// <summary>
+        /// If there is a column with the given name, set col to its index and return true.
+        /// Otherwise, return false. The expectation is that if there are multiple columns
+        /// with the same name, the greatest index is returned.
+        /// </summary>
+        bool TryGetColumnIndex(string name, out int col);
+
+        /// <summary>
+        /// Get the name of the given column index. Column names must be non-empty and non-null,
+        /// but multiple columns may have the same name.
+        /// </summary>
+        string GetColumnName(int col);
+
+        /// <summary>
+        /// Get the type of the given column index. This must be non-null.
+        /// </summary>
+        ColumnType GetColumnType(int col);
+
+        /// <summary>
+        /// Produces the metadata kinds and associated types supported by the given column.
+        /// If there is no metadata the returned enumerable should be non-null, but empty.
+        /// The string key values are unique, non-empty, non-null strings. The type should
+        /// be non-null.
+        /// </summary>
+        IEnumerable<KeyValuePair<string, ColumnType>> GetMetadataTypes(int col);
+
+        /// <summary>
+        /// If the given column has metadata of the indicated kind, this returns the type of the metadata.
+        /// Otherwise, it returns null.
+        /// </summary>
+        ColumnType GetMetadataTypeOrNull(string kind, int col);
+
+        /// <summary>
+        /// Fetches the indicated metadata for the indicated column.
+        /// This should only be called if a corresponding call to GetMetadataTypeOrNull
+        /// returned non-null. And the TValue type should be compatible with the type
+        /// returned by that call. Otherwise, this should throw an exception.
+        /// </summary>
+        void GetMetadata<TValue>(string kind, int col, ref TValue value);
+    }
+
+    /// <summary>
+    /// The transpose schema returns the schema information of the view we have transposed.
+    /// </summary>
+    public interface ITransposeSchema : ISchema
+    {
+        /// <summary>
+        /// <see cref="GetSlotType"/> (input argument is named col) specifies the type of all values at the col-th column of
+        /// <see cref="IDataView"/>.  For example, if <see cref="IDataView.Schema"/>[i] is a scalar float column, then
+        /// <see cref="GetSlotType"/> with col=i may return a <see cref="VectorType"/> whose <see cref="VectorType.ItemType"/>
+        /// field is <see cref="NumberType.R4"/>. If the i-th column can't be iterated column-wisely, this function may
+        /// return <see langword="null"/>.
+        /// </summary>
+        VectorType GetSlotType(int col);
+    }
+
     /// <summary>
     /// Extends an existing Schema.
     /// </summary>
@@ -398,6 +466,37 @@ namespace Scikit.ML.PipelineHelper
             }
             else
                 throw new IndexOutOfRangeException();
+        }
+
+        /// <summary>
+        /// Manufacture an instance of <see cref="Schema"/> out of any <see cref="ISchema"/>.
+        /// </summary>
+        public static Schema Create(ISchema inputSchema)
+        {
+            Contracts.CheckValue(inputSchema, nameof(inputSchema));
+
+            var builder = new SchemaBuilder();
+            for (int i = 0; i < inputSchema.ColumnCount; i++)
+            {
+                var meta = new MetadataBuilder();
+                foreach (var kvp in inputSchema.GetMetadataTypes(i))
+                {
+                    var getter = Utils.MarshalInvoke(GetMetadataGetterDelegate<int>, kvp.Value.RawType, inputSchema, i, kvp.Key);
+                    meta.Add(kvp.Key, kvp.Value, getter);
+                }
+                builder.AddColumn(inputSchema.GetColumnName(i), inputSchema.GetColumnType(i), meta.GetMetadata());
+            }
+
+            return builder.GetSchema();
+        }
+
+        private static Delegate GetMetadataGetterDelegate<TValue>(ISchema schema, int col, string kind)
+        {
+            // REVIEW: We are facing a choice here: cache 'value' and get rid of 'schema' reference altogether,
+            // or retain the reference but be more memory efficient. This code should not stick around for too long
+            // anyway, so let's not sweat too much, and opt for the latter.
+            ValueGetter<TValue> getter = (ref TValue value) => schema.GetMetadata(kind, col, ref value);
+            return getter;
         }
     }
 }

@@ -149,7 +149,7 @@ namespace Scikit.ML.PipelineTransforms
             var newNames = _args.columns.Select(c => c.Name).ToArray();
             var newTypes = _args.columns.Select(c => SchemaHelper.GetColumnType(sch, c.Source)).ToArray();
             var extSchema = new ExtendedSchema(Source.Schema, newNames, newTypes);
-            return Schema.Create(extSchema);
+            return ExtendedSchema.Create(extSchema);
         }
 
         Dictionary<int, int> BuildMapping()
@@ -178,23 +178,23 @@ namespace Scikit.ML.PipelineTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            var cur = Source.GetRowCursor(i => predicate(i) || predicate(SchemaHelper.NeedColumn(_columnMapping, i)));
+            var cur = Source.GetRowCursor(SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns));
             return new AddRandomCursor(this, cur);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             var host = new ConsoleEnvironment().Register("Estimate n threads");
             n = DataViewUtils.GetThreadCount(host, n);
 
             if (n <= 1)
-                return new RowCursor[] { GetRowCursor(predicate, rand) };
+                return new RowCursor[] { GetRowCursor(columnsNeeded, rand) };
             else
             {
-                var cursors = Source.GetRowCursorSet(i => predicate(i) || predicate(SchemaHelper.NeedColumn(_columnMapping, i)),
-                                                     n, rand);
+                var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+                var cursors = Source.GetRowCursorSet(cols, n, rand);
                 for (int i = 0; i < cursors.Length; ++i)
                     cursors[i] = new AddRandomCursor(this, cursors[i]);
                 return cursors;
@@ -220,11 +220,6 @@ namespace Scikit.ML.PipelineTransforms
                 _rand = new Random(_view._args.seed);
             }
 
-            public override RowCursor GetRootCursor()
-            {
-                return this;
-            }
-
             public override bool IsColumnActive(int col)
             {
                 if (col < _inputCursor.Schema.Count)
@@ -241,7 +236,6 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -251,11 +245,6 @@ namespace Scikit.ML.PipelineTransforms
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                return _inputCursor.MoveMany(count);
             }
 
             public override bool MoveNext()

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
@@ -98,7 +99,7 @@ namespace Scikit.ML.ProductionPrediction
                                                                                _sourceToReplace);
             int index = SchemaHelper.GetColumnIndex(outputView.Schema, _outputColumn);
             int newOutputIndex = index;
-            var cur = outputView.GetRowCursor(i => i == newOutputIndex);
+            var cur = outputView.GetRowCursor(outputView.Schema.Where(c => c.Index == newOutputIndex).ToArray());
             var getter = cur.GetGetter<TDst>(newOutputIndex);
             if (getter == null)
                 throw _env.Except("Unable to get a getter on the transform for type {0}", default(TDst).GetType());

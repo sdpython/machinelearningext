@@ -31,8 +31,8 @@ namespace Scikit.ML.NearestNeighbors
             int nt = args.numThreads ?? 1;
             Random rand = RandomUtils.Create(args.seed);
             var cursors = (nt == 1)
-                                ? new RowCursor[] { data.GetRowCursor(i => indexes.Contains(i), rand) }
-                                : data.GetRowCursorSet(i => indexes.Contains(i), nt, rand);
+                                ? new RowCursor[] { data.GetRowCursor(data.Schema.Where(c=>indexes.Contains(c.Index)), rand) }
+                                : data.GetRowCursorSet(data.Schema.Where(c => indexes.Contains(c.Index)), nt, rand);
             KdTree[] kdtrees;
             Dictionary<long, Tuple<TLabel, float>>[] labelsWeights;
             if (nt == 1)

@@ -1,6 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -19,13 +20,13 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="view">IDataView</param>
         /// <param name="predicate">column selector (null for all)</param>
         /// <returns>number of rows</returns>
-        public static long ComputeRowCount(IDataView view, Func<int, bool> predicate = null)
+        public static long ComputeRowCount(IDataView view, IEnumerable<Schema.Column> columnsNeeded = null)
         {
             var res = view.GetRowCount();
             if (res.HasValue)
                 return res.Value;
             long lres = 0;
-            using (var cur = view.GetRowCursor(predicate == null ? i => false : predicate))
+            using (var cur = view.GetRowCursor(columnsNeeded))
             {
                 while (cur.MoveNext())
                     ++lres;

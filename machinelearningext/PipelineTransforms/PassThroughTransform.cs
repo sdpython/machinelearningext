@@ -167,18 +167,18 @@ namespace Scikit.ML.PipelineTransforms
             return Source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_input, "_input");
             DumpView();
-            return Source.GetRowCursor(predicate, rand);
+            return Source.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_input, "_input");
             DumpView();
-            return Source.GetRowCursorSet(predicate, n, rand);
+            return Source.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         public void DumpView()

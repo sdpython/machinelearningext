@@ -113,24 +113,24 @@ namespace Scikit.ML.DataManipulation
         public string[] Columns => _data.Columns;
         public ColumnType[] Kinds => _data.Kinds;
 
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return _data.GetRowCursor(needCol, rand);
+            return _data.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return _data.GetRowCursorSet(needCol, n, rand);
+            return _data.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
-        public RowCursor GetRowCursor(int[] rows, int[] columns, Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return _data.GetRowCursor(rows, columns, needCol, rand);
+            return _data.GetRowCursor(rows, columns, columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return _data.GetRowCursorSet(rows, columns, needCol, n, rand);
+            return _data.GetRowCursorSet(rows, columns, columnsNeeded, n, rand);
         }
 
         /// <summary>

@@ -190,7 +190,7 @@ namespace Scikit.ML.FeaturesTransforms
             };
             var iterCols = _args.columns.Where(c => c.Name != c.Source);
             return iterCols.Any()
-                        ? Schema.Create(new ExtendedSchema(_input.Schema,
+                        ? ExtendedSchema.Create(new ExtendedSchema(_input.Schema,
                                                 iterCols.Select(c => c.Name).ToArray(),
                                                 iterCols.Select(c => getType(c.Source)).ToArray()))
                         : _input.Schema;
@@ -209,33 +209,22 @@ namespace Scikit.ML.FeaturesTransforms
             return Source.GetRowCount();
         }
 
-        /// <summary>
-        /// When the last column is requested, we also need the column used to compute it.
-        /// This function ensures that this column is requested when the last one is.
-        /// </summary>
-        bool PredicatePropagation(int col, Func<int, bool> predicate)
-        {
-            if (predicate(col))
-                return true;
-            if (_revIndex.ContainsKey(col))
-                return predicate(_revIndex[col]);
-            return predicate(col);
-        }
-
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
-            var cursor = _input.GetRowCursor(i => PredicatePropagation(i, predicate), rand);
-            return new ScalerCursor(cursor, this, i => PredicatePropagation(i, predicate));
+            var newColumnsNeeded = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+            var cursor = _input.GetRowCursor(newColumnsNeeded, rand);
+            return new ScalerCursor(cursor, this, newColumnsNeeded);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
-            var cursors = _input.GetRowCursorSet(i => PredicatePropagation(i, predicate), n, rand);
-            var res = cursors.Select(c => new ScalerCursor(c, this, i => PredicatePropagation(i, predicate))).ToArray();
+            var newColumnsNeeded = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+            var cursors = _input.GetRowCursorSet(newColumnsNeeded, n, rand);
+            var res = cursors.Select(c => new ScalerCursor(c, this, newColumnsNeeded)).ToArray();
             return res;
         }
 
@@ -271,7 +260,7 @@ namespace Scikit.ML.FeaturesTransforms
                         // Computation
                         var required = new HashSet<int>(indexesCol);
                         var requiredIndexes = required.OrderBy(c => c).ToArray();
-                        using (var cur = _input.GetRowCursor(i => required.Contains(i)))
+                        using (var cur = _input.GetRowCursor(Schema.Where(c => required.Contains(c.Index))))
                         {
                             bool[] isText = requiredIndexes.Select(c => sch[c].Type == TextType.Instance).ToArray();
                             bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BoolType.Instance).ToArray();
@@ -528,24 +517,28 @@ namespace Scikit.ML.FeaturesTransforms
             readonly RowCursor _inputCursor;
             readonly ScalerTransform _parent;
             readonly Dictionary<int, ScalingFactor> _scalingFactors;
+            readonly IEnumerable<Schema.Column> _columnsNeeded;
 
-            public ScalerCursor(RowCursor cursor, ScalerTransform parent, Func<int, bool> predicate)
+            public ScalerCursor(RowCursor cursor, ScalerTransform parent, IEnumerable<Schema.Column> columnsNeeded)
             {
                 _inputCursor = cursor;
                 _parent = parent;
                 _scalingFactors = parent._scalingFactors;
                 if (_scalingFactors == null)
                     throw parent._host.ExceptValue("The transform was never trained. Predictions cannot be computed.");
-            }
-
-            public override RowCursor GetRootCursor()
-            {
-                return this;
+                _columnsNeeded = columnsNeeded;
             }
 
             public override bool IsColumnActive(int col)
             {
-                return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
+                bool active = col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
+                if (active)
+                    return active;
+#if(DEBUG)
+                if (_columnsNeeded.Where(c => c.Index == col).Any())
+                    throw Contracts.ExceptNotImpl("Caught in debug mode.");
+#endif
+                return false;
             }
 
             public override ValueGetter<RowId> GetIdGetter()
@@ -557,7 +550,6 @@ namespace Scikit.ML.FeaturesTransforms
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _parent.Schema; } }
@@ -567,11 +559,6 @@ namespace Scikit.ML.FeaturesTransforms
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                return _inputCursor.MoveMany(count);
             }
 
             public override bool MoveNext()

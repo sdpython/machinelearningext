@@ -1,6 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -65,7 +66,7 @@ namespace Scikit.ML.ProductionPrediction
             int index = SchemaHelper.GetColumnIndex(_source.Schema, inputColumn);
             _inputColumn = inputColumn;
             _outputColumn = outputColumn;
-            _schema = Schema.Create(new ExtendedSchema(source.Schema, new[] { outputColumn }, new[] { mapper.OutputType }));
+            _schema = ExtendedSchema.Create(new ExtendedSchema(source.Schema, new[] { outputColumn }, new[] { mapper.OutputType }));
             _transform = CreateMemoryTransform();
         }
 
@@ -79,14 +80,14 @@ namespace Scikit.ML.ProductionPrediction
         public long? GetRowCount() { return _source.GetRowCount(); }
         public Schema Schema { get { return _schema; } }
 
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return _transform.GetRowCursor(needCol, rand);
+            return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return _transform.GetRowCursorSet(needCol, n, rand);
+            return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         public void Save(ModelSaveContext ctx)
@@ -181,43 +182,32 @@ namespace Scikit.ML.ProductionPrediction
             public Schema Schema { get { return _parent.Schema; } }
             public void Save(ModelSaveContext ctx) { throw Contracts.ExceptNotSupp("Not meant to be serialized. You need to serialize whatever it takes to instantiate it."); }
 
-            /// <summary>
-            /// When the last column is requested, we also need the column used to compute it.
-            /// This function ensures that this column is requested when the last one is.
-            /// </summary>
-            bool PredicatePropagation(int col, int index, Func<int, bool> predicate)
-            {
-                if (predicate(col))
-                    return true;
-                if (col == index)
-                    return predicate(_parent.Source.Schema.Count);
-                return predicate(col);
-            }
-
-            public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
                 int index = SchemaHelper.GetColumnIndex(Source.Schema, _parent.InputName);
-                if (predicate(index))
+                if (columnsNeeded.Where(c => c.Index == index).Any())
                 {
-                    var cursor = Source.GetRowCursor(i => PredicatePropagation(i, index, predicate), rand);
+                    var newCols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, index, Schema.Count);
+                    var cursor = Source.GetRowCursor(newCols, rand);
                     return new MemoryCursor<TSrc, TDst>(this, cursor, index);
                 }
                 else
                     // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                    return new SameCursor(Source.GetRowCursor(predicate, rand), Schema);
+                    return new SameCursor(Source.GetRowCursor(columnsNeeded, rand), Schema);
             }
 
-            public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
                 int index = SchemaHelper.GetColumnIndex(Source.Schema, _parent.InputName);
-                if (predicate(index))
+                if (columnsNeeded.Where(c => c.Index == index).Any())
                 {
-                    var cursors = Source.GetRowCursorSet(i => PredicatePropagation(i, index, predicate), n, rand);
+                    var newCols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, index, Schema.Count);
+                    var cursors = Source.GetRowCursorSet(newCols, n, rand);
                     return cursors.Select(c => new MemoryCursor<TSrc, TDst>(this, c, index)).ToArray();
                 }
                 else
                     // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                    return Source.GetRowCursorSet(predicate, n, rand)
+                    return Source.GetRowCursorSet(columnsNeeded, n, rand)
                                  .Select(c => new SameCursor(c, Schema))
                                  .ToArray();
             }
@@ -240,11 +230,6 @@ namespace Scikit.ML.ProductionPrediction
                 _inputCol = inputCol;
             }
 
-            public override RowCursor GetRootCursor()
-            {
-                return this;
-            }
-
             public override bool IsColumnActive(int col)
             {
                 // The column is active if is active in the input view or if it the new vector with the polynomial features.
@@ -261,7 +246,6 @@ namespace Scikit.ML.ProductionPrediction
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } } // No change.
             public override long Batch { get { return _inputCursor.Batch; } }        // No change.
             public override long Position { get { return _inputCursor.Position; } }  // No change.
             public override Schema Schema { get { return _view.Schema; } }          // No change.
@@ -271,11 +255,6 @@ namespace Scikit.ML.ProductionPrediction
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                return _inputCursor.MoveMany(count);
             }
 
             public override bool MoveNext()

@@ -34,7 +34,7 @@ namespace TestMachineLearningExt
                 var args = new MultiToBinaryTransform.Arguments { label = "Y", algo = algo, maxMulti = max };
                 var multiplied = new MultiToBinaryTransform(host, args, data);
 
-                using (var cursor = multiplied.GetRowCursor(i => true))
+                using (var cursor = multiplied.GetRowCursor(multiplied.Schema))
                 {
                     var labelGetter = cursor.GetGetter<uint>(1);
                     var binGetter = cursor.GetGetter<bool>(2);
@@ -86,7 +86,7 @@ namespace TestMachineLearningExt
                 var args = new MultiToBinaryTransform.Arguments { label = "Y", algo = algo, maxMulti = max };
                 var multiplied = new MultiToBinaryTransform(host, args, data);
 
-                using (var cursor = multiplied.GetRowCursor(i => true))
+                using (var cursor = multiplied.GetRowCursor(multiplied.Schema))
                 {
                     var labelGetter = cursor.GetGetter<uint>(1);
                     var labelVectorGetter = cursor.GetGetter<VBuffer<bool>>(1);

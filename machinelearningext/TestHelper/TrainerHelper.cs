@@ -116,7 +116,7 @@ namespace Scikit.ML.TestHelper
             string expectedOuput = kind == PredictionKind.Regression ? "Score" : "PredictedLabel";
 
             // Get label and basic checking about performance.
-            using (var cursor = scorer.GetRowCursor(i => true))
+            using (var cursor = scorer.GetRowCursor(scorer.Schema))
             {
                 int ilabel, ipred;
                 ilabel = SchemaHelper.GetColumnIndex(cursor.Schema, labelColumn);

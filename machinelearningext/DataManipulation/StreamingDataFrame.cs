@@ -1,6 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -51,10 +52,10 @@ namespace Scikit.ML.DataManipulation
 
         public bool CanShuffle => Source.CanShuffle;
         public long? GetRowCount() { return Source.GetRowCount(); }
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null) { return Source.GetRowCursor(needCol, rand); }
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null) { return Source.GetRowCursor(columnsNeeded, rand); }
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return Source.GetRowCursorSet(needCol, n, rand);
+            return Source.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         public static StreamingDataFrame ReadCsv(string filename,

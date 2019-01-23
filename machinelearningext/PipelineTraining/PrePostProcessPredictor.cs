@@ -94,7 +94,7 @@ namespace Scikit.ML.PipelineTraining
                 switch (type.AsVector().ItemType().RawKind())
                 {
                     case DataKind.R4:
-                        schema = Schema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorType(NumberType.R4) }));
+                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorType(NumberType.R4) }));
                         data = new TemporaryViewCursorColumn<VBuffer<float>>(default(VBuffer<float>), 0, schema);
                         break;
                     default:
@@ -106,7 +106,7 @@ namespace Scikit.ML.PipelineTraining
                 switch (type.RawKind())
                 {
                     case DataKind.R4:
-                        schema = Schema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { NumberType.R4 }));
+                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { NumberType.R4 }));
                         data = new TemporaryViewCursorColumn<float>(default(float), 0, schema);
                         break;
                     default:

@@ -1,6 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
@@ -121,16 +122,16 @@ namespace Scikit.ML.PipelineGraphTransforms
             return _dataTransforms.Last().GetRowCount();
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_dataTransforms, "_dataTransforms");
-            return _dataTransforms.Last().GetRowCursor(predicate, rand);
+            return _dataTransforms.Last().GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_dataTransforms, "_dataTransforms");
-            return _dataTransforms.Last().GetRowCursorSet(predicate, n, rand);
+            return _dataTransforms.Last().GetRowCursorSet(columnsNeeded, n, rand);
         }
     }
 }

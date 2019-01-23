@@ -244,16 +244,16 @@ namespace Scikit.ML.RandomTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursor(predicate, rand);
+            return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursorSet(predicate, n, rand);
+            return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion
@@ -367,7 +367,7 @@ namespace Scikit.ML.RandomTransforms
                         throw _host.ExceptNotSupp("Unknown aggregatino strategy {0}", _args.aggregation);
 
                 }
-                _schema = Schema.Create(new ExtendedSchema(input.Schema, args.outputColumns, colTypes.ToArray()));
+                _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema, args.outputColumns, colTypes.ToArray()));
             }
 
             public void Save(ModelSaveContext ctx)
@@ -402,23 +402,43 @@ namespace Scikit.ML.RandomTransforms
                 return null;
             }
 
-            public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+            /// <summary>
+            /// When the last column is requested, we also need the column used to compute it.
+            /// This function ensures that this column is requested when the last one is.
+            /// </summary>
+            IEnumerable<Schema.Column> PredicatePropagation(IEnumerable<Schema.Column> columnsNeeded)
+            {
+                var colSet = new HashSet<string>(_args.outputColumns);
+                var cols = columnsNeeded.ToList();
+                if (cols.Where(c => colSet.Contains(c.Name)).Any())
+                {
+                    cols.Add(Schema.Where(c => c.Name == _args.inputColumn).First());
+                    foreach (var i in _args.inputFeaturesInt)
+                        cols.Add(Schema.Where(c => c.Index == i).First());
+                }
+                return cols;
+            }
+
+            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
                 var kind = _toShake[0].OutputType.IsVector()
                                 ? _toShake[0].OutputType.ItemType().RawKind()
                                 : _toShake[0].OutputType.RawKind();
+
+                var newCols = PredicatePropagation(columnsNeeded);
+
                 switch (kind)
                 {
                     case DataKind.R4:
-                        var cursor = _input.GetRowCursor(i => i == _inputCol || predicate(i), rand);
-                        return new ShakeInputCursor<TInput, float>(this, cursor, i => i == _inputCol || predicate(i), _args, _inputCol, _toShake, _shakingValues,
+                        var cursor = _input.GetRowCursor(newCols, rand);
+                        return new ShakeInputCursor<TInput, float>(this, cursor, newCols, _args, _inputCol, _toShake, _shakingValues,
                                         (float x, float y) => { return x + y; });
                     default:
                         throw _host.Except("Not supported RawKind {0}", _toShake[0].OutputType.RawKind());
                 }
             }
 
-            public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
                 DataKind kind;
                 if (_toShake[0].OutputType.IsVector())
@@ -426,11 +446,13 @@ namespace Scikit.ML.RandomTransforms
                 else
                     kind = _toShake[0].OutputType.RawKind();
 
+                var newCols = PredicatePropagation(columnsNeeded);
+
                 switch (kind)
                 {
                     case DataKind.R4:
-                        var cursors = _input.GetRowCursorSet(i => i == _inputCol || predicate(i), n, rand);
-                        return cursors.Select(c => new ShakeInputCursor<TInput, float>(this, c, predicate, _args, _inputCol, _toShake, _shakingValues,
+                        var cursors = _input.GetRowCursorSet(newCols, n, rand);
+                        return cursors.Select(c => new ShakeInputCursor<TInput, float>(this, c, newCols, _args, _inputCol, _toShake, _shakingValues,
                                             (float x, float y) => { return x + y; })).ToArray();
                     default:
                         throw _host.Except("Not supported RawKind {0}", _toShake[0].OutputType.RawKind());
@@ -457,7 +479,7 @@ namespace Scikit.ML.RandomTransforms
             ValueMapper<VBuffer<TInput>, TOutput>[] _mappers;
             Func<TOutput, TOutput, TOutput> _aggregation;
 
-            public ShakeInputCursor(ShakeInputState<TInput> view, RowCursor cursor, Func<int, bool> predicate,
+            public ShakeInputCursor(ShakeInputState<TInput> view, RowCursor cursor, IEnumerable<Schema.Column> columnsNeeded,
                                     Arguments args, int column, IValueMapper[] toShake, TInput[][] shakingValues,
                                     Func<TOutput, TOutput, TOutput> aggregation)
             {
@@ -484,11 +506,6 @@ namespace Scikit.ML.RandomTransforms
                 _aggregation = aggregation;
             }
 
-            public override RowCursor GetRootCursor()
-            {
-                return this;
-            }
-
             public override bool IsColumnActive(int col)
             {
                 return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
@@ -503,7 +520,6 @@ namespace Scikit.ML.RandomTransforms
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -513,23 +529,6 @@ namespace Scikit.ML.RandomTransforms
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                var r = _inputCursor.MoveMany(count);
-                if (!r)
-                    return r;
-                _inputGetter(ref _inputValue);
-                switch (_args.algo)
-                {
-                    case ShakeInputAlgorithm.exhaustive:
-                        FillShakingValuesExhaustive();
-                        break;
-                    default:
-                        throw Contracts.Except("Not available algo {0}", _args.algo);
-                }
-                return true;
             }
 
             public override bool MoveNext()

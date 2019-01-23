@@ -66,18 +66,18 @@ namespace Scikit.ML.ProductionPrediction
             _ownCursor.Set(ref value, position);
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             if (_ownCursor != null)
                 throw Contracts.Except("GetRowCursor was called a second time which probably means this function was called from multiple threads. " +
                     "Be sure that an environment is called by parameter conc:1.");
-            _ownCursor = new CursorType(this, needCol, _otherValues);
+            _ownCursor = new CursorType(this, columnsNeeded, _otherValues);
             return _ownCursor;
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            var cur = GetRowCursor(needCol, rand);
+            var cur = GetRowCursor(columnsNeeded, rand);
             if (n >= 2)
             {
                 /*
@@ -95,9 +95,11 @@ namespace Scikit.ML.ProductionPrediction
                 return new RowCursor[] { cur };
         }
 
+        enum CursorState { Good, NotStarted, Done };
+
         class CursorType : RowCursor
         {
-            readonly Func<int, bool> _needCol;
+            readonly IEnumerable<Schema.Column> _columnsNeeded;
             readonly InfiniteLoopViewCursorDataFrame _view;
             readonly Schema _columnsSchema;
             CursorState _state;
@@ -109,9 +111,9 @@ namespace Scikit.ML.ProductionPrediction
             long _position;
             long _batch;
 
-            public CursorType(InfiniteLoopViewCursorDataFrame view, Func<int, bool> needCol, RowCursor otherValues)
+            public CursorType(InfiniteLoopViewCursorDataFrame view, IEnumerable<Schema.Column> columnsNeeded, RowCursor otherValues)
             {
-                _needCol = needCol;
+                _columnsNeeded = columnsNeeded;
                 _view = view;
                 _state = CursorState.NotStarted;
                 _otherValues = otherValues;
@@ -127,8 +129,6 @@ namespace Scikit.ML.ProductionPrediction
             }
 
             public long? GetRowCount() { return 1; }
-            public override CursorState State { get { return _state; } }
-            public override RowCursor GetRootCursor() { return this; }
             public override long Batch { get { return _batch; } }
             public override long Position { get { return _position; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -146,14 +146,9 @@ namespace Scikit.ML.ProductionPrediction
                 GC.SuppressFinalize(this);
             }
 
-            public override bool MoveMany(long count)
-            {
-                throw Contracts.ExceptNotSupp();
-            }
-
             public override bool MoveNext()
             {
-                if (State == CursorState.Done)
+                if (_state == CursorState.Done)
                     throw Contracts.Except("The state of the cursor should not be Done.");
                 if (_wait)
                     throw Contracts.Except("The cursor has no value to show. This exception happens because a different thread is " +
@@ -175,7 +170,9 @@ namespace Scikit.ML.ProductionPrediction
 
             public override bool IsColumnActive(int col)
             {
-                return _columns.ContainsKey(col) || _needCol(col) || (_otherValues != null && _otherValues.IsColumnActive(col));
+                return _columns.ContainsKey(col) ||
+                    _columnsNeeded.Where(c => c.Index == col).Any() ||
+                    (_otherValues != null && _otherValues.IsColumnActive(col));
             }
 
             /// <summary>

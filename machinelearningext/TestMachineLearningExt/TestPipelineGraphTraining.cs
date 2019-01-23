@@ -34,7 +34,7 @@ namespace TestMachineLearningExt
                 pipe = env.CreateTransform("SelectTag{tag=scoredTrain selectTag=test}", pipe);
                 pipe = env.CreateTransform("TagScore{in=trainP}", pipe);
 
-                var cursor = pipe.GetRowCursor(i => true);
+                var cursor = pipe.GetRowCursor(pipe.Schema);
                 string schema = SchemaHelper.ToString(pipe.Schema);
                 string schema2 = SchemaHelper.ToString(cursor.Schema);
                 if (schema != schema2)
@@ -83,7 +83,7 @@ namespace TestMachineLearningExt
                 pipe = env.CreateTransform("TagPredict{in=trainP}", pipe);
 
                 string schema = SchemaHelper.ToString(pipe.Schema);
-                var cursor = pipe.GetRowCursor(i => true);
+                var cursor = pipe.GetRowCursor(pipe.Schema);
                 string schema2 = SchemaHelper.ToString(cursor.Schema);
                 if (schema != schema2)
                     throw new Exception("Schema mismatch.");

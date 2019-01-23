@@ -86,7 +86,7 @@ namespace Scikit.ML.ProductionPrediction
                                 : ApplyTransformUtils.ApplyAllTransformsToData(_computeEnv, _transform, inputView, _sourceToReplace);
 
             // We assume all columns are needed, otherwise they should be removed.
-            using (var cur = outputView.GetRowCursor(i => true))
+            using (var cur = outputView.GetRowCursor(outputView.Schema))
             {
                 Delegate[] dels;
                 try

@@ -61,7 +61,7 @@ namespace TestProfileBenchmark
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
                 // Train
-                var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Arguments
+                var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Options
                 {
                     NumThreads = 1,
                     LabelColumn = "Label",
@@ -95,7 +95,7 @@ namespace TestProfileBenchmark
 
             var data = ml.Data.ReadFromTextFile(trainFilename, args);
             var pipeline = ml.Transforms.Text.FeaturizeText("SentimentText", "Features")
-                .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features", advancedSettings: s => s.NumThreads = 1));
+                .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
             var model = pipeline.Fit(data);
             return model;
         }
@@ -127,7 +127,7 @@ namespace TestProfileBenchmark
                     cache = new ExtendedCacheTransform(env, new ExtendedCacheTransform.Arguments(), testLoader);
                 else
                     cache = new CacheDataView(env, testLoader, new[] { 0, 1 });
-                var testData = cache.AsEnumerable<SentimentDataBoolFloat>(env, false);
+                //var testData = cache.AsEnumerable<SentimentDataBoolFloat>(env, false);
 
                 if (engine == "mlnet")
                 {
@@ -139,8 +139,11 @@ namespace TestProfileBenchmark
                         sw.Reset();
                         sw.Start();
                         for (int i = 0; i < N; ++i)
+                            /*
                             foreach (var input in testData)
                                 fct.Predict(input);
+                                */
+                            ;
                         sw.Stop();
                         times.Add(new Tuple<int, TimeSpan, int>(N, sw.Elapsed, call));
                     }
@@ -156,8 +159,11 @@ namespace TestProfileBenchmark
                         sw.Reset();
                         sw.Start();
                         for (int i = 0; i < N; ++i)
+                            /*
                             foreach (var input in testData)
                                 model.Predict(input, ref output);
+                                */
+                            ;
                         sw.Stop();
                         times.Add(new Tuple<int, TimeSpan, int>(N, sw.Elapsed, call));
                     }

@@ -37,13 +37,10 @@ namespace Scikit.ML.PipelineHelper
             GC.SuppressFinalize(this);
         }
 
-        public override RowCursor GetRootCursor() { return this; }
         public override ValueGetter<RowId> GetIdGetter() { return _inputCursor.GetIdGetter(); }
-        public override CursorState State { get { return _inputCursor.State; } }
         public override long Batch { get { return _inputCursor.Batch; } }
         public override long Position { get { return _inputCursor.Position; } }
         public override Schema Schema { get { return _schema; } }
-        public override bool MoveMany(long count) { return _inputCursor.MoveMany(count); }
         public override bool MoveNext() { return _inputCursor.MoveNext(); }
         public override ValueGetter<TValue> GetGetter<TValue>(int col) { return _inputCursor.GetGetter<TValue>(col); }
     }

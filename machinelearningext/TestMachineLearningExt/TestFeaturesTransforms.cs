@@ -104,7 +104,7 @@ namespace TestMachineLearningExt
                                 k => total[1](k) + total[2](k) + total[3](k)
                 };
 
-                using (var cursor = poly.GetRowCursor(i => true))
+                using (var cursor = poly.GetRowCursor(poly.Schema))
                 {
                     var outValues = new List<float[]>();
                     var colGetter = cursor.GetGetter<VBuffer<float>>(1);
@@ -231,7 +231,7 @@ namespace TestMachineLearningExt
 
             var scaled = new ScalerTransform(host, args, data);
 
-            using (var cursor = scaled.GetRowCursor(i => true))
+            using (var cursor = scaled.GetRowCursor(scaled.Schema))
             {
                 var outValues = new List<float[]>();
                 var colGetter = cursor.GetGetter<VBuffer<float>>(0);

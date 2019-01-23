@@ -33,7 +33,7 @@ namespace TestMachineLearningExt
                 var args = new ResampleTransform.Arguments { lambda = ratio, cache = false };
                 var tr = new ResampleTransform(env, args, data);
                 var values = new List<int>();
-                using (var cursor = tr.GetRowCursor(i => true))
+                using (var cursor = tr.GetRowCursor(tr.Schema))
                 {
                     var columnGetter = cursor.GetGetter<int>(1);
                     while (cursor.MoveNext())
@@ -118,7 +118,7 @@ namespace TestMachineLearningExt
                     throw new Exception("Invalid");
                 var shake = new ShakeInputTransform(host, args, data, new IValueMapper[] { trv });
 
-                using (var cursor = shake.GetRowCursor(i => true))
+                using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
                     var colGetter = cursor.GetGetter<VBuffer<float>>(1);
@@ -160,7 +160,7 @@ namespace TestMachineLearningExt
                     throw new Exception("Invalid");
                 var shake = new ShakeInputTransform(host, args, data, new IValueMapper[] { trv });
 
-                using (var cursor = shake.GetRowCursor(i => true))
+                using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
                     var colGetter = cursor.GetGetter<VBuffer<float>>(1);
@@ -201,7 +201,7 @@ namespace TestMachineLearningExt
                     throw new Exception("Invalid");
                 var shake = new ShakeInputTransform(host, args, data, new IValueMapper[] { trv });
 
-                using (var cursor = shake.GetRowCursor(i => true))
+                using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
                     var colGetter = cursor.GetGetter<VBuffer<float>>(1);
@@ -243,7 +243,7 @@ namespace TestMachineLearningExt
                     throw new Exception("Invalid");
                 var shake = new ShakeInputTransform(host, args, data, new IValueMapper[] { trv });
 
-                using (var cursor = shake.GetRowCursor(i => true))
+                using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
                     var colGetter = cursor.GetGetter<VBuffer<float>>(1);

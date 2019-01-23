@@ -484,7 +484,7 @@ namespace TestMachineLearningExt
                                     dst.Values[1] = src.Values[1] + 1f;
                                 });
 
-                using (var cursor = lambdaView.GetRowCursor(i => true))
+                using (var cursor = lambdaView.GetRowCursor(lambdaView.Schema))
                 {
                     var labelGetter = cursor.GetGetter<uint>(1);
                     var floatGetter = cursor.GetGetter<VBuffer<float>>(2);
@@ -535,7 +535,7 @@ namespace TestMachineLearningExt
                         var tr = new PassThroughTransform(env, new PassThroughTransform.Arguments() { }, data_unused);
                         var mapperClass = new ValueMapperFromTransform<InputOutputU, InputOutputU>(env, tr);
                         var mapper = mapperClass.GetMapper<InputOutputU, InputOutputU>();
-                        using (var cur = data.GetRowCursor(i => true))
+                        using (var cur = data.GetRowCursor(data.Schema))
                         {
                             for (int i = 0; i < inputs.Length; ++i)
                                 mapper(in inputs[i], ref outputs[i]);
@@ -572,7 +572,7 @@ namespace TestMachineLearningExt
 
             var view = new InfiniteLoopViewCursorDataFrame(schema: df.Schema);
             var values = new List<float>();
-            using (var cur = view.GetRowCursor(i => true))
+            using (var cur = view.GetRowCursor(view.Schema))
             {
                 var getter = cur.GetGetter<float>(8);
                 float val = 0f;

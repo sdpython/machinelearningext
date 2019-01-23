@@ -193,26 +193,26 @@ namespace Scikit.ML.PipelineTransforms
             return false;
         }
 
-        protected override RowCursor GetRowCursorCore(Func<int, bool> needCol, Random rand = null)
+        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             Host.Check(string.IsNullOrEmpty(_sortColumn) || rand == null, "Random access is not allowed on sorted data. (5)");
             Host.AssertValue(_transform, "_transform");
             int sortColumn = -1;
             if (!string.IsNullOrEmpty(_sortColumn))
                 sortColumn = SchemaHelper.GetColumnIndex(Source.Schema, _sortColumn);
-            return _transform.GetRowCursor(i => i == sortColumn || needCol(i), rand);
+            return _transform.GetRowCursor(SchemaHelper.ColumnsNeeded(columnsNeeded, _transform.Schema, _sortColumn), rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.Check(string.IsNullOrEmpty(_sortColumn) || rand == null, "Random access is not allowed on sorted data. (6)");
             Host.AssertValue(_transform, "_transform");
             if (string.IsNullOrEmpty(_sortColumn))
-                return _transform.GetRowCursorSet(needCol, n, rand);
+                return _transform.GetRowCursorSet(columnsNeeded, n, rand);
             else
             {
                 int sortColumn = SchemaHelper.GetColumnIndex(Source.Schema, _sortColumn);
-                return _transform.GetRowCursorSet(i => i == sortColumn || needCol(i), n, rand);
+                return _transform.GetRowCursorSet(SchemaHelper.ColumnsNeeded(columnsNeeded, _transform.Schema, _sortColumn), n, rand);
             }
         }
 
@@ -340,7 +340,7 @@ namespace Scikit.ML.PipelineTransforms
 
                         // We could use multithreading here but the cost of sorting
                         // might be higher than going through an array in memory.
-                        using (var cursor = _autoView.GetRowCursor(i => i == _sortColumn))
+                        using (var cursor = _autoView.GetRowCursor(_autoView.Schema.Where(c => c.Index == _sortColumn)))
                         {
                             var sortColumnGetter = cursor.GetGetter<TValue>(_sortColumn);
                             while (cursor.MoveNext())
@@ -368,20 +368,20 @@ namespace Scikit.ML.PipelineTransforms
                 return _autoView.Length;
             }
 
-            public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
                 FillCacheIfNotFilled();
                 _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (1).");
                 _host.AssertValue(_autoView, "_autoView");
-                return _autoView.GetRowCursor(needCol, rand);
+                return _autoView.GetRowCursor(columnsNeeded, rand);
             }
 
-            public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
                 FillCacheIfNotFilled();
                 _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (2).");
                 _host.AssertValue(_autoView, "_autoView");
-                return _autoView.GetRowCursorSet(needCol, n, rand);
+                return _autoView.GetRowCursorSet(columnsNeeded, n, rand);
             }
 
             private int CompareTo(KeyValuePair<TValue, long> a, KeyValuePair<TValue, long> b)

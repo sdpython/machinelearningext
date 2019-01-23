@@ -76,7 +76,7 @@ namespace TestMachineLearningExt
 
                 var scaled = new DeTrendTransform(host, args, data);
 
-                using (var cursor = scaled.GetRowCursor(i => true))
+                using (var cursor = scaled.GetRowCursor(scaled.OutputSchema))
                 {
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
@@ -121,7 +121,7 @@ namespace TestMachineLearningExt
 
                 var scaled = new DeTrendTransform(host, args, data);
 
-                using (var cursor = scaled.GetRowCursor(i => true))
+                using (var cursor = scaled.GetRowCursor(scaled.OutputSchema))
                 {
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
@@ -165,7 +165,7 @@ namespace TestMachineLearningExt
 
                 var scaled = new DeTrendTransform(host, args, data);
 
-                using (var cursor = scaled.GetRowCursor(i => true))
+                using (var cursor = scaled.GetRowCursor(scaled.OutputSchema))
                 {
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
@@ -215,7 +215,7 @@ namespace TestMachineLearningExt
 
                 var scaled = new DeTrendTransform(host, args, data);
 
-                using (var cursor = scaled.GetRowCursor(i => true))
+                using (var cursor = scaled.GetRowCursor(scaled.OutputSchema))
                 {
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
@@ -255,7 +255,7 @@ namespace TestMachineLearningExt
                 var data = host.CreateTransform("detrend{col=Y:X time=time optim=sasdcar{iter=50}}", loader);
 
                 // To train the model.
-                using (var cursor = data.GetRowCursor(i => true)) { }
+                using (var cursor = data.GetRowCursor(data.Schema)) { }
 
                 var methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
                 var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);

@@ -107,7 +107,7 @@ namespace TestMachineLearningExt
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
                 // Train
-                var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Arguments
+                var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Options
                 {
                     NumThreads = 1
                 });
@@ -138,7 +138,7 @@ namespace TestMachineLearningExt
 
             var data = ml.Data.ReadFromTextFile(trainFilename, args);
             var pipeline = ml.Transforms.Text.FeaturizeText("SentimentText", "Features")
-                .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features", advancedSettings: s => s.NumThreads = 1));
+                .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
             var model = pipeline.Fit(data);
             return model;
         }
@@ -170,8 +170,8 @@ namespace TestMachineLearningExt
                         cache = new ExtendedCacheTransform(env, new ExtendedCacheTransform.Arguments(), testLoader);
                     else
                         cache = new CacheDataView(env, testLoader, new[] { 0, 1 });
-                    var testData = cache.AsEnumerable<SentimentDataBoolFloat>(env, false);
-                    var testDataArray = cache.AsEnumerable<SentimentDataBoolFloat>(env, false).ToArray();
+                    //var testData = cache.AsEnumerable<SentimentDataBoolFloat>(env, false);
+                    //var testDataArray = cache.AsEnumerable<SentimentDataBoolFloat>(env, false).ToArray();
                     int N = 1;
 
                     var model = ComponentCreation.CreatePredictionEngine<SentimentDataBoolFloat, SentimentPrediction>(env, trscorer);
@@ -185,13 +185,17 @@ namespace TestMachineLearningExt
                         {
                             if (strategy.Contains("array"))
                             {
+                                /*
                                 foreach (var input in testDataArray)
                                     pred.Add(model.Predict(input).Score);
+                                    */
                             }
                             else
                             {
+                                /*
                                 foreach (var input in testData)
                                     pred.Add(model.Predict(input).Score);
+                                    */
                             }
                         }
                         sw.Stop();
@@ -217,8 +221,8 @@ namespace TestMachineLearningExt
                         cache = new ExtendedCacheTransform(env, new ExtendedCacheTransform.Arguments(), testLoader);
                     else
                         cache = new CacheDataView(env, testLoader, new[] { 0, 1 });
-                    var testData = cache.AsEnumerable<SentimentDataBool>(env, false);
-                    var testDataArray = cache.AsEnumerable<SentimentDataBool>(env, false).ToArray();
+                    //var testData = cache.AsEnumerable<SentimentDataBool>(env, false);
+                    //var testDataArray = cache.AsEnumerable<SentimentDataBool>(env, false).ToArray();
                     int N = 1;
 
                     string allSchema = SchemaHelper.ToString(scorer.Schema);
@@ -235,19 +239,23 @@ namespace TestMachineLearningExt
                         {
                             if (strategy.Contains("array"))
                             {
+                                /*
                                 foreach (var input in testDataArray)
                                 {
                                     model.Predict(input, ref output);
                                     pred.Add(output.Score);
                                 }
+                                */
                             }
                             else
                             {
+                                /*
                                 foreach (var input in testData)
                                 {
                                     model.Predict(input, ref output);
                                     pred.Add(output.Score);
                                 }
+                                */
                             }
                         }
                         sw.Stop();

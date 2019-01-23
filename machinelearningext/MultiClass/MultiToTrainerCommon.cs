@@ -90,7 +90,7 @@ namespace Scikit.ML.MultiClass
         protected Tuple<TLabel, TLabel> MinMaxLabel<TLabel>(MultiToBinaryTransform tr, int index)
             where TLabel : IComparable<TLabel>
         {
-            using (var cursor = tr.GetRowCursor(i => i == index))
+            using (var cursor = tr.GetRowCursor(tr.Schema.Where(c => c.Index == index).ToArray()))
             {
                 var getter = cursor.GetGetter<TLabel>(index);
                 TLabel cl = default(TLabel), max = default(TLabel), min = default(TLabel);
@@ -160,7 +160,7 @@ namespace Scikit.ML.MultiClass
             int index = SchemaHelper.GetColumnIndex(viewI.Schema, labName);
             var ty = viewI.Schema[index].Type;
             Contracts.Assert(ty.IsKey() || ty.IsVector() || ty.RawKind() == DataKind.R4);
-            using (var cursor = viewI.GetRowCursor(i => i == index))
+            using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(i => i.Index == index).ToArray()))
             {
                 var getter = cursor.GetGetter<VBuffer<float>>(index);
                 var value = new VBuffer<float>();
@@ -197,7 +197,7 @@ namespace Scikit.ML.MultiClass
         {
             int index = SchemaHelper.GetColumnIndex(viewI.Schema, labName);
             int nbRows = 0;
-            using (var cursor = viewI.GetRowCursor(i => i == index))
+            using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(c => c.Index == index).ToArray()))
             {
                 if (oneO)
                 {

@@ -10,18 +10,14 @@ namespace Scikit.ML.ProductionPrediction
     {
         Func<int, bool> _needCol;
         IDataView _view;
-        CursorState _state;
 
         public EmptyCursor(IDataView view, Func<int, bool> needCol)
         {
             _needCol = needCol;
             _view = view;
-            _state = CursorState.NotStarted;
         }
 
         public override int Count() { return 0; }
-        public override CursorState State { get { return _state; } }
-        public override RowCursor GetRootCursor() { return this; }
         public override long Batch { get { return 0; } }
         public override long Position { get { return 0; } }
         public override Schema Schema { get { return _view.Schema; } }
@@ -32,15 +28,8 @@ namespace Scikit.ML.ProductionPrediction
             GC.SuppressFinalize(this);
         }
 
-        public override bool MoveMany(long count)
-        {
-            _state = CursorState.Done;
-            return false;
-        }
-
         public override bool MoveNext()
         {
-            _state = CursorState.Done;
             return false;
         }
 

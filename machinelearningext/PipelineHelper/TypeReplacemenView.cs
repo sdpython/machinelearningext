@@ -1,6 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -23,7 +24,7 @@ namespace Scikit.ML.PipelineHelper
         public TypeReplacementDataView(IDataView source, TypeReplacementSchema newSchema)
         {
             _source = source;
-            _schema = Schema.Create(newSchema);
+            _schema = ExtendedSchema.Create(newSchema);
         }
 
         public bool CanShuffle
@@ -41,9 +42,9 @@ namespace Scikit.ML.PipelineHelper
             return _source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            var res = new TypeReplacementCursor(_source.GetRowCursor(predicate, rand), Schema);
+            var res = new TypeReplacementCursor(_source.GetRowCursor(columnsNeeded, rand), Schema);
 #if(DEBUG)
             if (!SchemaHelper.CompareSchema(_schema, res.Schema))
                 SchemaHelper.CompareSchema(_schema, res.Schema, true);
@@ -51,9 +52,9 @@ namespace Scikit.ML.PipelineHelper
             return res;
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            return _source.GetRowCursorSet(predicate, n, rand)
+            return _source.GetRowCursorSet(columnsNeeded, n, rand)
                           .Select(c => new TypeReplacementCursor(c, Schema)).ToArray();
         }
 
@@ -65,7 +66,7 @@ namespace Scikit.ML.PipelineHelper
             public TypeReplacementCursor(RowCursor cursor, ISchema newSchema)
             {
                 _cursor = cursor;
-                _schema = Schema.Create(newSchema);
+                _schema = ExtendedSchema.Create(newSchema);
             }
 
             public TypeReplacementCursor(RowCursor cursor, Schema newSchema)
@@ -75,13 +76,10 @@ namespace Scikit.ML.PipelineHelper
             }
 
             public override Schema Schema { get { return _schema; } }
-            public override RowCursor GetRootCursor() { return this; }
             public override bool IsColumnActive(int col) { return _cursor.IsColumnActive(col); }
             public override ValueGetter<RowId> GetIdGetter() { return _cursor.GetIdGetter(); }
-            public override CursorState State { get { return _cursor.State; } }
             public override long Batch { get { return _cursor.Batch; } }
             public override long Position { get { return _cursor.Position; } }
-            public override bool MoveMany(long count) { return _cursor.MoveMany(count); }
             public override bool MoveNext() { return _cursor.MoveNext(); }
             public override ValueGetter<TValue> GetGetter<TValue>(int col) { return _cursor.GetGetter<TValue>(col); }
 

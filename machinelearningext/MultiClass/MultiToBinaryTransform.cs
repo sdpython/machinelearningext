@@ -207,16 +207,16 @@ namespace Scikit.ML.MultiClass
             return true;
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursor(predicate, rand);
+            return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursorSet(predicate, n, rand);
+            return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion
@@ -399,13 +399,13 @@ namespace Scikit.ML.MultiClass
                 {
                     case MultiplicationAlgorithm.Default:
                     case MultiplicationAlgorithm.Reweight:
-                        _schema = Schema.Create(new ExtendedSchema(input.Schema,
+                        _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                 new string[] { _args.newColumn },
                                                 new ColumnType[] { BoolType.Instance },
                                                 true, true));
                         break;
                     case MultiplicationAlgorithm.Ranking:
-                        _schema = Schema.Create(new ExtendedSchema(input.Schema,
+                        _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                 new string[] { _args.newColumn },
                                                 new ColumnType[] { NumberType.U4 },
                                                 true, true));
@@ -482,7 +482,8 @@ namespace Scikit.ML.MultiClass
             void ComputeLabelDistribution(IChannel ch, Random rand)
             {
                 int nt = DataViewUtils.GetThreadCount(_host, _args.numThreads ?? 0);
-                var cursors = nt <= 1 ? null : _input.GetRowCursorSet(col => col == _colLabel || col == _colWeight, nt, rand);
+                var cols = _input.Schema.Where(col => col.Index == _colLabel || col.Index == _colWeight).ToArray();
+                var cursors = nt <= 1 ? null : _input.GetRowCursorSet(cols, nt, rand);
                 if (cursors != null && cursors.Length == 1)
                 {
                     cursors[0].Dispose();
@@ -540,7 +541,7 @@ namespace Scikit.ML.MultiClass
                 }
                 else
                 {
-                    using (var cursor = _input.GetRowCursor(i => i == _colLabel || i == _colWeight))
+                    using (var cursor = _input.GetRowCursor(cols))
                     {
                         var labelGetter = cursor.GetGetter<TLabel>(_colLabel);
                         var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_colWeight);
@@ -643,24 +644,12 @@ namespace Scikit.ML.MultiClass
             public bool CanShuffle { get { return true; } }
             public long? GetRowCount() { return null; }
 
-            /// <summary>
-            /// When the last column is requested, we also need the column used to compute it.
-            /// This function ensures that this column is requested when the last one is.
-            /// </summary>
-            bool PredicatePropagation(int col, Func<int, bool> predicate)
+            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
-                if (predicate(col))
-                    return true;
-                if (col == _colLabel || col == _colWeight)
-                    return true;  // It cannot be predicate(Source.Schema.ColumnCount) because the number of rows depends on the label.
-                return predicate(col);
-            }
-
-            public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
-            {
+                var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema, new[] { _colLabel, _colWeight }).ToArray();
                 TrainTransform(rand);
                 _host.AssertValue(_labelDistribution, "_labelDistribution");
-                var cursor = _input.GetRowCursor(i => PredicatePropagation(i, predicate), rand);
+                var cursor = _input.GetRowCursor(cols, rand);
                 switch (_args.algo)
                 {
                     case MultiplicationAlgorithm.Default:
@@ -673,11 +662,12 @@ namespace Scikit.ML.MultiClass
                 }
             }
 
-            public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
+                var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema, new[] { _colLabel, _colWeight }).ToArray();
                 TrainTransform(rand);
                 _host.AssertValue(_labelDistribution, "_labelDistribution");
-                var cursors = _input.GetRowCursorSet(i => PredicatePropagation(i, predicate), n, rand);
+                var cursors = _input.GetRowCursorSet(cols, n, rand);
                 switch (_args.algo)
                 {
                     case MultiplicationAlgorithm.Default:
@@ -765,11 +755,6 @@ namespace Scikit.ML.MultiClass
                 };
             }
 
-            public override RowCursor GetRootCursor()
-            {
-                return this;
-            }
-
             public override bool IsColumnActive(int col)
             {
                 if (col < _inputCursor.Schema.Count)
@@ -781,7 +766,6 @@ namespace Scikit.ML.MultiClass
                 return true;
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -791,11 +775,6 @@ namespace Scikit.ML.MultiClass
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                throw Contracts.ExceptNotImpl();
             }
 
             public override bool MoveNext()

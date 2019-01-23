@@ -47,14 +47,14 @@ namespace Scikit.ML.ProductionPrediction
         public long? GetRowCount() { return null; }
         public Schema Schema { get { return _schema; } }
 
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return new CursorType(this, needCol, _otherValues);
+            return new CursorType(this, columnsNeeded, _otherValues);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            var cur = GetRowCursor(needCol, rand);
+            var cur = GetRowCursor(columnsNeeded, rand);
             if (n >= 2)
             {
                 /*
@@ -73,25 +73,25 @@ namespace Scikit.ML.ProductionPrediction
                 return new RowCursor[] { cur };
         }
 
+        enum CursorState { Good, Done, NotStarted };
+
         class CursorType : RowCursor
         {
-            Func<int, bool> _needCol;
+            IEnumerable<Schema.Column> _columnsNeeded;
             TemporaryViewCursorColumn<TRepValue> _view;
             CursorState _state;
             RowCursor _otherValues;
             bool _ignoreOtherColumn;
 
-            public CursorType(TemporaryViewCursorColumn<TRepValue> view, Func<int, bool> needCol, RowCursor otherValues)
+            public CursorType(TemporaryViewCursorColumn<TRepValue> view, IEnumerable<Schema.Column> columnsNeeded, RowCursor otherValues)
             {
-                _needCol = needCol;
+                _columnsNeeded = columnsNeeded;
                 _view = view;
                 _state = CursorState.NotStarted;
                 _otherValues = otherValues;
                 _ignoreOtherColumn = view._ignoreOtherColumn;
             }
 
-            public override CursorState State { get { return _state; } }
-            public override RowCursor GetRootCursor() { return this; }
             public override long Batch { get { return 1; } }
             public override long Position { get { return 0; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -109,19 +109,14 @@ namespace Scikit.ML.ProductionPrediction
                 GC.SuppressFinalize(this);
             }
 
-            public override bool MoveMany(long count)
-            {
-                throw Contracts.ExceptNotSupp();
-            }
-
             public override bool MoveNext()
             {
-                if (State == CursorState.NotStarted)
+                if (_state == CursorState.NotStarted)
                 {
                     _state = CursorState.Good;
                     return true;
                 }
-                else if (State == CursorState.Good)
+                else if (_state == CursorState.Good)
                 {
                     _state = CursorState.Done;
                     return false;
@@ -131,7 +126,9 @@ namespace Scikit.ML.ProductionPrediction
 
             public override bool IsColumnActive(int col)
             {
-                return col == _view._column || _needCol(col) || (_otherValues != null && _otherValues.IsColumnActive(col));
+                return col == _view._column ||
+                        _columnsNeeded.Where(c => c.Index == col).Any() ||
+                        (_otherValues != null && _otherValues.IsColumnActive(col));
             }
 
             public override ValueGetter<TValue> GetGetter<TValue>(int col)
@@ -239,14 +236,14 @@ namespace Scikit.ML.ProductionPrediction
         public long? GetRowCount() { return null; }
         public Schema Schema { get { return _schema; } }
 
-        public RowCursor GetRowCursor(Func<int, bool> needCol, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            return new CursorType(this, needCol, _otherValues);
+            return new CursorType(this, columnsNeeded, _otherValues);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> needCol, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
-            var cur = GetRowCursor(needCol, rand);
+            var cur = GetRowCursor(columnsNeeded, rand);
             if (n >= 2)
             {
                 /*
@@ -265,9 +262,11 @@ namespace Scikit.ML.ProductionPrediction
                 return new RowCursor[] { cur };
         }
 
+        enum CursorState { Good, NotStarted, Done };
+
         class CursorType : RowCursor
         {
-            Func<int, bool> _needCol;
+            IEnumerable<Schema.Column> _columnsNeeded;
             TemporaryViewCursorRow<TRowValue> _view;
             SchemaDefinition _columnsSchema;
             CursorState _state;
@@ -275,9 +274,9 @@ namespace Scikit.ML.ProductionPrediction
             Dictionary<int, int> _columns;
             Dictionary<string, Delegate> _overwriteRowGetter;
 
-            public CursorType(TemporaryViewCursorRow<TRowValue> view, Func<int, bool> needCol, RowCursor otherValues)
+            public CursorType(TemporaryViewCursorRow<TRowValue> view, IEnumerable<Schema.Column> columnsNeeded, RowCursor otherValues)
             {
-                _needCol = needCol;
+                _columnsNeeded = columnsNeeded;
                 _view = view;
                 _state = CursorState.NotStarted;
                 _otherValues = otherValues;
@@ -289,8 +288,6 @@ namespace Scikit.ML.ProductionPrediction
             }
 
             public override int Count() { return 1; }
-            public override CursorState State { get { return _state; } }
-            public override RowCursor GetRootCursor() { return this; }
             public override long Batch { get { return 1; } }
             public override long Position { get { return 0; } }
             public override Schema Schema { get { return _view.Schema; } }
@@ -308,19 +305,14 @@ namespace Scikit.ML.ProductionPrediction
                 GC.SuppressFinalize(this);
             }
 
-            public override bool MoveMany(long count)
-            {
-                throw Contracts.ExceptNotSupp();
-            }
-
             public override bool MoveNext()
             {
-                if (State == CursorState.NotStarted)
+                if (_state == CursorState.NotStarted)
                 {
                     _state = CursorState.Good;
                     return true;
                 }
-                else if (State == CursorState.Good)
+                else if (_state == CursorState.Good)
                 {
                     _state = CursorState.Done;
                     return false;
@@ -330,7 +322,9 @@ namespace Scikit.ML.ProductionPrediction
 
             public override bool IsColumnActive(int col)
             {
-                return _columns.ContainsKey(col) || _needCol(col) || (_otherValues != null && _otherValues.IsColumnActive(col));
+                return _columns.ContainsKey(col) ||
+                        _columnsNeeded.Where(c => c.Index == col).Any() ||
+                        (_otherValues != null && _otherValues.IsColumnActive(col));
             }
 
             /// <summary>

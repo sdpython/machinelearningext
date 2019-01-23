@@ -129,7 +129,7 @@ namespace TestMachineLearningExt
                 if (nb == 0)
                     throw new System.Exception("Empty pipeline.");
 
-                using (var cursor = concat.GetRowCursor(i => true))
+                using (var cursor = concat.GetRowCursor(concat.Schema))
                 {
                     var getdist = cursor.GetGetter<VBuffer<float>>(7);
                     var getid = cursor.GetGetter<VBuffer<long>>(8);

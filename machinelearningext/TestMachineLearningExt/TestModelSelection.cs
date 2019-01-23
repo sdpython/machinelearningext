@@ -39,7 +39,7 @@ namespace TestMachineLearningExt
                 var transformedData = new SplitTrainTestTransform(host, args, data);
 
                 var counter1 = new Dictionary<int, List<int>>();
-                using (var cursor = transformedData.GetRowCursor(i => true))
+                using (var cursor = transformedData.GetRowCursor(transformedData.OutputSchema))
                 {
                     int index = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
                     var sortColumnGetter = cursor.GetGetter<int>(index);
@@ -91,7 +91,7 @@ namespace TestMachineLearningExt
 
                 // We check a second run brings the same results (CacheView).
                 var counter2 = new Dictionary<int, List<int>>();
-                using (var cursor = transformedData.GetRowCursor(i => true))
+                using (var cursor = transformedData.GetRowCursor(transformedData.OutputSchema))
                 {
                     var schema = SchemaHelper.ToString(cursor.Schema);
                     if (string.IsNullOrEmpty(schema))

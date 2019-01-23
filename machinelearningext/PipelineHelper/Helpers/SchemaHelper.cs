@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -99,7 +100,7 @@ namespace Scikit.ML.PipelineHelper
         /// <returns>schema as a string</returns>
         public static string ToString(ISchema schemaInst, string sep = "; ", bool vectorVec = true, bool keepHidden = false)
         {
-            return ToString(Schema.Create(schemaInst), sep, vectorVec, keepHidden);
+            return ToString(ExtendedSchema.Create(schemaInst), sep, vectorVec, keepHidden);
         }
 
         public static string ToString(Schema schema, string sep = "; ", bool vectorVec = true, bool keepHidden = false)
@@ -659,6 +660,34 @@ namespace Scikit.ML.PipelineHelper
                 return col;
         }
 
+        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, Column1x1[] columns)
+        {
+            var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
+            var hashName = new HashSet<string>(columnsNeeded.Select(c => c.Name));
+            var di = new Dictionary<string, string>();
+            if (columns != null)
+                foreach (var c in columns)
+                    if (hashName.Contains(c.Name))
+                        hashName.Add(c.Source);
+            return schema.Where(c => hash.Contains(c.Index) || hashName.Contains(c.Name)).ToArray();
+        }
+
+        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, int[] columns)
+        {
+            var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
+            foreach (var c in columns)
+                hash.Add(c);
+            return schema.Where(c => hash.Contains(c.Index)).ToArray();
+        }
+
+        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, string column)
+        {
+            var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
+            var hashName = new HashSet<string>(columnsNeeded.Select(c => c.Name));
+            hashName.Add(column);
+            return schema.Where(c => hash.Contains(c.Index) || hashName.Contains(c.Name)).ToArray();
+        }
+
         public static IEnumerable<string> EnumerateColumns(ISchema sch)
         {
             for (int i = 0; i < sch.ColumnCount; ++i)
@@ -669,6 +698,23 @@ namespace Scikit.ML.PipelineHelper
         {
             for (int i = 0; i < sch.Count; ++i)
                 yield return sch[i].Name;
+        }
+
+        /// <summary>
+        /// When the last column is requested, we also need the column used to compute it.
+        /// This function ensures that this column is requested when the last one is.
+        /// </summary>
+        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, int newCol, int dependsOn)
+        {
+            var cols = columnsNeeded.ToList();
+            var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
+            if (hash.Contains(newCol) && !hash.Contains(dependsOn))
+            {
+                hash.Add(dependsOn);
+                return schema.Where(c => hash.Contains(c.Index)).ToArray();
+            }
+            else
+                return columnsNeeded;
         }
     }
 }

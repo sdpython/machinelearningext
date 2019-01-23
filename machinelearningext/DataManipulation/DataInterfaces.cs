@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Scikit.ML.PipelineHelper;
 
 
 namespace Scikit.ML.DataManipulation
@@ -304,12 +305,12 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Sames a GetRowCursor but on a subset of the data.
         /// </summary>
-        RowCursor GetRowCursor(int[] rows, int[] columns, Func<int, bool> needCol, Random rand = null);
+        RowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null);
 
         /// <summary>
         /// Sames a GetRowCursorSet but on a subset of the data.
         /// </summary>
-        RowCursor[] GetRowCursorSet(int[] rows, int[] columns, Func<int, bool> needCol, int n, Random rand = null);
+        RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null);
 
         /// <summary>
         /// Retrieves a column by its name.

@@ -496,8 +496,8 @@ namespace Scikit.ML.MultiClass
             Host.Assert(0 <= iinfo && iinfo < Infos.Length);
             return _exes[iinfo].SlotTypeDst;
         }
-
-        protected override SlotCursor GetSlotCursorCore(int iinfo)
+        /*
+        protected virtual SlotCursor GetSlotCursorCore(int iinfo)
         {
             Host.Assert(0 <= iinfo && iinfo < Infos.Length);
             Host.AssertValue(Infos[iinfo].SlotTypeSrc);
@@ -512,11 +512,11 @@ namespace Scikit.ML.MultiClass
             private readonly Delegate _getter;
             private readonly VectorType _type;
 
-            public SlotCursorImpl(IChannelProvider provider, SlotCursor cursor, VectorType typeDst)
+            public SlotCursorImpl(IChannelProvider provider, SlotCursor cursor, VectorType typeDst, Delegate getter)
                 : base(provider, cursor)
             {
-                Ch.AssertValue(typeDst);
-                _getter = RowCursorUtils.GetLabelGetter(cursor);
+                Contracts.AssertValue(typeDst);
+                _getter = getter;
                 _type = typeDst;
             }
 
@@ -529,9 +529,10 @@ namespace Scikit.ML.MultiClass
             {
                 ValueGetter<VBuffer<TValue>> getter = _getter as ValueGetter<VBuffer<TValue>>;
                 if (getter == null)
-                    throw Ch.Except("Invalid TValue: '{0}'", typeof(TValue));
+                    throw Contracts.Except("Invalid TValue: '{0}'", typeof(TValue));
                 return getter;
             }
         }
+        */
     }
 }

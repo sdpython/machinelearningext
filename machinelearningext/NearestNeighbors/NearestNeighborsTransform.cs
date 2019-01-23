@@ -158,7 +158,7 @@ namespace Scikit.ML.NearestNeighbors
 
         Schema ComputeExtendedSchema()
         {
-            return Schema.Create(new ExtendedSchema(_input.Schema, new string[] { _args.distColumn, _args.idNeighborsColumn },
+            return ExtendedSchema.Create(new ExtendedSchema(_input.Schema, new string[] { _args.distColumn, _args.idNeighborsColumn },
                                        new ColumnType[] { new VectorType(NumberType.R4, _args.k),
                                        new VectorType(NumberType.I8, _args.k) }));
         }
@@ -179,47 +179,57 @@ namespace Scikit.ML.NearestNeighbors
         /// When the last column is requested, we also need the column used to compute it.
         /// This function ensures that this column is requested when the last one is.
         /// </summary>
-        bool PredicatePropagation(int col, int featureIndex, Func<int, bool> predicate)
+        IEnumerable<Schema.Column> PredicatePropagation(IEnumerable<Schema.Column> columnsNeeded)
         {
-            if (predicate(col))
-                return true;
-            if (col == featureIndex)
-                return predicate(Source.Schema.Count);
-            return predicate(col);
+            var cols = columnsNeeded.ToList();
+            if (cols.Where(c => c.Index == _input.Schema.Count).Any())
+            {
+                if (_args.column != null)
+                    cols.Add(Schema.Where(c => c.Name == _args.column).First());
+                if (_args.idNeighborsColumn != null)
+                    cols.Add(Schema.Where(c => c.Name == _args.idNeighborsColumn).First());
+                if (_args.labelColumn != null)
+                    cols.Add(Schema.Where(c => c.Name == _args.labelColumn).First());
+                if (_args.weightColumn != null)
+                    cols.Add(Schema.Where(c => c.Name == _args.weightColumn).First());
+            }
+            return cols;
         }
 
-        public RowCursor GetRowCursor(Func<int, bool> predicate, Random rand = null)
+        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
             ComputeNearestNeighbors();
             _host.AssertValue(_input, "_input");
             var schema = _input.Schema;
 
-            if (predicate(schema.Count))
+            if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
             {
+                var newColumns = PredicatePropagation(columnsNeeded);
                 int featureIndex = SchemaHelper.GetColumnIndex(Schema, _args.column);
-                return new NearestNeighborsCursor(_input.GetRowCursor(i => PredicatePropagation(i, featureIndex, predicate), rand), this, predicate, featureIndex);
+                return new NearestNeighborsCursor(_input.GetRowCursor(columnsNeeded, rand), this, newColumns, featureIndex);
             }
             else
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                return new SameCursor(_input.GetRowCursor(predicate, rand), Schema);
+                return new SameCursor(_input.GetRowCursor(columnsNeeded, rand), Schema);
         }
 
-        public RowCursor[] GetRowCursorSet(Func<int, bool> predicate, int n, Random rand = null)
+        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
         {
             ComputeNearestNeighbors();
             _host.AssertValue(_input, "_input");
             var schema = _input.Schema;
 
-            if (predicate(_input.Schema.Count))
+            if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
             {
+                var newColumns = PredicatePropagation(columnsNeeded);
                 int featureIndex = SchemaHelper.GetColumnIndex(Schema, _args.column);
-                var res = _input.GetRowCursorSet(predicate, n, rand)
-                                .Select(c => new NearestNeighborsCursor(c, this, i => PredicatePropagation(i, featureIndex, predicate), featureIndex)).ToArray();
+                var res = _input.GetRowCursorSet(columnsNeeded, n, rand)
+                                .Select(c => new NearestNeighborsCursor(c, this, newColumns, featureIndex)).ToArray();
                 return res;
             }
             else
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                return _input.GetRowCursorSet(predicate, n, rand)
+                return _input.GetRowCursorSet(columnsNeeded, n, rand)
                              .Select(c => new SameCursor(c, Schema))
                              .ToArray();
         }
@@ -271,7 +281,7 @@ namespace Scikit.ML.NearestNeighbors
             VBuffer<float> _distance;
             VBuffer<long> _idn;
 
-            public NearestNeighborsCursor(RowCursor cursor, NearestNeighborsTransform parent, Func<int, bool> predicate, int colFeatures)
+            public NearestNeighborsCursor(RowCursor cursor, NearestNeighborsTransform parent, IEnumerable<Schema.Column> columnsNeeded, int colFeatures)
             {
                 _inputCursor = cursor;
                 _parent = parent;
@@ -281,11 +291,6 @@ namespace Scikit.ML.NearestNeighbors
                 _tempFeatures = new VBuffer<float>();
                 _distance = new VBuffer<float>(_k, new float[_k]);
                 _idn = new VBuffer<long>(_k, new long[_k]);
-            }
-
-            public override RowCursor GetRootCursor()
-            {
-                return this;
             }
 
             public override bool IsColumnActive(int col)
@@ -302,7 +307,6 @@ namespace Scikit.ML.NearestNeighbors
                 };
             }
 
-            public override CursorState State { get { return _inputCursor.State; } }
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
             public override Schema Schema { get { return _parent.Schema; } }
@@ -312,15 +316,6 @@ namespace Scikit.ML.NearestNeighbors
                 if (disposing)
                     _inputCursor.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            public override bool MoveMany(long count)
-            {
-                var res = _inputCursor.MoveMany(count);
-                if (!res)
-                    return res;
-                RetrieveNeighbors();
-                return true;
             }
 
             public override bool MoveNext()
