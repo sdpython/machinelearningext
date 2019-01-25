@@ -214,7 +214,8 @@ namespace Scikit.ML.FeaturesTransforms
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
             var newColumnsNeeded = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-            var cursor = _input.GetRowCursor(newColumnsNeeded, rand);
+            var oldCols = SchemaHelper.ColumnsNeeded(newColumnsNeeded, _input.Schema);
+            var cursor = _input.GetRowCursor(oldCols, rand);
             return new ScalerCursor(cursor, this, newColumnsNeeded);
         }
 
@@ -223,7 +224,8 @@ namespace Scikit.ML.FeaturesTransforms
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
             var newColumnsNeeded = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-            var cursors = _input.GetRowCursorSet(newColumnsNeeded, n, rand);
+            var oldCols = SchemaHelper.ColumnsNeeded(newColumnsNeeded, _input.Schema);
+            var cursors = _input.GetRowCursorSet(oldCols, n, rand);
             var res = cursors.Select(c => new ScalerCursor(c, this, newColumnsNeeded)).ToArray();
             return res;
         }

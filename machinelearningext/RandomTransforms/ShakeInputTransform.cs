@@ -426,11 +426,12 @@ namespace Scikit.ML.RandomTransforms
                                 : _toShake[0].OutputType.RawKind();
 
                 var newCols = PredicatePropagation(columnsNeeded);
+                var oldCols = SchemaHelper.ColumnsNeeded(newCols, _input.Schema);
 
                 switch (kind)
                 {
                     case DataKind.R4:
-                        var cursor = _input.GetRowCursor(newCols, rand);
+                        var cursor = _input.GetRowCursor(oldCols, rand);
                         return new ShakeInputCursor<TInput, float>(this, cursor, newCols, _args, _inputCol, _toShake, _shakingValues,
                                         (float x, float y) => { return x + y; });
                     default:
@@ -447,11 +448,12 @@ namespace Scikit.ML.RandomTransforms
                     kind = _toShake[0].OutputType.RawKind();
 
                 var newCols = PredicatePropagation(columnsNeeded);
+                var oldCols = SchemaHelper.ColumnsNeeded(newCols, _input.Schema);
 
                 switch (kind)
                 {
                     case DataKind.R4:
-                        var cursors = _input.GetRowCursorSet(newCols, n, rand);
+                        var cursors = _input.GetRowCursorSet(oldCols, n, rand);
                         return cursors.Select(c => new ShakeInputCursor<TInput, float>(this, c, newCols, _args, _inputCol, _toShake, _shakingValues,
                                             (float x, float y) => { return x + y; })).ToArray();
                     default:

@@ -180,7 +180,9 @@ namespace Scikit.ML.PipelineTransforms
 
         public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
         {
-            var cur = Source.GetRowCursor(SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns));
+            //var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+            var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Source.Schema);
+            var cur = Source.GetRowCursor(cols);
             return new AddRandomCursor(this, cur);
         }
 
@@ -193,7 +195,8 @@ namespace Scikit.ML.PipelineTransforms
                 return new RowCursor[] { GetRowCursor(columnsNeeded, rand) };
             else
             {
-                var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+                //var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
+                var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Source.Schema);
                 var cursors = Source.GetRowCursorSet(cols, n, rand);
                 for (int i = 0; i < cursors.Length; ++i)
                     cursors[i] = new AddRandomCursor(this, cursors[i]);

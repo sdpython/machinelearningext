@@ -188,7 +188,8 @@ namespace Scikit.ML.ProductionPrediction
                 if (columnsNeeded.Where(c => c.Index == index).Any())
                 {
                     var newCols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, index, Schema.Count);
-                    var cursor = Source.GetRowCursor(newCols, rand);
+                    var oldCols = SchemaHelper.ColumnsNeeded(newCols, Source.Schema);
+                    var cursor = Source.GetRowCursor(oldCols, rand);
                     return new MemoryCursor<TSrc, TDst>(this, cursor, index);
                 }
                 else
@@ -202,7 +203,8 @@ namespace Scikit.ML.ProductionPrediction
                 if (columnsNeeded.Where(c => c.Index == index).Any())
                 {
                     var newCols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, index, Schema.Count);
-                    var cursors = Source.GetRowCursorSet(newCols, n, rand);
+                    var oldCols = SchemaHelper.ColumnsNeeded(newCols, Source.Schema);
+                    var cursors = Source.GetRowCursorSet(oldCols, n, rand);
                     return cursors.Select(c => new MemoryCursor<TSrc, TDst>(this, c, index)).ToArray();
                 }
                 else

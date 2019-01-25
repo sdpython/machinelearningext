@@ -660,7 +660,7 @@ namespace Scikit.ML.PipelineHelper
                 return col;
         }
 
-        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, Column1x1[] columns)
+        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, Column1x1[] columns = null)
         {
             var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
             var hashName = new HashSet<string>(columnsNeeded.Select(c => c.Name));

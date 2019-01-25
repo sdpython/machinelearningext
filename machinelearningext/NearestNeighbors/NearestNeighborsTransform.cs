@@ -205,12 +205,16 @@ namespace Scikit.ML.NearestNeighbors
             if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
             {
                 var newColumns = PredicatePropagation(columnsNeeded);
+                var oldCols = SchemaHelper.ColumnsNeeded(newColumns, schema);
                 int featureIndex = SchemaHelper.GetColumnIndex(Schema, _args.column);
-                return new NearestNeighborsCursor(_input.GetRowCursor(columnsNeeded, rand), this, newColumns, featureIndex);
+                return new NearestNeighborsCursor(_input.GetRowCursor(oldCols, rand), this, newColumns, featureIndex);
             }
             else
+            {
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                return new SameCursor(_input.GetRowCursor(columnsNeeded, rand), Schema);
+                var oldCols = SchemaHelper.ColumnsNeeded(columnsNeeded, schema);
+                return new SameCursor(_input.GetRowCursor(oldCols, rand), Schema);
+            }
         }
 
         public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
@@ -222,16 +226,18 @@ namespace Scikit.ML.NearestNeighbors
             if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
             {
                 var newColumns = PredicatePropagation(columnsNeeded);
+                var oldCols = SchemaHelper.ColumnsNeeded(newColumns, schema);
                 int featureIndex = SchemaHelper.GetColumnIndex(Schema, _args.column);
-                var res = _input.GetRowCursorSet(columnsNeeded, n, rand)
+                var res = _input.GetRowCursorSet(oldCols, n, rand)
                                 .Select(c => new NearestNeighborsCursor(c, this, newColumns, featureIndex)).ToArray();
                 return res;
             }
             else
+            {
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                return _input.GetRowCursorSet(columnsNeeded, n, rand)
-                             .Select(c => new SameCursor(c, Schema))
-                             .ToArray();
+                var oldCols = SchemaHelper.ColumnsNeeded(columnsNeeded, schema);
+                return _input.GetRowCursorSet(oldCols, n, rand).Select(c => new SameCursor(c, Schema)).ToArray();
+            }
         }
 
         int GetColumnIndex(IExceptionContext ch, string name)

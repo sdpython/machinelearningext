@@ -129,7 +129,7 @@ namespace TestMachineLearningExt
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
                 var data = host.CreateStreamingDataView(inputs);
-                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
+                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     Assert.IsTrue(predictor != null);
@@ -178,7 +178,7 @@ namespace TestMachineLearningExt
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
                 var data = host.CreateStreamingDataView(inputs);
-                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
+                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     Assert.IsTrue(predictor != null);
@@ -274,7 +274,7 @@ namespace TestMachineLearningExt
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = host.CreateStreamingDataView(inputs);
-                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host: host))
+                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host: host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     Assert.IsTrue(predictor != null);
@@ -312,7 +312,7 @@ namespace TestMachineLearningExt
 
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
+                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     DataFrame pred = null, pred2 = null;
                     var predictor = pipe.Train(df1, feature: "X");

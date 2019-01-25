@@ -647,9 +647,10 @@ namespace Scikit.ML.MultiClass
             public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
             {
                 var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema, new[] { _colLabel, _colWeight }).ToArray();
+                var oldCols = SchemaHelper.ColumnsNeeded(cols, _input.Schema);
                 TrainTransform(rand);
                 _host.AssertValue(_labelDistribution, "_labelDistribution");
-                var cursor = _input.GetRowCursor(cols, rand);
+                var cursor = _input.GetRowCursor(oldCols, rand);
                 switch (_args.algo)
                 {
                     case MultiplicationAlgorithm.Default:
@@ -665,9 +666,10 @@ namespace Scikit.ML.MultiClass
             public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
             {
                 var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema, new[] { _colLabel, _colWeight }).ToArray();
+                var oldCols = SchemaHelper.ColumnsNeeded(cols, _input.Schema);
                 TrainTransform(rand);
                 _host.AssertValue(_labelDistribution, "_labelDistribution");
-                var cursors = _input.GetRowCursorSet(cols, n, rand);
+                var cursors = _input.GetRowCursorSet(oldCols, n, rand);
                 switch (_args.algo)
                 {
                     case MultiplicationAlgorithm.Default:

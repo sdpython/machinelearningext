@@ -335,7 +335,8 @@ namespace Scikit.ML.FeaturesTransforms
                 if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
                 {
                     var newColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-                    var cursor = _input.GetRowCursor(newColumns, rand);
+                    var oldColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema);
+                    var cursor = _input.GetRowCursor(oldColumns, rand);
                     return new PolynomialCursor<TInput>(this, cursor, newColumns, _args, _inputCol, _multiplication);
                 }
                 else
@@ -348,7 +349,8 @@ namespace Scikit.ML.FeaturesTransforms
                 if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
                 {
                     var newColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-                    var cursors = _input.GetRowCursorSet(newColumns, n, rand);
+                    var oldColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema);
+                    var cursors = _input.GetRowCursorSet(oldColumns, n, rand);
                     return cursors.Select(c => new PolynomialCursor<TInput>(this, c, newColumns, _args, _inputCol, _multiplication)).ToArray();
                 }
                 else

@@ -179,7 +179,7 @@ namespace Scikit.ML.DocHelperMlExt
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = host.CreateStreamingDataView(inputs);
-                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
+                using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     if (predictor == null)
