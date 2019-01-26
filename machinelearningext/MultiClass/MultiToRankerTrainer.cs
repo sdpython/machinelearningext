@@ -189,8 +189,8 @@ namespace Scikit.ML.MultiClass
             }
             else if (data.Schema.Label.Value.Type.IsKey())
             {
-                int nb = data.Schema.Label.Value.Type.AsKey().KeyCount();
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberType.R4, nb) });
+                ulong nb = data.Schema.Label.Value.Type.AsKey().GetKeyCount();
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberType.R4, (int)nb) });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)
@@ -198,7 +198,7 @@ namespace Scikit.ML.MultiClass
                 MinMaxLabelOverDataSet(trans, labName, out nb_);
                 int count3;
                 data.CheckMultiClassLabel(out count3);
-                if (count3 != nb)
+                if ((ulong)count3 != nb)
                     throw ch.Except("Count mismatch (KeyCount){0} != {1}", nb, count3);
                 DebugChecking0(viewI, labName, true);
                 DebugChecking0Vfloat(viewI, labName, nb);
@@ -233,7 +233,7 @@ namespace Scikit.ML.MultiClass
             var convArgs = new MultiClassConvertTransform.Arguments
             {
                 column = new[] { MultiClassConvertTransform.Column.Parse(string.Format("{0}k:{0}", dstName)) },
-                keyRange = new KeyRange() { Min = 0, Max = 4 },
+                keyCount = new KeyCount(4),
                 resultType = DataKind.U4
             };
             IDataView after_concatenation_key_label = new MultiClassConvertTransform(Host, convArgs, after_concatenation_);
@@ -242,7 +242,7 @@ namespace Scikit.ML.MultiClass
             convArgs = new MultiClassConvertTransform.Arguments
             {
                 column = new[] { MultiClassConvertTransform.Column.Parse(string.Format("{0}k:{0}", groupColumnTemp)) },
-                keyRange = new KeyRange() { Min = 0, Max = null },
+                keyCount = new KeyCount(),
                 resultType = _args.groupIsU4 ? DataKind.U4 : DataKind.U8
             };
             after_concatenation_key_label = new MultiClassConvertTransform(Host, convArgs, after_concatenation_key_label);

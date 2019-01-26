@@ -42,7 +42,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "concat{col=xt:time,one}" }, "sasdcar{iter=50}", host))
                 {
                     pipe.Train(data, feature: "xt", label: "X");
@@ -66,7 +66,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new DeTrendTransform.Arguments
                 {
@@ -111,7 +111,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new DeTrendTransform.Arguments
                 {
@@ -155,7 +155,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new DeTrendTransform.Arguments
                 {
@@ -205,7 +205,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new DeTrendTransform.Arguments
                 {
@@ -251,7 +251,7 @@ namespace TestMachineLearningExt
                     new InputOutput() { X = 8f, time=4f },
                 };
 
-                IDataView loader = host.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var data = host.CreateTransform("detrend{col=Y:X time=time optim=sasdcar{iter=50}}", loader);
 
                 // To train the model.

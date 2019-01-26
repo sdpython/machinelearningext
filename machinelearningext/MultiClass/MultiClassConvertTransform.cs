@@ -50,7 +50,7 @@ namespace Scikit.ML.MultiClass
             public DataKind? resultType;
 
             [Argument(ArgumentType.Multiple, HelpText = "For a key column, this defines the range of values", ShortName = "key")]
-            public KeyRange keyRange;
+            public KeyCount keyCount;
         }
 
         private sealed class ColInfoEx
@@ -100,27 +100,27 @@ namespace Scikit.ML.MultiClass
             for (int i = 0; i < _exes.Length; i++)
             {
                 DataKind kind;
-                KeyRange range;
+                KeyCount range;
                 var col = args.column[i];
                 if (col.ResultType != null)
                 {
                     kind = col.ResultType.Value;
-                    range = col.KeyRange;
+                    range = col.KeyCount;
                 }
-                else if (col.KeyRange != null)
+                else if (col.KeyCount != null)
                 {
                     kind = Infos[i].TypeSrc.IsKey() ? Infos[i].TypeSrc.RawKind() : DataKind.U4;
-                    range = col.KeyRange;
+                    range = col.KeyCount;
                 }
                 else if (args.resultType != null)
                 {
                     kind = args.resultType.Value;
-                    range = args.keyRange;
+                    range = args.keyCount;
                 }
-                else if (args.keyRange != null)
+                else if (args.keyCount != null)
                 {
                     kind = Infos[i].TypeSrc.IsKey() ? Infos[i].TypeSrc.RawKind() : DataKind.U4;
-                    range = args.keyRange;
+                    range = args.keyCount;
                 }
                 else
                 {
@@ -166,8 +166,8 @@ namespace Scikit.ML.MultiClass
                     Host.Assert(typeSrc.VectorSize() == typeDst.VectorSize());
                     return typeDst.IsKnownSizeVector();
                 case MetadataUtils.Kinds.KeyValues:
-                    return typeSrc.ItemType().IsKey() && typeDst.ItemType().IsKey() && typeSrc.ItemType().KeyCount() > 0 &&
-                        typeSrc.ItemType().KeyCount() == typeDst.ItemType().KeyCount();
+                    return typeSrc.ItemType().IsKey() && typeDst.ItemType().IsKey() && typeSrc.ItemType().GetKeyCount() > 0 &&
+                        typeSrc.ItemType().GetKeyCount() == typeDst.ItemType().GetKeyCount();
                 case MetadataUtils.Kinds.IsNormalized:
                     return typeSrc.ItemType().IsNumber() && typeDst.ItemType().IsNumber();
             }
@@ -185,19 +185,17 @@ namespace Scikit.ML.MultiClass
                 byte b = ctx.Reader.ReadByte();
                 var kind = (DataKind)(b & 0x7F);
                 Host.CheckDecode(Enum.IsDefined(typeof(DataKind), kind));
-                KeyRange range = null;
+                KeyCount range = null;
                 if ((b & 0x80) != 0)
                 {
-                    range = new KeyRange();
-                    range.Min = ctx.Reader.ReadUInt64();
-                    int count = ctx.Reader.ReadInt32();
+                    range = new KeyCount();
+                    ulong count = ctx.Reader.ReadUInt64();
                     if (count != 0)
                     {
-                        if (count < 0 || (ulong)(count - 1) > ulong.MaxValue - range.Min)
+                        if (count < 0 || (ulong)(count - 1) > ulong.MaxValue)
                             throw Host.ExceptDecode("KeyType count too large");
-                        range.Max = range.Min + (ulong)(count - 1);
+                        range.Count = count;
                     }
-                    range.Contiguous = ctx.Reader.ReadBoolByte();
                 }
 
                 PrimitiveType itemType;
@@ -247,9 +245,7 @@ namespace Scikit.ML.MultiClass
                     byte b = (byte)ex.Kind;
                     b |= 0x80;
                     ctx.Writer.Write(b);
-                    ctx.Writer.Write(key.Min);
                     ctx.Writer.Write(key.Count);
-                    ctx.Writer.WriteBoolByte(key.Contiguous);
                 }
             }
         }
@@ -281,7 +277,7 @@ namespace Scikit.ML.MultiClass
             }
         }
 
-        private static bool TryCreateEx(IExceptionContext ectx, ColInfo info, DataKind kind, KeyRange range,
+        private static bool TryCreateEx(IExceptionContext ectx, ColInfo info, DataKind kind, KeyCount range,
                                         out PrimitiveType itemType, out ColInfoEx ex)
         {
             ectx.AssertValue(info);
@@ -308,14 +304,14 @@ namespace Scikit.ML.MultiClass
             {
                 var key = typeSrc.ItemType().AsKey();
                 ectx.Assert(ColumnTypeHelper.IsValidDataKind(key.RawKind()));
-                int count = key.Count;
+                ulong count = key.Count;
                 // Technically, it's an error for the counts not to match, but we'll let the Conversions
                 // code return false below. There's a possibility we'll change the standard conversions to
                 // map out of bounds values to zero, in which case, this is the right thing to do.
                 ulong max = kind.ToMaxInt();
                 if ((ulong)count > max)
-                    count = (int)max;
-                itemType = new KeyType(kind.ToType(), key.Min, count, key.Contiguous);
+                    count = max;
+                itemType = new KeyType(kind.ToType(), count);
             }
 
             // Ensure that the conversion is legal. We don't actually cache the delegate here. It will get
@@ -330,6 +326,7 @@ namespace Scikit.ML.MultiClass
                     {
                         case DataKind.U4:
                             // Key starts at 1.
+                            // MultiClass future issue
                             uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                             identity = false;
                             ValueMapper<uint, uint> map_ = (in uint src, ref uint dst) => { dst = src + plus; };
@@ -355,6 +352,7 @@ namespace Scikit.ML.MultiClass
                 }
                 else if (typeSrc.ItemType().RawKind() == DataKind.I8 && kind == DataKind.U4)
                 {
+                    // MultiClass future issue
                     uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                     identity = false;
                     ValueMapper<long, uint> map_ = (in long src, ref uint dst) =>
@@ -415,6 +413,7 @@ namespace Scikit.ML.MultiClass
             if (typeSrc.RawKind() == DataKind.U4 && typeDst.RawKind() == DataKind.U4)
             {
                 var getter = row.GetGetter<uint>(col);
+                // MultiClass future issue
                 uint plus = (typeDst.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                 identity = true;
                 var src = default(uint);
@@ -443,6 +442,7 @@ namespace Scikit.ML.MultiClass
             }
             else if (typeSrc.RawKind() == DataKind.I8 && typeDst.RawKind() == DataKind.U4)
             {
+                // MultiClass future issue
                 uint plus = (typeDst.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                 var getter = row.GetGetter<long>(col);
                 identity = true;

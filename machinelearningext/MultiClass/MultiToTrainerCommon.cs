@@ -155,7 +155,7 @@ namespace Scikit.ML.MultiClass
         #region debugging
 #if (DEBUG)
 
-        protected void DebugChecking0Vfloat(IDataView viewI, string labName, int count)
+        protected void DebugChecking0Vfloat(IDataView viewI, string labName, ulong count)
         {
             int index = SchemaHelper.GetColumnIndex(viewI.Schema, labName);
             var ty = viewI.Schema[index].Type;
@@ -170,16 +170,16 @@ namespace Scikit.ML.MultiClass
                     getter(ref value);
                     if (value.Length == 0 || value.Count == 0)
                         throw Host.Except("Issue.");
-                    if (value.Length > count || value.Count > count)
+                    if ((ulong)value.Length > count || (ulong)value.Count > count)
                         throw Host.Except("Issue.");
-                    if (value.Length != count || value.Count != 1)
+                    if ((ulong)value.Length != count || value.Count != 1)
                     {
                         getter(ref value);
                         throw Host.Except("Issue.");
                     }
                     if (value.Values[0] != 1)
                         throw Host.Except("Issue.");
-                    if (value.Indices[0] >= count)
+                    if ((ulong)value.Indices[0] >= count)
                     {
                         getter(ref value);
                         throw Host.Except("Issue.");
@@ -402,7 +402,7 @@ namespace Scikit.ML.MultiClass
         {
             var lab = data.Schema.Label.Value;
             Host.Assert(!data.Schema.Schema[lab.Index].IsHidden);
-            Host.Assert(lab.Type.KeyCount() > 0 || lab.Type == NumberType.R4);
+            Host.Assert(lab.Type.GetKeyCount() > 0 || lab.Type == NumberType.R4);
 
             IDataView source = data.Data;
             if (train)

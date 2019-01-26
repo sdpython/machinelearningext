@@ -37,7 +37,7 @@ namespace TestMachineLearningExt
                     new InputOutput { X = new float[] { 2, 3 }, Y=100 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var trv = LambdaTransform.CreateMap(host, data,
                                             (InputOutput src, InputOutput dst, EnvHelper.EmptyState state) =>
@@ -102,7 +102,7 @@ namespace TestMachineLearningExt
                     new InputOutput { X = new float[] { 2, 3 }, Y=100 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var trv = LambdaTransform.CreateMap(host, data,
                                             (InputOutput src, InputOutputOut dst, EnvHelper.EmptyState state) =>
@@ -166,7 +166,7 @@ namespace TestMachineLearningExt
                     new InputOutput { X = new float[] { 2, 3 }, Y=100 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var trv = LambdaTransform.CreateMap(host, data,
                                             (InputOutput src, InputOutput2 dst, EnvHelper.EmptyState state) =>
@@ -234,7 +234,7 @@ namespace TestMachineLearningExt
                 _predictor = _env.LoadPredictorOrNull(File.OpenRead(modelName));
                 var inputs = new Input[0];
 
-                var view = _env.CreateStreamingDataView<Input>(inputs);
+                var view = DataViewConstructionUtils.CreateFromEnumerable(_env, inputs);
                 _transforms = ComponentCreation.LoadTransforms(_env, File.OpenRead(modelName), view);
                 var data = _env.CreateExamples(_transforms, features);
                 var scorer = _env.CreateDefaultScorer(data, _predictor);
@@ -473,7 +473,7 @@ namespace TestMachineLearningExt
                     new InputOutputU() { X = new float[] { 0.3f, 1.3f }, Y = 2 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var lambdaView = LambdaColumnHelper.Create<VBuffer<float>, VBuffer<float>>(host,
                                 "Lambda", data, "X", "XX", new VectorType(NumberType.R4, 2),
                                 new VectorType(NumberType.R4, 2),
@@ -528,8 +528,8 @@ namespace TestMachineLearningExt
                     for (int i = 0; i < outputs.Length; ++i)
                         outputs[i] = new InputOutputU();
 
-                    var data_unused = host.CreateStreamingDataView(inputs_unsued);
-                    var data = host.CreateStreamingDataView(inputs);
+                    var data_unused = DataViewConstructionUtils.CreateFromEnumerable(host, inputs_unsued);
+                    var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                     using (var env = EnvHelper.NewTestEnvironment())
                     {
                         var tr = new PassThroughTransform(env, new PassThroughTransform.Arguments() { }, data_unused);

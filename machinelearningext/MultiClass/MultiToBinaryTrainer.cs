@@ -159,8 +159,8 @@ namespace Scikit.ML.MultiClass
             }
             else if (data.Schema.Label.Value.Type.IsKey())
             {
-                int nb = data.Schema.Label.Value.Type.AsKey().KeyCount();
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberType.R4, nb) });
+                ulong nb = data.Schema.Label.Value.Type.AsKey().GetKeyCount();
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberType.R4, (int)nb) });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)
@@ -168,7 +168,7 @@ namespace Scikit.ML.MultiClass
                 MinMaxLabelOverDataSet(trans, labName, out nb_);
                 int count3;
                 data.CheckMultiClassLabel(out count3);
-                if (count3 != nb)
+                if ((ulong)count3 != nb)
                     throw ch.Except("Count mismatch (KeyCount){0} != {1}", nb, count3);
                 DebugChecking0(viewI, labName, true);
                 DebugChecking0Vfloat(viewI, labName, nb);

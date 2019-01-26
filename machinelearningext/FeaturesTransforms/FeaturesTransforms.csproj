@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Microsoft.Data.DataView">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.Data.DataView.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ML.Core">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Core.dll</HintPath>
     </Reference>

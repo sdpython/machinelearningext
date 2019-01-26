@@ -25,7 +25,7 @@ namespace TestMachineLearningExt
             using (var env = EnvHelper.NewTestEnvironment())
             {
                 var inputs = InputOutput.CreateInputs();
-                var data = env.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
                 var args = new DescribeTransform.Arguments() { columns = new[] { "X" } };
                 var tr = new DescribeTransform(env, args, data);
 
@@ -50,7 +50,7 @@ namespace TestMachineLearningExt
             using (var env = EnvHelper.NewTestEnvironment())
             {
                 var inputs = InputOutput.CreateInputs();
-                var data = env.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
                 var args = new DescribeTransform.Arguments() { columns = new[] { "X" } };
                 var tr = new DescribeTransform(env, args, data);
 
@@ -149,7 +149,7 @@ namespace TestMachineLearningExt
                     new InputOutput() { X = new float[] { 0, 1 }, Y = 0 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 using (var cursor = data.GetRowCursor(data.Schema))
                 {
@@ -208,7 +208,7 @@ namespace TestMachineLearningExt
                     new InputOutput() { X = new float[] { 0, 1 }, Y = 0 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 using (var cursor = data.GetRowCursor(data.Schema))
                 {

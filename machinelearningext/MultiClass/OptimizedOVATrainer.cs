@@ -165,13 +165,13 @@ namespace Scikit.ML.MultiClass
         {
             var lab = data.Schema.Label.Value;
             Host.Assert(!data.Schema.Schema[lab.Index].IsHidden);
-            Host.Assert(lab.Type.KeyCount() > 0 || lab.Type == NumberType.R4 || lab.Type == NumberType.R8);
+            Host.Assert(lab.Type.GetKeyCount() > 0 || lab.Type == NumberType.R4 || lab.Type == NumberType.R8);
 
             // Get the destination label column name.
             dstName = data.Schema.Schema.GetTempColumnName();
 
             // Key values are 1-based.
-            if (lab.Type.KeyCount() > 0)
+            if (lab.Type.GetKeyCount() > 0)
             {
                 uint key = (uint)(cls + 1);
                 if (_args.downsampling > 0)

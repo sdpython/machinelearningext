@@ -69,7 +69,7 @@ namespace Scikit.ML.ProductionPrediction
             if (_env == null)
                 throw Contracts.Except("env must not be null");
             var inputs = new FloatVectorInput[0];
-            var view = ComponentCreation.CreateStreamingDataView<FloatVectorInput>(_env, inputs);
+            var view = DataViewConstructionUtils.CreateFromEnumerable<FloatVectorInput>(_env, inputs);
 
             long modelPosition = modelStream.Position;
             _predictor = ComponentCreation.LoadPredictorOrNull(_env, modelStream);

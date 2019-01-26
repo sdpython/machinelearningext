@@ -30,7 +30,7 @@ namespace TestMachineLearningExt
                     new ExampleA() { X = new float[] { 2, 3 } }
                 };
 
-                IDataView loader = host.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var data = host.CreateTransform("Scaler{col=X1:X}", loader);
                 data = host.CreateTransform("tag{t=memory}", data);
 
@@ -58,7 +58,7 @@ namespace TestMachineLearningExt
                 };
 
                 // Create IDV
-                IDataView loader = env.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
                 var saver = ComponentCreation.CreateSaver(env, "binary");
                 using (var ch = env.Start("save"))
                 {
@@ -66,7 +66,7 @@ namespace TestMachineLearningExt
                         DataSaverUtils.SaveDataView(ch, saver, loader, fs0, true);
 
                     // Create parallel pipeline
-                    loader = env.CreateStreamingDataView(inputs);
+                    loader = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
                     var data = env.CreateTransform("Scaler{col=X1:X}", loader);
                     data = env.CreateTransform(string.Format("selecttag{{t=first s=second f={0}}}", firstData), data);
                     data = env.CreateTransform("Scaler{col=X1:X}", data);
@@ -99,7 +99,7 @@ namespace TestMachineLearningExt
             };
 
             using (var host = EnvHelper.NewTestEnvironment()) { 
-                IDataView loader = host.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
             var chained = host.CreateTransform("ChainTrans{ xf1=Scaler{col=X2:X} xf2=Scaler{col=X3:X2} }", loader);
             var schStr = SchemaHelper.ToString(chained.Schema);
             Assert.AreEqual(schStr, "X:Vec<R4,3>:0; X2:Vec<R4,3>:1; X3:Vec<R4,3>:2");
@@ -156,7 +156,7 @@ namespace TestMachineLearningExt
                     new ExampleA() { X = new float[] { 2, 3, 5 } }
                 };
 
-                IDataView loader = host.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 IDataTransform data = host.CreateTransform("Scaler{col=X4:X}", loader);
                 data = host.CreateTransform("ChainTrans{ xf1=Scaler{col=X2:X} xf2=Poly{col=X3:X2} }", data);
 

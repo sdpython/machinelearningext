@@ -29,7 +29,7 @@ namespace TestMachineLearningExt
                     new InputOutput() { X = new float[] { 0, 1 }, Y = 3 },
                 };
 
-                var data = env.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
                 var args = new ResampleTransform.Arguments { lambda = ratio, cache = false };
                 var tr = new ResampleTransform(env, args, data);
                 var values = new List<int>();
@@ -103,7 +103,7 @@ namespace TestMachineLearningExt
                     new SHExampleA() { X = new float[] { 2, 3 } }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new ShakeInputTransform.Arguments
                 {
@@ -144,7 +144,7 @@ namespace TestMachineLearningExt
                     new SHExampleA() { X = new float[] { 2, 3 } }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new ShakeInputTransform.Arguments
                 {
@@ -186,7 +186,7 @@ namespace TestMachineLearningExt
                     new SHExampleA() { X = new float[] { 2, 3 } }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new ShakeInputTransform.Arguments
                 {
@@ -227,7 +227,7 @@ namespace TestMachineLearningExt
                     new SHExampleA() { X = new float[] { 2, 3 } }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new ShakeInputTransform.Arguments
                 {

@@ -178,13 +178,13 @@ namespace Scikit.ML.DocHelperMlExt
             using (var host = new ConsoleEnvironment(conc: 1))
             {
                 ComponentHelper.AddStandardComponents(host);
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     if (predictor == null)
                         throw new Exception("Test failed: no predictor.");
-                    var data2 = host.CreateStreamingDataView(inputs2);
+                    var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                     var predictions = pipe.Predict(data2);
                     var df = DataFrameIO.ReadView(predictions);
                     if (df.Shape.Item1 != 4 || df.Shape.Item2 != 12)

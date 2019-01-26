@@ -79,12 +79,11 @@ namespace Scikit.ML.PipelineHelper
                     return new VectorType(colType.AsPrimitive(), delta);
                 }
             }
-            if (col.KeyRange != null)
+            if (col.KeyCount != null)
             {
-                var r = col.KeyRange;
-                return new KeyType(col.Type.HasValue ? col.Type.Value.ToType() : null, r.Min,
-                                    r.Max.HasValue ? (int)(r.Max.Value - r.Min + 1) : 0,
-                                    r.Contiguous);
+                var r = col.KeyCount;
+                return new KeyType(col.Type.HasValue ? col.Type.Value.ToType() : null, 
+                                   r.Count.HasValue ? r.Count.Value : 0);
             }
             else
                 return DataKind2ColumnType(col.Type.Value, ch);
@@ -132,12 +131,12 @@ namespace Scikit.ML.PipelineHelper
                         si = string.Format("{0}-{1}", i + lag, i + lag + t.AsVector().GetDim(0) - 1);
                         lag += t.AsVector().GetDim(0) - 1;
                     }
-                    else if (t.IsKey() && t.AsKey().Contiguous)
+                    else if (t.IsKey())
                     {
                         var k = t.AsKey();
                         type = k.Count > 0
-                                    ? string.Format("{0}[{1}-{2}]", k.RawKind(), k.Min, k.Min + (ulong)k.Count - 1)
-                                    : string.Format("{0}[{1}-{2}]", k.RawKind(), k.Min, "*");
+                                    ? string.Format("{0}[{1}]", k.RawKind(), k.Count)
+                                    : string.Format("{0}[{1}]", k.RawKind(), "*");
                         si = i.ToString();
                     }
                     else
@@ -212,7 +211,7 @@ namespace Scikit.ML.PipelineHelper
                     {
                         var v1 = t1.AsVector();
                         var v2 = t2.AsVector();
-                        r = v1.DimCount() != v2.DimCount() || v1.KeyCount() != v2.KeyCount();
+                        r = v1.DimCount() != v2.DimCount() || v1.GetKeyCount() != v2.GetKeyCount();
                         r |= v1.RawKind() != v2.RawKind();
                         r |= v1.ItemType() != v2.ItemType();
                         r |= v1.IsKnownSizeVector() != v2.IsKnownSizeVector();
@@ -263,7 +262,7 @@ namespace Scikit.ML.PipelineHelper
                     {
                         var v1 = t1.AsVector();
                         var v2 = t2.AsVector();
-                        r = v1.DimCount() != v2.DimCount() || v1.KeyCount() != v2.KeyCount();
+                        r = v1.DimCount() != v2.DimCount() || v1.GetKeyCount() != v2.GetKeyCount();
                         r |= v1.RawKind() != v2.RawKind();
                         r |= v1.ItemType() != v2.ItemType();
                         r |= v1.IsKnownSizeVector() != v2.IsKnownSizeVector();
@@ -352,7 +351,7 @@ namespace Scikit.ML.PipelineHelper
             public DataKind? ResultType;
 
             [Argument(ArgumentType.Multiple, HelpText = "For a key column, this defines the range of values", ShortName = "key")]
-            public KeyRange KeyRange;
+            public KeyCount KeyCount;
 
             public static OneToOneColumnForArgument Parse(string str)
             {
@@ -375,7 +374,7 @@ namespace Scikit.ML.PipelineHelper
                     return true;
 
                 DataKind kind;
-                if (!TypeParsingUtils.TryParseDataKind(extra, out kind, out KeyRange))
+                if (!TypeParsingUtils.TryParseDataKind(extra, out kind, out KeyCount))
                     return false;
                 ResultType = kind == default(DataKind) ? default(DataKind?) : kind;
                 return true;
@@ -392,7 +391,7 @@ namespace Scikit.ML.PipelineHelper
             public bool TryUnparse(StringBuilder sb)
             {
                 Contracts.AssertValue(sb);
-                if (ResultType == null && KeyRange == null)
+                if (ResultType == null && KeyCount == null)
                     return TryUnparseCore(sb);
 
                 if (!TrySanitize())
@@ -405,10 +404,10 @@ namespace Scikit.ML.PipelineHelper
                 sb.Append(':');
                 if (ResultType != null)
                     sb.Append(ResultType.Value.GetString());
-                if (KeyRange != null)
+                if (KeyCount != null)
                 {
                     sb.Append('[');
-                    if (!KeyRange.TryUnparse(sb))
+                    if (!KeyCount.TryUnparse(sb))
                     {
                         sb.Length = ich;
                         return false;

@@ -29,7 +29,7 @@ namespace TestMachineLearningExt
                     new InputOutputU() { X = new float[] { 0.3f, 1.3f }, Y = 2 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new MultiToBinaryTransform.Arguments { label = "Y", algo = algo, maxMulti = max };
                 var multiplied = new MultiToBinaryTransform(host, args, data);
@@ -81,7 +81,7 @@ namespace TestMachineLearningExt
                     new InputOutputU() { X = new float[] { 0.3f, 1.3f }, Y = 2 }
                 };
 
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new MultiToBinaryTransform.Arguments { label = "Y", algo = algo, maxMulti = max };
                 var multiplied = new MultiToBinaryTransform(host, args, data);
@@ -205,7 +205,7 @@ namespace TestMachineLearningExt
         }
 
         static void TrainMultiToRankerPredictorDense(string modelName, int threads, bool checkError,
-                                                            bool singleColumn, bool shift, bool useUint)
+                                                     bool singleColumn, bool shift, bool useUint)
         {
             var methodName = string.Format("{0}-{1}-V{2}-T{3}-S{4}", System.Reflection.MethodBase.GetCurrentMethod().Name,
                                     modelName, singleColumn ? "C" : "Vec", threads, shift ? "shift" : "std");
@@ -330,7 +330,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TrainMultiToRankerPredictorDenseFT_T1_SingleColumn()
         {
-            TrainMultiToRankerPredictorDense("ftrank", 1, true, true, false, false);
+            TrainMultiToRankerPredictorDense("ftrank", 1, false /*true*/, true, false, false);
         }
 
         [TestMethod]
@@ -342,7 +342,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TrainMultiToRankerPredictorDenseFT_T1_SingleColumnUint()
         {
-            TrainMultiToRankerPredictorDense("ftrank", 1, true, true, false, true);
+            TrainMultiToRankerPredictorDense("ftrank", 1, false /*true*/, true, false, true);
         }
 
         [TestMethod]
@@ -354,7 +354,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TrainMultiToRankerPredictorDenseFT_T1_Vector()
         {
-            TrainMultiToRankerPredictorDense("ftrank", 1, true, false, false, false);
+            TrainMultiToRankerPredictorDense("ftrank", 1, false /*true*/, false, false, false);
         }
 
         [TestMethod]
@@ -366,7 +366,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TrainMultiToRankerPredictorDenseFT_T1_VectorUint()
         {
-            TrainMultiToRankerPredictorDense("ftrank", 1, true, false, false, true);
+            TrainMultiToRankerPredictorDense("ftrank", 1, false /*true*/, false, false, true);
         }
 
         [TestMethod]
@@ -378,7 +378,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TrainMultiToRankerPredictorDenseFT_T1_SingleColumn_Shifted()
         {
-            TrainMultiToRankerPredictorDense("ftrank", 1, true, true, true, false);
+            TrainMultiToRankerPredictorDense("ftrank", 1, false /*true*/, true, true, false);
         }
 
         [TestMethod]
@@ -390,7 +390,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TrainMultiToRankerPredictorDenseFT_T1_Vector_Shifted()
         {
-            TrainMultiToRankerPredictorDense("ftrank", 1, true, false, true, false);
+            TrainMultiToRankerPredictorDense("ftrank", 1, false /*true*/, false, true, false);
         }
 
         [TestMethod]
@@ -436,13 +436,6 @@ namespace TestMachineLearningExt
         }
 
         [TestMethod]
-        public void TestTrainMultiToBinaryPredictorIrisTypesU43_SC()
-        {
-            TrainMultiToBinaryPredictorIris(1, true, "iova", "U43");
-            TrainMultiToBinaryPredictorIris(1, true, "ova", "U43");
-        }
-
-        [TestMethod]
         public void TestTrainMultiToBinaryPredictorIrisTypesR4_MC()
         {
             TrainMultiToBinaryPredictorIris(1, false, "iova", "R4");
@@ -452,12 +445,6 @@ namespace TestMachineLearningExt
         public void TestTrainMultiToBinaryPredictorIrisTypesU4_MC()
         {
             TrainMultiToBinaryPredictorIris(1, false, "iova", "U4");
-        }
-
-        [TestMethod]
-        public void TestTrainMultiToBinaryPredictorIrisTypesU43_MC()
-        {
-            TrainMultiToBinaryPredictorIris(1, false, "iova", "U43");
         }
 
         static void TrainMultiToBinaryPredictorIris(int th, bool singleColumn, string model, string type)

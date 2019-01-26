@@ -33,12 +33,12 @@ namespace TestMachineLearningExt
 
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, host: host))
                 {
                     var predictor = pipe.Train(data);
                     Assert.IsTrue(predictor != null);
-                    var data2 = host.CreateStreamingDataView(inputs2);
+                    var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                     var predictions = pipe.Transform(data2);
                     var df = DataFrameIO.ReadView(predictions);
                     Assert.AreEqual(df.Shape, new Tuple<int, int>(2, 9));
@@ -78,12 +78,12 @@ namespace TestMachineLearningExt
             string expected = null;
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, host: host))
                 {
                     var predictor = pipe.Train(data);
                     Assert.IsTrue(predictor != null);
-                    var data2 = host.CreateStreamingDataView(inputs2);
+                    var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                     var predictions = pipe.Transform(data2);
                     var df = DataFrameIO.ReadView(predictions);
                     Assert.AreEqual(df.Shape, new Tuple<int, int>(2, 9));
@@ -96,7 +96,7 @@ namespace TestMachineLearningExt
             }
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data2 = host.CreateStreamingDataView(inputs2);
+                var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                 using (var pipe2 = new ScikitPipeline(output, host))
                 {
                     var predictions = pipe2.Transform(data2);
@@ -128,12 +128,12 @@ namespace TestMachineLearningExt
 
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     Assert.IsTrue(predictor != null);
-                    var data2 = new StreamingDataFrame(host.CreateStreamingDataView(inputs2));
+                    var data2 = new StreamingDataFrame(DataViewConstructionUtils.CreateFromEnumerable(host, inputs2));
                     var predictions = pipe.Predict(data2);
                     var df = DataFrameIO.ReadView(predictions);
                     Assert.AreEqual(df.Shape, new Tuple<int, int>(4, 12));
@@ -177,12 +177,12 @@ namespace TestMachineLearningExt
             string expected = null;
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
                     Assert.IsTrue(predictor != null);
-                    var data2 = host.CreateStreamingDataView(inputs2);
+                    var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                     var predictions = pipe.Predict(data2);
                     var df = DataFrameIO.ReadView(predictions);
                     Assert.AreEqual(df.Shape, new Tuple<int, int>(4, 12));
@@ -196,7 +196,7 @@ namespace TestMachineLearningExt
             }
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data2 = host.CreateStreamingDataView(inputs2);
+                var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                 using (var pipe2 = new ScikitPipeline(output, host))
                 {
                     var predictions = pipe2.Predict(data2);
@@ -238,7 +238,7 @@ namespace TestMachineLearningExt
             {
                 ComponentHelper.AddStandardComponents(host);
                 ch.Info(MessageSensitivity.All, "Polynomial");
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, host: host))
                 {
                     var predictor = pipe.Train(data);
@@ -273,7 +273,7 @@ namespace TestMachineLearningExt
             using (var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 0))
             {
                 ComponentHelper.AddStandardComponents(host);
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{clustersCount=2}", host: host))
                 {
                     var predictor = pipe.Train(data, feature: "X");
@@ -303,8 +303,8 @@ namespace TestMachineLearningExt
             DataFrame df1, df2, df3;
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
-                var data2 = host.CreateStreamingDataView(inputs2);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
+                var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                 df1 = DataFrameIO.ReadView(data, env: host, keepVectors: true);
                 df2 = DataFrameIO.ReadView(data2, env: host, keepVectors: true);
                 df3 = DataFrameIO.ReadView(data2, env: host, keepVectors: true);

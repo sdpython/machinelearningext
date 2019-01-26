@@ -26,7 +26,7 @@ namespace TestMachineLearningExt
                 for (int i = 0; i < 100; ++i)
                     inputsl.Add(new InputOutput { X = new float[] { 0, 1 }, Y = i });
                 var inputs = inputsl.ToArray();
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
                 var args = new SplitTrainTestTransform.Arguments { newColumn = "Part", numThreads = numThreads };
                 if (option == "2")

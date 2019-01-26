@@ -257,7 +257,7 @@ namespace Scikit.ML.DataManipulation
             var args = new TextLoader.Arguments()
             {
                 AllowQuoting = false,
-                Separator = string.Format("{0}", sep),
+                Separators = new[] { sep },
                 Column = cols,
                 TrimWhitespace = true,
                 UseThreads = useThreads,

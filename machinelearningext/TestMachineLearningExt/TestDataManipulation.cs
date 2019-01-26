@@ -1294,7 +1294,7 @@ namespace TestMachineLearningExt
 
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "Concat{col=Z:X,Y}" }, host: host))
                 {
                     var predictor = pipe.Train(data);
@@ -1320,7 +1320,7 @@ namespace TestMachineLearningExt
             DataFrame df1;
             using (var host = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 df1 = DataFrameIO.ReadView(data, env: host, keepVectors: true);
             }
             var flat = df1.Flatten();

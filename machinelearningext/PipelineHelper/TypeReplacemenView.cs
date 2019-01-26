@@ -81,7 +81,10 @@ namespace Scikit.ML.PipelineHelper
             public override long Batch { get { return _cursor.Batch; } }
             public override long Position { get { return _cursor.Position; } }
             public override bool MoveNext() { return _cursor.MoveNext(); }
-            public override ValueGetter<TValue> GetGetter<TValue>(int col) { return _cursor.GetGetter<TValue>(col); }
+            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            {
+                return _cursor.GetGetter<TValue>(col);
+            }
 
             protected override void Dispose(bool disposing)
             {

@@ -195,6 +195,7 @@ namespace Scikit.ML.PipelineTransforms
                                             (in float src, ref float dst) => { dst = src; }));
                         break;
                     case DataKind.U4:
+                        // MultiClass future issue
                         view = new PassThroughTransform(_host, new PassThroughTransform.Arguments(),
                                             LambdaColumnMapper.Create(_host, "U42R4", view,
                                             _args.columns[i].Source, _args.columns[i].Name,

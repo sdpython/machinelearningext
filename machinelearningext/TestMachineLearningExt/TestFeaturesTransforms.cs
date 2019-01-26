@@ -31,7 +31,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
                 CommonTestPolynomialTransform(host, data, 3, out values);
             }
@@ -46,12 +46,12 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
                 CommonTestPolynomialTransform(host, data, 5, out values);
 
                 List<float[]> valuesDense;
-                data = host.CreateStreamingDataView(inputs);
+                data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 CommonTestPolynomialTransform(host, data, 5, out valuesDense);
 
                 if (values.Count != valuesDense.Count)
@@ -137,7 +137,7 @@ namespace TestMachineLearningExt
                     new ExampleA() { X = new float[] { 2, 3, 5 } }
                 };
 
-                IDataView loader = host.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var data = host.CreateTransform("poly{col=poly:X d=3}", loader);
 
                 // We create a specific folder in build/UnitTest which will contain the output.
@@ -183,7 +183,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
                 CommonTestScalerTransform(host, data, 3, ScalerTransform.ScalerStrategy.meanVar, out values);
             }
@@ -198,7 +198,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
                 CommonTestScalerTransform(host, data, 3, ScalerTransform.ScalerStrategy.meanVar, out values);
             }
@@ -213,7 +213,7 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
                 CommonTestScalerTransform(host, data, 3, ScalerTransform.ScalerStrategy.minMax, out values);
             }
@@ -262,12 +262,12 @@ namespace TestMachineLearningExt
             };
             using (var host = EnvHelper.NewTestEnvironment())
             {
-                var data = host.CreateStreamingDataView(inputs);
+                var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
                 CommonTestScalerTransform(host, data, 5, ScalerTransform.ScalerStrategy.meanVar, out values);
 
                 List<float[]> valuesDense;
-                data = host.CreateStreamingDataView(inputs);
+                data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 CommonTestScalerTransform(host, data, 5, ScalerTransform.ScalerStrategy.meanVar, out valuesDense);
 
                 if (values.Count != valuesDense.Count)
@@ -294,7 +294,7 @@ namespace TestMachineLearningExt
                     new ExampleA() { X = new float[] { 2, 3, 5 } }
                 };
 
-                IDataView loader = host.CreateStreamingDataView(inputs);
+                IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var data = host.CreateTransform("Scaler{col=X}", loader);
                 (data as ITrainableTransform).Estimate();
 

@@ -73,7 +73,7 @@ namespace TestMachineLearningExt
 
             var args = new TextLoader.Arguments()
             {
-                Separator = "tab",
+                Separators = new[] { '\t' },
                 HasHeader = true,
                 Column = new[] {
                     new TextLoader.Column("Label", DataKind.BL, 0),
@@ -125,7 +125,7 @@ namespace TestMachineLearningExt
         {
             var args = new TextLoader.Arguments()
             {
-                Separator = "tab",
+                Separators = new[] { '\t' },
                 HasHeader = true,
                 Column = new[] {
                     new TextLoader.Column("Label", DataKind.BL, 0),
@@ -155,7 +155,7 @@ namespace TestMachineLearningExt
                 {
                     var args = new TextLoader.Arguments()
                     {
-                        Separator = "tab",
+                        Separators = new[] { '\t' },
                         HasHeader = true,
                         Column = new[] {
                             new TextLoader.Column("Label", DataKind.BL, 0),
@@ -206,7 +206,7 @@ namespace TestMachineLearningExt
                 {
                     var args = new TextLoader.Arguments()
                     {
-                        Separator = "tab",
+                        Separators = new[] { '\t' },
                         HasHeader = true,
                         Column = new[] {
                             new TextLoader.Column("Label", DataKind.Bool, 0),

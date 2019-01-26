@@ -54,11 +54,6 @@ namespace Scikit.ML.PipelineHelper
             return IsVector(column) ? (VectorType)column : null;
         }
 
-        public static int KeyCount(this ColumnType column)
-        {
-            return IsKey(column) ? AsKey(column).Count : 0;
-        }
-
         public static int DimCount(this ColumnType column)
         {
             return IsVector(column) ? AsVector(column).Dimensions.Length : 0;
@@ -88,11 +83,6 @@ namespace Scikit.ML.PipelineHelper
             if (DataKindExtensions.TryGetDataKind(type.RawType, out kind))
                 return kind;
             throw Contracts.ExceptNotSupp($"Unable to guess kind for type {type}.");
-        }
-
-        public static bool IsKnownSizeVector(this ColumnType column)
-        {
-            return !IsVector(column) || (AsVector(column).Size > 0);
         }
 
         public static int VectorSize(this ColumnType column)
@@ -133,23 +123,7 @@ namespace Scikit.ML.PipelineHelper
             if (kind == DataKind.DZ)
                 return DateTimeOffsetType.Instance;
             return NumberFromKind(kind);
-        }
-
-        public static bool SameSizeAndItemType(this ColumnType column, ColumnType other)
-        {
-            if (other == null)
-                return false;
-
-            if (column.Equals(other))
-                return true;
-
-            // For vector types, we don't care about the factoring of the dimensions.
-            if (!IsVector(column) || !IsVector(other))
-                return false;
-            if (!ItemType(column).Equals(ItemType(other)))
-                return false;
-            return VectorSize(column) == VectorSize(other);
-        }
+        }       
 
         public static bool IsBool(this ColumnType column)
         {
