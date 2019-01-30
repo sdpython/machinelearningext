@@ -14,9 +14,9 @@ using ArgumentType = Microsoft.ML.CommandLine.ArgumentType;
 
 using DataKind = Microsoft.ML.Data.DataKind;
 using IDataTransform = Microsoft.ML.Data.IDataTransform;
-using IDataView = Microsoft.ML.Data.IDataView;
-using RowCursor = Microsoft.ML.Data.RowCursor;
-using Schema = Microsoft.ML.Data.Schema;
+using IDataView = Microsoft.Data.DataView.IDataView;
+using RowCursor = Microsoft.Data.DataView.RowCursor;
+using Schema = Microsoft.Data.DataView.Schema;
 using TransformBase = Microsoft.ML.Data.TransformBase;
 
 using ModelLoadContext = Microsoft.ML.Model.ModelLoadContext;

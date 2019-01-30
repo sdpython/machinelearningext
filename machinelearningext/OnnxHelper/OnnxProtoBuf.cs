@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Google.Protobuf;
+using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.UniversalModelFormat.Onnx;
 using Microsoft.ML.Data;

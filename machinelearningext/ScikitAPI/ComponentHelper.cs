@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Learners;
@@ -63,11 +64,11 @@ namespace Scikit.ML.ScikitAPI
             var res = new List<Assembly>();
             res.Add(typeof(TextLoader).Assembly);
             res.Add(typeof(LinearModelStatistics).Assembly);
-            res.Add(typeof(Categorical).Assembly);
+            res.Add(typeof(OneHotEncodingEstimator).Assembly);
             res.Add(typeof(FastTreeRankingTrainer).Assembly);
             res.Add(typeof(EnsembleModelParameters).Assembly);
             res.Add(typeof(KMeansPlusPlusTrainer).Assembly);
-            res.Add(typeof(LightGbm).Assembly);
+            res.Add(typeof(LightGbmBinaryTrainer).Assembly);
             res.Add(typeof(OlsLinearRegressionTrainer).Assembly);
             res.Add(typeof(PcaModelParameters).Assembly);
             res.Add(typeof(SlidingWindowTransform).Assembly);

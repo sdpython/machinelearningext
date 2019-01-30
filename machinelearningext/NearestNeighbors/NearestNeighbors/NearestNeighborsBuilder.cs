@@ -4,9 +4,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Scikit.ML.PipelineHelper;
+using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Scikit.ML.PipelineHelper;
 
 
 namespace Scikit.ML.NearestNeighbors

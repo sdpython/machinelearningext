@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Text;
 using System.IO;
+using Microsoft.Data.DataView;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.TestHelper;
