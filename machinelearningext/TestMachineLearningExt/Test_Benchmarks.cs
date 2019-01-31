@@ -138,8 +138,8 @@ namespace TestMachineLearningExt
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
 
             var data = ml.Data.ReadFromTextFile(trainFilename, args);
-            var pipeline = ml.Transforms.Text.FeaturizeText("SentimentText", "Features")
-                .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
+            var pipeline = ml.Transforms.Text.FeaturizeText("Features", "SentimentText")
+                             .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
             var model = pipeline.Fit(data);
             return model;
         }
