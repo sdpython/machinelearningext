@@ -76,7 +76,7 @@ namespace TestMachineLearningExt
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
-                Column = new[] {
+                Columns = new[] {
                     new TextLoader.Column("Label", DataKind.BL, 0),
                     new TextLoader.Column("SentimentText", DataKind.Text, 1)
                 }
@@ -84,7 +84,7 @@ namespace TestMachineLearningExt
 
             var args2 = new TextFeaturizingEstimator.Arguments()
             {
-                Column = new TextFeaturizingEstimator.Column
+                Columns = new TextFeaturizingEstimator.Column
                 {
                     Name = "Features",
                     Source = new[] { "SentimentText" }
@@ -128,7 +128,7 @@ namespace TestMachineLearningExt
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
-                Column = new[] {
+                Columns = new[] {
                     new TextLoader.Column("Label", DataKind.BL, 0),
                     new TextLoader.Column("SentimentText", DataKind.Text, 1)
                 }
@@ -158,7 +158,7 @@ namespace TestMachineLearningExt
                     {
                         Separators = new[] { '\t' },
                         HasHeader = true,
-                        Column = new[] {
+                        Columns = new[] {
                             new TextLoader.Column("Label", DataKind.BL, 0),
                             new TextLoader.Column("SentimentText", DataKind.Text, 1)
                         }
@@ -209,7 +209,7 @@ namespace TestMachineLearningExt
                     {
                         Separators = new[] { '\t' },
                         HasHeader = true,
-                        Column = new[] {
+                        Columns = new[] {
                             new TextLoader.Column("Label", DataKind.Bool, 0),
                             new TextLoader.Column("SentimentText", DataKind.Text, 1)
                         }

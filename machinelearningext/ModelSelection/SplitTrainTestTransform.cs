@@ -340,7 +340,7 @@ namespace Scikit.ML.ModelSelection
             var columnName = current.Schema.GetTempColumnName();
             var args2 = new GenerateNumberTransform.Arguments()
             {
-                Column = new GenerateNumberTransform.Column[] { new GenerateNumberTransform.Column() { Name = columnName } },
+                Columns = new GenerateNumberTransform.Column[] { new GenerateNumberTransform.Column() { Name = columnName } },
                 Seed = _seed ?? 42
             };
             IDataTransform currentTr = new GenerateNumberTransform(Host, args2, current);

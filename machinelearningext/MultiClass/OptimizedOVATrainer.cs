@@ -155,7 +155,7 @@ namespace Scikit.ML.MultiClass
         {
             if (_args.dropNALabel)
             {
-                var args = new NAFilter.Arguments { Column = new[] { label } };
+                var args = new NAFilter.Arguments { Columns = new[] { label } };
                 return new NAFilter(Host, args, view);
             }
             else

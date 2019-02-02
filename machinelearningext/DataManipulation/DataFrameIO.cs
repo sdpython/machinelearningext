@@ -259,7 +259,7 @@ namespace Scikit.ML.DataManipulation
             {
                 AllowQuoting = false,
                 Separators = new[] { sep },
-                Column = cols,
+                Columns = cols,
                 TrimWhitespace = true,
                 UseThreads = useThreads,
                 HasHeader = header,

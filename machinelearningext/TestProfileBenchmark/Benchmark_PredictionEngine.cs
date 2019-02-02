@@ -28,7 +28,7 @@ namespace TestProfileBenchmark
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
-                Column = new[]
+                Columns = new[]
                 {
                     new TextLoader.Column("Label", DataKind.BL, 0),
                     new TextLoader.Column("SentimentText", DataKind.Text, 1)
@@ -37,7 +37,7 @@ namespace TestProfileBenchmark
 
             var args2 = new TextFeaturizingEstimator.Arguments()
             {
-                Column = new TextFeaturizingEstimator.Column
+                Columns = new TextFeaturizingEstimator.Column
                 {
                     Name = "Features",
                     Source = new[] { "SentimentText" }
@@ -84,7 +84,7 @@ namespace TestProfileBenchmark
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
-                Column = new[]
+                Columns = new[]
                            {
                     new TextLoader.Column("Label", DataKind.BL, 0),
                     new TextLoader.Column("SentimentText", DataKind.Text, 1)
@@ -109,7 +109,7 @@ namespace TestProfileBenchmark
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
-                Column = new[] {
+                Columns = new[] {
                     new TextLoader.Column("Label", DataKind.BL, 0),
                     new TextLoader.Column("SentimentText", DataKind.Text, 1)
                 }

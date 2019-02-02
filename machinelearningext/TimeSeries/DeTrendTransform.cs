@@ -292,7 +292,7 @@ namespace Scikit.ML.TimeSeries
             string tempColumn = predict.Schema.GetTempColumnName() + "ConcatDeTrend";
             var cargs = new ColumnConcatenatingTransformer.Arguments()
             {
-                Column = new[] {
+                Columns = new[] {
                     ColumnConcatenatingTransformer.Column.Parse(string.Format("{0}:{1},{2}", tempColumn, slotName, newName)),
                }
             };

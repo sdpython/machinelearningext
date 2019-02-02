@@ -72,7 +72,7 @@ namespace Scikit.ML.PipelineGraphTransforms
 
             public void Write(ModelSaveContext ctx, IHost host)
             {
-                IOHelper.Write(ctx, CustomColumn);
+                IOHelper.Write(ctx, CustomColumns);
                 IOHelper.Write(ctx, FeatureColumn);
                 IOHelper.Write(ctx, GroupColumn);
                 IOHelper.Write(ctx, LabelColumn);
@@ -86,7 +86,7 @@ namespace Scikit.ML.PipelineGraphTransforms
 
             public void Read(ModelLoadContext ctx, IHost host)
             {
-                CustomColumn = IOHelper.ReadArrayKeyValuePairStringString(ctx);
+                CustomColumns = IOHelper.ReadArrayKeyValuePairStringString(ctx);
                 FeatureColumn = IOHelper.ReadString(ctx);
                 GroupColumn = IOHelper.ReadString(ctx);
                 LabelColumn = IOHelper.ReadString(ctx);
@@ -164,7 +164,7 @@ namespace Scikit.ML.PipelineGraphTransforms
                 if (views.Any())
                     throw _host.Except("Tag '{0}' is already used.", _args.tag);
 
-                var customCols = TrainUtils.CheckAndGenerateCustomColumns(_host, _args.CustomColumn);
+                var customCols = TrainUtils.CheckAndGenerateCustomColumns(_host, _args.CustomColumns);
                 string feat;
                 string group;
                 var data = CreateDataFromArgs(_host, ch, new OpaqueDataView(input), _args, out feat, out group);
@@ -212,7 +212,7 @@ namespace Scikit.ML.PipelineGraphTransforms
                 ch.Trace("Constructing trainer");
                 var trainerSett = ScikitSubComponent<ITrainer, SignatureTrainer>.AsSubComponent(args.trainer);
                 ITrainer trainer = trainerSett.CreateInstance(host);
-                var customCols = TrainUtils.CheckAndGenerateCustomColumns(env, args.CustomColumn);
+                var customCols = TrainUtils.CheckAndGenerateCustomColumns(env, args.CustomColumns);
 
                 string feat;
                 string group;
@@ -264,7 +264,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             group = TrainUtils.MatchNameOrDefaultOrNull(ectx, schema, "GroupColumn", args.GroupColumn, DefaultColumnNames.GroupId);
             var weight = TrainUtils.MatchNameOrDefaultOrNull(ectx, schema, "WeightColumn", args.WeightColumn, DefaultColumnNames.Weight);
             var name = TrainUtils.MatchNameOrDefaultOrNull(ectx, schema, "NameColumn", args.NameColumn, DefaultColumnNames.Name);
-            var customCols_ = TrainUtils.CheckAndGenerateCustomColumns(ectx, args.CustomColumn);
+            var customCols_ = TrainUtils.CheckAndGenerateCustomColumns(ectx, args.CustomColumns);
             var customCols = customCols_ == null ? new List<KeyValuePair<RoleMappedSchema.ColumnRole, string>>() : customCols_.ToList();
             if (!string.IsNullOrEmpty(name))
                 customCols.Add(new KeyValuePair<RoleMappedSchema.ColumnRole, string>(RoleMappedSchema.ColumnRole.Name, name));

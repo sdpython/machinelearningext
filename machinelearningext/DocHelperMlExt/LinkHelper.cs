@@ -27,7 +27,7 @@ namespace Scikit.ML.DocHelperMlExt
         {
             var args = new NormalizeTransform.MinMaxArguments()
             {
-                Column = new[]
+                Columns = new[]
                 {
                     NormalizeTransform.AffineColumn.Parse("A"),
                     new NormalizeTransform.AffineColumn() { Name = "B", Source = "B", FixZero = false },

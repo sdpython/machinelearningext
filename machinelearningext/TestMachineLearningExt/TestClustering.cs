@@ -227,7 +227,7 @@ namespace TestMachineLearningExt
                 var loader = new TextLoader(env, new TextLoader.Arguments()
                 {
                     HasHeader = true,
-                    Column = new[] { TextLoader.Column.Parse("RowId:R4:0"),
+                    Columns = new[] { TextLoader.Column.Parse("RowId:R4:0"),
                                      TextLoader.Column.Parse("Features:R4:1-2")}
                 }).Read(new MultiFileSource(dataFilePath));
                 var xf = env.CreateTransform("DBScan{col=Features}", loader);
