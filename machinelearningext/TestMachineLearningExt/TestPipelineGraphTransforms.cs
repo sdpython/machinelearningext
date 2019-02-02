@@ -186,7 +186,7 @@ namespace TestMachineLearningExt
 
                 var xf = env.CreateTransform("ChainTrans{xf1=Scaler{col=Features} xf2=Scaler{col=Features}}", loader);
                 var roles = env.CreateExamples(xf, "Features");
-                var trainer = env.CreateTrainer("KMeansPlusPlus{clustersCount=5}");
+                var trainer = env.CreateTrainer("km{k=5}");
                 using (var ch = env.Start("Train"))
                 {
                     var pred = trainer.Train(env, ch, roles);
