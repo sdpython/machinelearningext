@@ -15,7 +15,7 @@ using Scikit.ML.PipelineLambdaTransforms;
 
 namespace Scikit.ML.MultiClass
 {
-    using TScalarTrainer = ITrainer<IPredictorProducing<float>>;
+    using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
     using TVectorPredictor = IPredictorProducing<VBuffer<float>>;
 
     /// <summary>

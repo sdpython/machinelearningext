@@ -1,5 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -133,6 +135,30 @@ namespace Scikit.ML.PipelineHelper
         public static ITrainerExtended CreateTrainer(this IHostEnvironment env, string settings, params object[] extraArgs)
         {
             return ExtendedTrainer.CreateTrainer(env, settings, extraArgs);
+        }
+
+        /// <summary>
+        /// Returns all base types for a given type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static IEnumerable<Type> GetParentTypes(Type type)
+        {
+            // is there any base type?
+            if (type == null)
+                yield break;
+
+            // return all implemented or inherited interfaces
+            foreach (var i in type.GetInterfaces())
+                yield return i;
+
+            // return all inherited types
+            var currentBaseType = type.BaseType;
+            while (currentBaseType != null)
+            {
+                yield return currentBaseType;
+                currentBaseType = currentBaseType.BaseType;
+            }
         }
     }
 }

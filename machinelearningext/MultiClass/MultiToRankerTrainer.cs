@@ -21,8 +21,8 @@ using MultiToRankerTrainer = Scikit.ML.MultiClass.MultiToRankerTrainer;
 
 namespace Scikit.ML.MultiClass
 {
-    using TScalarTrainer = ITrainer<IPredictorProducing<float>>;
-    using TScalarPredictor = IPredictorProducing<float>;
+    using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
+    using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
     using TVectorPredictor = IPredictorProducing<VBuffer<float>>;
 
     /// <summary>

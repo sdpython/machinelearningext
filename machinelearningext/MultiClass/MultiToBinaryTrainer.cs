@@ -20,8 +20,8 @@ using MultiToBinaryTrainer = Scikit.ML.MultiClass.MultiToBinaryTrainer;
 
 namespace Scikit.ML.MultiClass
 {
-    using TScalarTrainer = ITrainer<IPredictorProducing<float>>;
-    using TScalarPredictor = IPredictorProducing<float>;
+    using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
+    using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
     using TVectorPredictor = IPredictorProducing<VBuffer<float>>;
 
     /// <summary>
@@ -124,7 +124,14 @@ namespace Scikit.ML.MultiClass
                     else
                     {
                         var temp = ScikitSubComponent<ITrainer, SignatureBinaryClassifierTrainer>.AsSubComponent(_args.predictorType);
-                        trainer = temp.CreateInstance(Host) as TScalarTrainer;
+                        var inst = temp.CreateInstance(Host);
+                        trainer = inst as TScalarTrainer;
+                        if (trainer == null)
+                        {
+                            var allTypes = TrainerHelper.GetParentTypes(inst.GetType()).ToArray();
+                            var allTypesStr = string.Join("\n", allTypes.Select(c => c.ToString()));
+                            throw ch.ExceptNotSupp($"Unable to cast {inst.GetType()} into {typeof(TScalarTrainer)}.\n-TYPES-\n{allTypesStr}");
+                        }
                     }
 
                     _trainer = null;

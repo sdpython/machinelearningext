@@ -14,7 +14,7 @@ using MultiToBinaryPredictor = Scikit.ML.MultiClass.MultiToBinaryPredictor;
 
 namespace Scikit.ML.MultiClass
 {
-    using TScalarPredictor = IPredictorProducing<float>;
+    using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
 
     /// <summary>
     /// Defines a predictor which does what OVA does but produces only one model.
