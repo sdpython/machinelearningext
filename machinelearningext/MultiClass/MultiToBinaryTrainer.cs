@@ -22,7 +22,7 @@ namespace Scikit.ML.MultiClass
 {
     using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
-    using TVectorPredictor = IPredictorProducing<VBuffer<float>>;
+    using TVectorPredictor = IPredictor; //IPredictorProducing<VBuffer<float>>;
 
     /// <summary>
     /// Train a MultiToBinary predictor. It multiplies the rows by the number of classes to predict.

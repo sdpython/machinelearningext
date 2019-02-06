@@ -20,7 +20,7 @@ using OptimizedOVAPredictor = Scikit.ML.MultiClass.OptimizedOVAPredictor;
 
 namespace Scikit.ML.MultiClass
 {
-    using TScalarPredictor = IPredictorProducing<float>;
+    using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
 
     public sealed class OptimizedOVAPredictor :
         PredictorBase<VBuffer<float>>,

@@ -21,9 +21,9 @@ using OptimizedOVATrainer = Scikit.ML.MultiClass.OptimizedOVATrainer;
 
 namespace Scikit.ML.MultiClass
 {
-    using TScalarTrainer = ITrainer<IPredictorProducing<float>>;
-    using TScalarPredictor = IPredictorProducing<float>;
-    using TVectorPredictor = IPredictorProducing<VBuffer<float>>;
+    using TScalarTrainer = ITrainer<IPredictor>; //ITrainer<IPredictorProducing<float>>;
+    using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
+    using TVectorPredictor = IPredictor; //IPredictorProducing<VBuffer<float>>;
     using CR = RoleMappedSchema.ColumnRole;
 
     /// <summary>
