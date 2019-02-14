@@ -32,7 +32,8 @@ namespace Scikit.ML.TestHelper
                             string outModelFilePath, IPredictor predictor,
                             RoleMappedData roles, string outData, string outData2,
                             PredictionKind kind, bool checkError = true,
-                            float ratio = 0.8f, float ratioReadSave = 0.06f)
+                            float ratio = 0.8f, float ratioReadSave = 0.06f,
+                            bool checkType = true)
         {
             string labelColumn = kind != PredictionKind.Clustering ? roles.Schema.Label.Value.Name : null;
 
@@ -51,7 +52,7 @@ namespace Scikit.ML.TestHelper
                 var pred_local = env.LoadPredictorOrNull(fs);
                 if (pred_local == null)
                     throw new Exception(string.Format("Unable to load '{0}'", outModelFilePath));
-                if (predictor.GetType() != pred_local.GetType())
+                if (checkType && predictor.GetType() != pred_local.GetType())
                     throw new Exception(string.Format("Type mismatch {0} != {1}", predictor.GetType(), pred_local.GetType()));
             }
 

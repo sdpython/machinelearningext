@@ -101,7 +101,7 @@ namespace TestMachineLearningExt
                 if (!File.Exists(tempFile))
                     throw new FileNotFoundException(tempFile);
             }
-        }        
+        }
 
         #endregion
 
@@ -130,10 +130,11 @@ namespace TestMachineLearningExt
                 {
                     var pred = trainer.Train(env, ch, roles);
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, pred, roles, outData, outData2,
-                                                                     trainer.Trainer.PredictionKind, true, ratio: 0.8f);
+                                                                     trainer.Trainer.PredictionKind, true, ratio: 0.8f,
+                                                                     checkType: false);
                 }
             }
-        }       
+        }
 
         #endregion
 
