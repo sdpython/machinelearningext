@@ -224,7 +224,7 @@ namespace Scikit.ML.ModelSelection
             return h.Apply("Loading Model", ch => new SplitTrainTestTransform(h, ctx, input));
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             Host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();
@@ -326,7 +326,7 @@ namespace Scikit.ML.ModelSelection
             IDataView current = input;
             if (_shuffleInput)
             {
-                var args1 = new RowShufflingTransformer.Arguments()
+                var args1 = new RowShufflingTransformer.Options()
                 {
                     ForceShuffle = false,
                     ForceShuffleSeed = _seedShuffle,
@@ -338,7 +338,7 @@ namespace Scikit.ML.ModelSelection
 
             // We generate a random number.
             var columnName = current.Schema.GetTempColumnName();
-            var args2 = new GenerateNumberTransform.Arguments()
+            var args2 = new GenerateNumberTransform.Options()
             {
                 Columns = new GenerateNumberTransform.Column[] { new GenerateNumberTransform.Column() { Name = columnName } },
                 Seed = _seed ?? 42
@@ -382,7 +382,10 @@ namespace Scikit.ML.ModelSelection
             currentTr = new ExtendedCacheTransform(Host, args3, view);
 
             // Removing the temporary column.
-            var finalTr = ColumnSelectingTransformer.CreateDrop(Host, currentTr, new string[] { columnName });
+            var objtr = ColumnSelectingTransformer.CreateDrop(Host, currentTr, new string[] { columnName });
+            var finalTr = objtr as IDataTransform;
+            if (finalTr == null)
+                throw Contracts.ExceptNotSupp("Desgin change.");
             var taggedViews = new List<Tuple<string, ITaggedDataView>>();
 
             // filenames
@@ -404,7 +407,7 @@ namespace Scikit.ML.ModelSelection
                             ch.Info("Create part {0}: {1} (tag: {2})", i + 1, _ratios[i], _tags[i]);
                         else
                             ch.Info("Create part {0}: {1} (file: {2})", i + 1, _ratios[i], _filenames[i]);
-                        var ar1 = new RangeFilter.Arguments() { Column = _newColumn, Min = i, Max = i, IncludeMax = true };
+                        var ar1 = new RangeFilter.Options() { Column = _newColumn, Min = i, Max = i, IncludeMax = true };
                         int pardId = i;
                         var filtView = LambdaFilter.Create<int>(Host, string.Format("Select part {0}", i), currentTr,
                                                                    _newColumn, NumberType.I4,

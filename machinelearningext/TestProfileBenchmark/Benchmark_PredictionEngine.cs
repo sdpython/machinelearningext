@@ -9,7 +9,6 @@ using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.ML.Transforms.Text;
-using Microsoft.ML.Core.Data;
 using Scikit.ML.TestHelper;
 using Scikit.ML.ProductionPrediction;
 using Scikit.ML.DataManipulation;

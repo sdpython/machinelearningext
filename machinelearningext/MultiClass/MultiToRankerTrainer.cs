@@ -149,7 +149,7 @@ namespace Scikit.ML.MultiClass
 
             // We insert a group Id.
             string groupColumnTemp = DataViewUtils.GetTempColumnName(data.Schema.Schema) + "GR";
-            var groupArgs = new GenerateNumberTransform.Arguments
+            var groupArgs = new GenerateNumberTransform.Options
             {
                 Columns = new[] { GenerateNumberTransform.Column.Parse(groupColumnTemp) },
                 UseCounter = true

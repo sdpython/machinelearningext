@@ -129,7 +129,7 @@ namespace Scikit.ML.TimeSeries
             return h.Apply("Loading Model", ch => new DeTrendTransform(h, ctx, input));
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             Host.CheckValue(_trend, "No trend predictor was ever trained. The model cannot be saved.");
             Host.CheckValue(ctx, "ctx");
@@ -290,7 +290,7 @@ namespace Scikit.ML.TimeSeries
             var args = new PredictTransform.Arguments { featureColumn = slotTime, outputColumn = newName, serialize = false };
             var predict = new PredictTransform(Host, args, roles.Data, trend);
             string tempColumn = predict.Schema.GetTempColumnName() + "ConcatDeTrend";
-            var cargs = new ColumnConcatenatingTransformer.Arguments()
+            var cargs = new ColumnConcatenatingTransformer.Options()
             {
                 Columns = new[] {
                     ColumnConcatenatingTransformer.Column.Parse(string.Format("{0}:{1},{2}", tempColumn, slotName, newName)),
@@ -315,7 +315,10 @@ namespace Scikit.ML.TimeSeries
             dropColumns.Add(tempColumn);
 
             var dropped = ColumnSelectingTransformer.CreateDrop(Host, lambdaView, dropColumns.ToArray());
-            return dropped;
+            var trans = dropped as IDataTransform;
+            if (trans == null)
+                throw Contracts.ExceptNotSupp("ML.net changed its design.");
+            return trans;
         }
     }
 

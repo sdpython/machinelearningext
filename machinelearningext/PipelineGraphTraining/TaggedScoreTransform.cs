@@ -111,7 +111,7 @@ namespace Scikit.ML.PipelineGraphTraining
                 throw _host.Except("_sourcePipe cannot be null.");
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             _host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();

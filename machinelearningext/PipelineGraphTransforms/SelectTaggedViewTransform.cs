@@ -110,7 +110,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             // nothing 
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             _host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();

@@ -4,7 +4,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Scikit.ML.DataManipulation;
-using ITransformer = Microsoft.ML.Core.Data.ITransformer;
+using ITransformer = Microsoft.ML.ITransformer;
 
 
 namespace Scikit.ML.ProductionPrediction

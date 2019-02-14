@@ -160,6 +160,8 @@ namespace Scikit.ML.PipelineTransforms
             return _sourcePipe.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
-        public abstract void Save(ModelSaveContext ctx);
+        protected abstract void SaveModel(ModelSaveContext ctx);
+
+        void ICanSaveModel.Save(ModelSaveContext ctx) => SaveModel(ctx);
     }
 }

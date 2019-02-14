@@ -117,7 +117,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _sourcePipe = Create(_host, args, input, out _sourceCtx);
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             _host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();

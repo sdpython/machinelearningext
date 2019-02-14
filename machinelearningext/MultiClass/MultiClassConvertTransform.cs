@@ -225,7 +225,7 @@ namespace Scikit.ML.MultiClass
                 });
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             Host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();

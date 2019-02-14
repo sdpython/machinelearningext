@@ -150,7 +150,7 @@ namespace Scikit.ML.PipelineTransforms
             return h.Apply("Loading Model", ch => new ExtendedCacheTransform(h, ctx, input));
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             Host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();

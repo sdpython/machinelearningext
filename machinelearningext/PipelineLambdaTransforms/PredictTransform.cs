@@ -114,7 +114,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
             _host.Check(_predictor != null, "_predictor is null. It should not.");
         }
 
-        public override void Save(ModelSaveContext ctx)
+        protected override void SaveModel(ModelSaveContext ctx)
         {
             _host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();
