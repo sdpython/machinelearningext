@@ -177,7 +177,7 @@ jobs:
             cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Sweeper/netstandard2.0/*.dll machinelearning/dist/Release
             cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.TensorFlow/netstandard2.0/*.dll machinelearning/dist/Release
             cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.TimeSeries/netstandard2.0/*.dll machinelearning/dist/Release
-            cp machinelearning/packages/lightgbm/2.2.1.1/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
+            cp machinelearning/packages/lightgbm/2.2.3/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
             cp machinelearning/packages/mlnetmkldeps/0.0.0.7/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
             cp machinelearning/packages/google.protobuf/3.5.1/lib/netstandard1.0/*.* machinelearning/bin/x64.Release/Native
             cp machinelearning/packages/system.codedom/4.5.0/lib/netstandard2.0/*.dll machinelearning/dist/Release
@@ -201,7 +201,7 @@ jobs:
             cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Sweeper/netstandard2.0/*.dll machinelearning/dist/Debug
             cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.TensorFlow/netstandard2.0/*.dll machinelearning/dist/Debug
             cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.TimeSeries/netstandard2.0/*.dll machinelearning/dist/Debug
-            cp machinelearning/packages/lightgbm/2.2.1.1/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
+            cp machinelearning/packages/lightgbm/2.2.3/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
             cp machinelearning/packages/mlnetmkldeps/0.0.0.7/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
             cp machinelearning/packages/google.protobuf/3.5.1/lib/netstandard1.0/*.* machinelearning/bin/x64.Release/Native
             cp machinelearning/packages/system.codedom/4.5.0/lib/netstandard2.0/*.dll machinelearning/dist/Release
