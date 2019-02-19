@@ -151,7 +151,7 @@ namespace Scikit.ML.PipelineTraining
                     var sch1 = SchemaHelper.ToString(data.Schema.Schema);
                     var sch2 = SchemaHelper.ToString(td.Schema.Schema);
                     ch2.Info("Initial schema: {0}", sch1);
-                    ch2.Info("Schema before training: {0}", sch2);
+                    ch2.Info("DataViewSchema before training: {0}", sch2);
                     ch2.Info("Train a predictor: {0}", _args.predictorType);
                     _predictor = _trainer.Train(td);
                 }

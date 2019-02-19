@@ -41,7 +41,7 @@ namespace Scikit.ML.NearestNeighbors
 
         public PredictionKind PredictionKind { get { return PredictionKind.BinaryClassification; } }
 
-        public ColumnType OutputType { get { return NumberType.R4; } }
+        public DataViewType OutputType { get { return NumberDataViewType.Single; } }
 
         internal static NearestNeighborsBinaryClassifierPredictor Create<TLabel>(IHost host,
                                 KdTree[] kdtrees, Dictionary<long, Tuple<TLabel, float>> labelWeights,
@@ -132,10 +132,10 @@ namespace Scikit.ML.NearestNeighbors
 
         int _nbClass;
 
-        public ColumnType OutputType { get { return new VectorType(NumberType.R4, _nbClass); } }
+        public DataViewType OutputType { get { return new VectorType(NumberDataViewType.Single, _nbClass); } }
 
 #if IMPLIValueMapperDist
-        public ColumnType DistType { get { return OutputType; } }
+        public DataViewType DistType { get { return OutputType; } }
 #endif
 
         internal static NearestNeighborsMultiClassClassifierPredictor Create<TLabel>(IHost host,

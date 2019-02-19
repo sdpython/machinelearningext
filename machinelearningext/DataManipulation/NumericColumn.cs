@@ -42,7 +42,7 @@ namespace Scikit.ML.DataManipulation
         public IDataColumn Column { get { return _column; } }
         public int Length => _column.Length;
         public int MemoryLength => _column.MemoryLength;
-        public ColumnType Kind => _column.Kind;
+        public DataViewType Kind => _column.Kind;
         public object Get(int row) => _column.Get(row);
         public void Set(int row, object value) { _column.Set(row, value); }
         public void Set<T>(int row, T value) { _column.Set(row, value); }
@@ -50,8 +50,8 @@ namespace Scikit.ML.DataManipulation
         public void SetDefault() { _column.SetDefault(); }
         public IDataFrameView Flatten(string name, IEnumerable<int> rows = null) { return _column.Flatten(name, rows); }
         public void Resize(int length, bool keepData = false) { _column.Resize(length, keepData); }
-        public ValueGetter<DType> GetGetter<DType>(RowCursor cursor) => _column.GetGetter<DType>(cursor);
-        public ValueGetter<VBuffer<DType>> GetGetterVector<DType>(RowCursor cursor) => _column.GetGetterVector<DType>(cursor);
+        public ValueGetter<DType> GetGetter<DType>(DataViewRowCursor cursor) => _column.GetGetter<DType>(cursor);
+        public ValueGetter<VBuffer<DType>> GetGetterVector<DType>(DataViewRowCursor cursor) => _column.GetGetterVector<DType>(cursor);
         public bool Equals(IDataColumn col) => _column.Equals(col);
 
         public NumericColumn Apply<TSrc, TDst>(ValueMapper<TSrc, TDst> mapper) where TDst : IEquatable<TDst>, IComparable<TDst>
@@ -94,7 +94,7 @@ namespace Scikit.ML.DataManipulation
         /// </summary>
         /// <param name="colType">column type</param>
         /// <returns>new columns</returns>
-        public IDataColumn AsType(ColumnType colType)
+        public IDataColumn AsType(DataViewType colType)
         {
             return _column.AsType(colType);
         }

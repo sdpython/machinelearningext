@@ -20,15 +20,15 @@ namespace Scikit.ML.ProductionPrediction
     /// </summary>
     public class ValueMapperFromTransformFloat<TColValue> : IValueMapper, IDisposable
     {
-        public ColumnType InputType { get { return _transform.Source.Schema[_inputIndex].Type; } }
-        public ColumnType OutputType { get { return _outputType; } }
+        public DataViewType InputType { get { return _transform.Source.Schema[_inputIndex].Type; } }
+        public DataViewType OutputType { get { return _outputType; } }
 
         readonly IDataTransform _transform;
         readonly IDataView _sourceToReplace;
         readonly IHostEnvironment _env;
         readonly string _outputColumn;
         readonly int _inputIndex;
-        readonly ColumnType _outputType;
+        readonly DataViewType _outputType;
         IHostEnvironment _computeEnv;
         readonly bool _disposeEnv;
         readonly bool _ignoreOtherColumn;

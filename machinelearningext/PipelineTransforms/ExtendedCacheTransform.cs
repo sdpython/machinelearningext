@@ -15,8 +15,8 @@ using DataSaverUtils = Microsoft.ML.Data.DataSaverUtils;
 using IDataTransform = Microsoft.ML.Data.IDataTransform;
 using IDataSaver = Microsoft.ML.Data.IDataSaver;
 using IDataView = Microsoft.Data.DataView.IDataView;
-using RowCursor = Microsoft.Data.DataView.RowCursor;
-using Schema = Microsoft.Data.DataView.Schema;
+using DataViewRowCursor = Microsoft.Data.DataView.DataViewRowCursor;
+using DataViewSchema = Microsoft.Data.DataView.DataViewSchema;
 using TransformBase = Microsoft.ML.Data.TransformBase;
 using MultiFileSource = Microsoft.ML.Data.MultiFileSource;
 using CacheDataView = Microsoft.ML.Data.CacheDataView;
@@ -108,7 +108,7 @@ namespace Scikit.ML.PipelineTransforms
         readonly string _saverSettings;
         readonly IDataTransform _pipedTransform;
 
-        public override Schema OutputSchema { get { return Source.Schema; } }
+        public override DataViewSchema OutputSchema { get { return Source.Schema; } }
 
         #endregion
 
@@ -226,13 +226,13 @@ namespace Scikit.ML.PipelineTransforms
             return true;
         }
 
-        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        protected override DataViewRowCursor GetRowCursorCore(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
             return _pipedTransform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public override DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
             return _pipedTransform.GetRowCursorSet(columnsNeeded, n, rand);

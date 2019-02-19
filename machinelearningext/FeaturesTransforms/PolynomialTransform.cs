@@ -185,7 +185,7 @@ namespace Scikit.ML.FeaturesTransforms
 
         #region IDataTransform API
 
-        public Schema Schema { get { return _transform.Schema; } }
+        public DataViewSchema Schema { get { return _transform.Schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         /// <summary>
@@ -206,14 +206,14 @@ namespace Scikit.ML.FeaturesTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             // Fun part we'll see later.
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -274,7 +274,7 @@ namespace Scikit.ML.FeaturesTransforms
             IHost _host;
             IDataView _input;
 
-            readonly Schema _schema;
+            readonly DataViewSchema _schema;
             readonly Arguments _args;
             readonly int _inputCol;
             readonly Func<TInput, TInput, TInput> _multiplication;
@@ -285,7 +285,7 @@ namespace Scikit.ML.FeaturesTransforms
             // object _lock;
 
             public IDataView Source => _input;
-            public Schema Schema => _schema;
+            public DataViewSchema Schema => _schema;
             public IHost Host => _host;
 
             public PolynomialState(IHostEnvironment host, IDataView input, Arguments args, Func<TInput, TInput, TInput> multiplication)
@@ -331,7 +331,7 @@ namespace Scikit.ML.FeaturesTransforms
                 return _input.GetRowCount();
             }
 
-            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+            public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
                 {
@@ -345,7 +345,7 @@ namespace Scikit.ML.FeaturesTransforms
                     return new SameCursor(_input.GetRowCursor(columnsNeeded, rand), this.Schema);
             }
 
-            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+            public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
             {
                 if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
                 {
@@ -366,16 +366,16 @@ namespace Scikit.ML.FeaturesTransforms
 
         #region Cursor
 
-        class PolynomialCursor<TInput> : RowCursor
+        class PolynomialCursor<TInput> : DataViewRowCursor
         {
             readonly PolynomialState<TInput> _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly Arguments _args;
             readonly Func<TInput, TInput, TInput> _multiplication;
 
             ValueGetter<VBuffer<TInput>> _inputGetter;
 
-            public PolynomialCursor(PolynomialState<TInput> view, RowCursor cursor, IEnumerable<Schema.Column> columnsNeeded,
+            public PolynomialCursor(PolynomialState<TInput> view, DataViewRowCursor cursor, IEnumerable<DataViewSchema.Column> columnsNeeded,
                                     Arguments args, int column, Func<TInput, TInput, TInput> multiplication)
             {
                 if (!columnsNeeded.Where(c => c.Index == column).Any())
@@ -393,11 +393,11 @@ namespace Scikit.ML.FeaturesTransforms
                 return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 // We do not change the ID (row to row transform).
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -405,7 +405,7 @@ namespace Scikit.ML.FeaturesTransforms
 
             public override long Batch => _inputCursor.Batch;        // No change.
             public override long Position => _inputCursor.Position;  // No change.
-            public override Schema Schema => _view.Schema;           // No change.
+            public override DataViewSchema Schema => _view.Schema;           // No change.
 
             protected override void Dispose(bool disposing)
             {

@@ -19,40 +19,40 @@ namespace Scikit.ML.PipelineHelper
     /// </summary>
     public static class SchemaHelper
     {
-        public static ColumnType DataKind2ColumnType(DataKind kind, IChannel ch = null)
+        public static DataViewType DataKind2ColumnType(DataKind kind, IChannel ch = null)
         {
             switch (kind)
             {
                 case DataKind.BL:
-                    return BoolType.Instance;
+                    return BooleanDataViewType.Instance;
                 case DataKind.R4:
-                    return NumberType.R4;
+                    return NumberDataViewType.Single;
                 case DataKind.R8:
-                    return NumberType.R8;
+                    return NumberDataViewType.Double;
                 case DataKind.I1:
-                    return NumberType.I1;
+                    return NumberDataViewType.SByte;
                 case DataKind.I2:
-                    return NumberType.I2;
+                    return NumberDataViewType.Int16;
                 case DataKind.I4:
-                    return NumberType.I4;
+                    return NumberDataViewType.Int32;
                 case DataKind.I8:
-                    return NumberType.I8;
+                    return NumberDataViewType.Int64;
                 case DataKind.U1:
-                    return NumberType.U1;
+                    return NumberDataViewType.Byte;
                 case DataKind.U2:
-                    return NumberType.U2;
+                    return NumberDataViewType.UInt16;
                 case DataKind.U4:
-                    return NumberType.U4;
+                    return NumberDataViewType.UInt32;
                 case DataKind.U8:
-                    return NumberType.U8;
+                    return NumberDataViewType.UInt64;
                 case DataKind.Text:
-                    return TextType.Instance;
+                    return TextDataViewType.Instance;
                 case DataKind.U16:
-                    return NumberType.UG;
+                    return NumberDataViewType.DataViewRowId;
                 case DataKind.DateTime:
-                    return DateTimeType.Instance;
+                    return DateTimeDataViewType.Instance;
                 case DataKind.DateTimeZone:
-                    return DateTimeOffsetType.Instance;
+                    return DateTimeOffsetDataViewType.Instance;
                 default:
                     throw ch != null ? ch.Except("Unknown kind {0}", kind) : Contracts.Except("Unknown kind {0}", kind);
             }
@@ -62,7 +62,7 @@ namespace Scikit.ML.PipelineHelper
         /// Convert a type description into another type description.
         /// </summary>
 
-        public static ColumnType Convert(TextLoader.Column col, IChannel ch = null)
+        public static DataViewType Convert(TextLoader.Column col, IChannel ch = null)
         {
             if (!col.Type.HasValue)
                 throw ch != null ? ch.Except("Kind is null") : Contracts.Except("kind is null");
@@ -103,7 +103,7 @@ namespace Scikit.ML.PipelineHelper
             return ToString(ExtendedSchema.Create(schemaInst), sep, vectorVec, keepHidden);
         }
 
-        public static string ToString(Schema schema, string sep = "; ", bool vectorVec = true, bool keepHidden = false)
+        public static string ToString(DataViewSchema schema, string sep = "; ", bool vectorVec = true, bool keepHidden = false)
         {
             var builder = new StringBuilder();
             string name, type;
@@ -165,7 +165,7 @@ namespace Scikit.ML.PipelineHelper
             }
         }
 
-        public static void CheckSchema(IHostEnvironment host, Schema sch1, Schema sch2)
+        public static void CheckSchema(IHostEnvironment host, DataViewSchema sch1, DataViewSchema sch2)
         {
             if (sch1.Count != sch2.Count)
                 throw host.Except("Mismatch between input schema and cached schema #columns {0} != # cached columns {1}.\nSchema 1:{2}\nSchema 2: {3}",
@@ -232,7 +232,7 @@ namespace Scikit.ML.PipelineHelper
             return true;
         }
 
-        public static bool CompareSchema(Schema sch1, Schema sch2, bool raise = false)
+        public static bool CompareSchema(DataViewSchema sch1, DataViewSchema sch2, bool raise = false)
         {
             if (sch1.Count != sch2.Count)
             {
@@ -286,7 +286,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Saves a type into a stream.
         /// </summary>
-        public static void WriteType(ModelSaveContext ctx, ColumnType type)
+        public static void WriteType(ModelSaveContext ctx, DataViewType type)
         {
             ctx.Writer.Write(type.IsVector());
             if (type.IsVector())
@@ -303,26 +303,26 @@ namespace Scikit.ML.PipelineHelper
         }
 
         /// <summary>
-        /// From DataKind to ColumnType
+        /// From DataKind to DataViewType
         /// </summary>
-        public static ColumnType FromKind(DataKind kind)
+        public static DataViewType FromKind(DataKind kind)
         {
             switch (kind)
             {
                 case DataKind.TX:
-                    return TextType.Instance;
+                    return TextDataViewType.Instance;
                 case DataKind.Bool:
-                    return BoolType.Instance;
+                    return BooleanDataViewType.Instance;
                 case DataKind.DateTime:
-                    return DateTimeType.Instance;
+                    return DateTimeDataViewType.Instance;
                 case DataKind.TimeSpan:
-                    return TimeSpanType.Instance;
+                    return TimeSpanDataViewType.Instance;
                 default:
                     return ColumnTypeHelper.NumberFromKind(kind);
             }
         }
 
-        public static ColumnType ReadType(ModelLoadContext ctx)
+        public static DataViewType ReadType(ModelLoadContext ctx)
         {
             bool isVector = ctx.Reader.ReadBoolean();
             if (isVector)
@@ -432,13 +432,13 @@ namespace Scikit.ML.PipelineHelper
             switch (kind)
             {
                 case PredictionKind.BinaryClassification:
-                    return new ExtendedSchema((ISchema)null, new[] { "Score" }, new[] { NumberType.R4 });
+                    return new ExtendedSchema((ISchema)null, new[] { "Score" }, new[] { NumberDataViewType.Single });
                 case PredictionKind.Regression:
-                    return new ExtendedSchema((ISchema)null, new[] { "Prediction" }, new[] { NumberType.R4 });
+                    return new ExtendedSchema((ISchema)null, new[] { "Prediction" }, new[] { NumberDataViewType.Single });
                 case PredictionKind.MultiClassClassification:
-                    return new ExtendedSchema((ISchema)null, new[] { "Scores" }, new[] { new VectorType(NumberType.R4, dim) });
+                    return new ExtendedSchema((ISchema)null, new[] { "Scores" }, new[] { new VectorType(NumberDataViewType.Single, dim) });
                 case PredictionKind.MultiOutputRegression:
-                    return new ExtendedSchema((ISchema)null, new[] { "Predictions" }, new[] { new VectorType(NumberType.R4, dim) });
+                    return new ExtendedSchema((ISchema)null, new[] { "Predictions" }, new[] { new VectorType(NumberDataViewType.Single, dim) });
                 default:
                     throw Contracts.Except("Unable to build the schema for kind {0}", kind);
             }
@@ -447,7 +447,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns the data kind based on a type.
         /// </summary>
-        public static ColumnType GetColumnType<TLabel>()
+        public static DataViewType GetColumnType<TLabel>()
         {
             return GetColumnType(typeof(TLabel));
         }
@@ -455,31 +455,31 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns the data kind based on a type.
         /// </summary>
-        public static ColumnType GetColumnType(Type type)
+        public static DataViewType GetColumnType(Type type)
         {
             if (type == typeof(bool))
-                return BoolType.Instance;
+                return BooleanDataViewType.Instance;
             if (type == typeof(byte))
-                return NumberType.U1;
+                return NumberDataViewType.Byte;
             if (type == typeof(ushort))
-                return NumberType.U2;
+                return NumberDataViewType.UInt16;
             if (type == typeof(uint))
-                return NumberType.U4;
+                return NumberDataViewType.UInt32;
             if (type == typeof(int))
-                return NumberType.I4;
+                return NumberDataViewType.Int32;
             if (type == typeof(Int64))
-                return NumberType.I8;
+                return NumberDataViewType.Int64;
             if (type == typeof(float))
-                return NumberType.R4;
+                return NumberDataViewType.Single;
             if (type == typeof(double))
-                return NumberType.R8;
+                return NumberDataViewType.Double;
             if (type == typeof(ReadOnlyMemory<char>) || type == typeof(string) || type == typeof(DvText))
                 return ColumnTypeHelper.PrimitiveFromKind(DataKind.TX);
 
             if (type == typeof(VBuffer<bool>) || type == typeof(VBufferEqSort<bool>))
                 return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.BL));
             if (type == typeof(VBuffer<byte>) || type == typeof(VBufferEqSort<byte>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.U1));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.I1));
             if (type == typeof(VBuffer<ushort>) || type == typeof(VBufferEqSort<ushort>))
                 return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.U2));
             if (type == typeof(VBuffer<uint>) || type == typeof(VBufferEqSort<uint>))
@@ -507,7 +507,7 @@ namespace Scikit.ML.PipelineHelper
             VBuffer = 2
         }
 
-        public static Tuple<DataKind, ArrayKind> GetKindArray(ColumnType type)
+        public static Tuple<DataKind, ArrayKind> GetKindArray(DataViewType type)
         {
             if (type.IsVector())
             {
@@ -527,7 +527,7 @@ namespace Scikit.ML.PipelineHelper
             if (type == typeof(bool))
                 return new Tuple<DataKind, ArrayKind>(DataKind.BL, ArrayKind.None);
             if (type == typeof(byte))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U1, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.I1, ArrayKind.None);
             if (type == typeof(ushort))
                 return new Tuple<DataKind, ArrayKind>(DataKind.U2, ArrayKind.None);
             if (type == typeof(uint))
@@ -546,7 +546,7 @@ namespace Scikit.ML.PipelineHelper
             if (type == typeof(VBuffer<bool>))
                 return new Tuple<DataKind, ArrayKind>(DataKind.BL, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<byte>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U1, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.I1, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<ushort>))
                 return new Tuple<DataKind, ArrayKind>(DataKind.U2, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<uint>))
@@ -565,7 +565,7 @@ namespace Scikit.ML.PipelineHelper
             if (type == typeof(bool[]))
                 return new Tuple<DataKind, ArrayKind>(DataKind.BL, ArrayKind.Array);
             if (type == typeof(byte[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U1, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.I1, ArrayKind.Array);
             if (type == typeof(ushort[]))
                 return new Tuple<DataKind, ArrayKind>(DataKind.U2, ArrayKind.Array);
             if (type == typeof(uint[]))
@@ -614,7 +614,7 @@ namespace Scikit.ML.PipelineHelper
             return Conversions.Instance.GetStandardConversion<TLabel, TDest>(col1, col2, out identity);
         }
 
-        public static ColumnType GetColumnType(ISchema schema, string name)
+        public static DataViewType GetColumnType(ISchema schema, string name)
         {
             int index;
             if (!schema.TryGetColumnIndex(name, out index))
@@ -622,7 +622,7 @@ namespace Scikit.ML.PipelineHelper
             return schema.GetColumnType(index);
         }
 
-        public static ColumnType GetColumnType(Schema schema, string name)
+        public static DataViewType GetColumnType(DataViewSchema schema, string name)
         {
             int index = GetColumnIndex(schema, name);
             return schema[index].Type;
@@ -640,7 +640,7 @@ namespace Scikit.ML.PipelineHelper
             return index;
         }
 
-        public static int GetColumnIndex(Schema schema, string name, bool allowNull = false, bool allowHidden = false)
+        public static int GetColumnIndex(DataViewSchema schema, string name, bool allowNull = false, bool allowHidden = false)
         {
             int index;
             for (index = 0; index < schema.Count; ++index)
@@ -660,7 +660,8 @@ namespace Scikit.ML.PipelineHelper
                 return col;
         }
 
-        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, Column1x1[] columns = null)
+        public static IEnumerable<DataViewSchema.Column> ColumnsNeeded(IEnumerable<DataViewSchema.Column> columnsNeeded,
+                                                                       DataViewSchema schema, Column1x1[] columns = null)
         {
             var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
             var hashName = new HashSet<string>(columnsNeeded.Select(c => c.Name));
@@ -672,7 +673,7 @@ namespace Scikit.ML.PipelineHelper
             return schema.Where(c => hash.Contains(c.Index) || hashName.Contains(c.Name)).ToArray();
         }
 
-        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, int[] columns)
+        public static IEnumerable<DataViewSchema.Column> ColumnsNeeded(IEnumerable<DataViewSchema.Column> columnsNeeded, DataViewSchema schema, int[] columns)
         {
             var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
             foreach (var c in columns)
@@ -680,7 +681,7 @@ namespace Scikit.ML.PipelineHelper
             return schema.Where(c => hash.Contains(c.Index)).ToArray();
         }
 
-        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, string column)
+        public static IEnumerable<DataViewSchema.Column> ColumnsNeeded(IEnumerable<DataViewSchema.Column> columnsNeeded, DataViewSchema schema, string column)
         {
             var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
             var hashName = new HashSet<string>(columnsNeeded.Select(c => c.Name));
@@ -694,7 +695,7 @@ namespace Scikit.ML.PipelineHelper
                 yield return sch.GetColumnName(i);
         }
 
-        public static IEnumerable<string> EnumerateColumns(Schema sch)
+        public static IEnumerable<string> EnumerateColumns(DataViewSchema sch)
         {
             for (int i = 0; i < sch.Count; ++i)
                 yield return sch[i].Name;
@@ -704,7 +705,7 @@ namespace Scikit.ML.PipelineHelper
         /// When the last column is requested, we also need the column used to compute it.
         /// This function ensures that this column is requested when the last one is.
         /// </summary>
-        public static IEnumerable<Schema.Column> ColumnsNeeded(IEnumerable<Schema.Column> columnsNeeded, Schema schema, int newCol, int dependsOn)
+        public static IEnumerable<DataViewSchema.Column> ColumnsNeeded(IEnumerable<DataViewSchema.Column> columnsNeeded, DataViewSchema schema, int newCol, int dependsOn)
         {
             var cols = columnsNeeded.ToList();
             var hash = new HashSet<int>(columnsNeeded.Select(c => c.Index));
@@ -720,7 +721,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns from superset inside subset.
         /// </summary>
-        public static IEnumerable<Schema.Column> SchemaIntersection(IEnumerable<Schema.Column> subset, IEnumerable<Schema.Column> superset, int addition = -1)
+        public static IEnumerable<DataViewSchema.Column> SchemaIntersection(IEnumerable<DataViewSchema.Column> subset, IEnumerable<DataViewSchema.Column> superset, int addition = -1)
         {
             var hash = new HashSet<Tuple<string, int>>(subset.Select(c => new Tuple<string, int>(c.Name, c.Index)).ToArray());
             var auto = superset.Where(c => hash.Contains(new Tuple<string, int>(c.Name, c.Index))).ToList();

@@ -105,9 +105,9 @@ namespace Scikit.ML.Clustering
 
         IDataTransform _transform;      // templated transform (not the serialized version)
         Arguments _args;                // parameters
-        Schema _schema;                 // We need the schema the transform outputs.
+        DataViewSchema _schema;                 // We need the schema the transform outputs.
 
-        public override Schema OutputSchema { get { return _schema; } }
+        public override DataViewSchema OutputSchema { get { return _schema; } }
 
         #endregion
 
@@ -123,7 +123,7 @@ namespace Scikit.ML.Clustering
                 Contracts.Check(false, "Parameter minPoints must be positive.");
             _args = args;
             _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema, new string[] { args.outCluster, args.outScore },
-                                                       new ColumnType[] { NumberType.I4, NumberType.R4 }));
+                                                       new DataViewType[] { NumberDataViewType.Int32, NumberDataViewType.Single }));
             _transform = CreateTemplatedTransform();
         }
 
@@ -153,7 +153,7 @@ namespace Scikit.ML.Clustering
             _args = new Arguments();
             _args.Read(ctx, Host);
             _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema, new string[] { _args.outCluster, _args.outScore },
-                                                       new ColumnType[] { NumberType.I4, NumberType.R4 }));
+                                                       new DataViewType[] { NumberDataViewType.Int32, NumberDataViewType.Single }));
             _transform = CreateTemplatedTransform();
         }
 
@@ -174,13 +174,13 @@ namespace Scikit.ML.Clustering
             return false;
         }
 
-        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        protected override DataViewRowCursor GetRowCursorCore(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             Host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public override DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -221,7 +221,7 @@ namespace Scikit.ML.Clustering
             object _lock;
 
             public IDataView Source { get { return _input; } }
-            public Schema Schema { get { return _parent.OutputSchema; } }
+            public DataViewSchema Schema { get { return _parent.OutputSchema; } }
 
             public DBScanState(IHostEnvironment host, DBScanTransform parent, IDataView input, Arguments args)
             {
@@ -256,7 +256,7 @@ namespace Scikit.ML.Clustering
                         {
                             var getter = cursor.GetGetter<VBuffer<float>>(index);
                             var getterId = cursor.GetIdGetter();
-                            RowId id = new RowId();
+                            DataViewRowId id = new DataViewRowId();
 
                             VBuffer<float> tmp = new VBuffer<float>();
 
@@ -404,7 +404,7 @@ namespace Scikit.ML.Clustering
                 return _input.GetRowCount();
             }
 
-            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+            public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 TrainTransform();
                 _host.AssertValue(_reversedMapping, "_reversedMapping");
@@ -412,7 +412,7 @@ namespace Scikit.ML.Clustering
                 return new DBScanCursor(this, cursor);
             }
 
-            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+            public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
             {
                 TrainTransform();
                 _host.AssertValue(_reversedMapping, "_reversedMapping");
@@ -426,15 +426,15 @@ namespace Scikit.ML.Clustering
             }
         }
 
-        public class DBScanCursor : RowCursor
+        public class DBScanCursor : DataViewRowCursor
         {
             readonly DBScanState _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly int _colCluster;
             readonly int _colScore;
             readonly int _colName;
 
-            public DBScanCursor(DBScanState view, RowCursor cursor)
+            public DBScanCursor(DBScanState view, DataViewRowCursor cursor)
             {
                 _view = view;
                 _colCluster = view.Source.Schema.Count;
@@ -450,10 +450,10 @@ namespace Scikit.ML.Clustering
                 return true;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -461,7 +461,7 @@ namespace Scikit.ML.Clustering
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _view.Schema; } }
+            public override DataViewSchema Schema { get { return _view.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

@@ -23,7 +23,7 @@ namespace Scikit.ML.OnnxHelper
             public string variableName;
             public IDataView view;
             public TagHelper.GraphPositionEnum position;
-            public ColumnType variableType;
+            public DataViewType variableType;
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Scikit.ML.OnnxHelper
 
             var hasin = new HashSet<string>(inputs);
             var uniqueVars = EnumerateVariables(trans, begin).ToArray();
-            var mapInputType = new Dictionary<string, ColumnType>();
+            var mapInputType = new Dictionary<string, DataViewType>();
             foreach (var it in uniqueVars.Where(c => c.position == TagHelper.GraphPositionEnum.first))
                 mapInputType[it.variableName] = it.variableType;
 
@@ -165,7 +165,7 @@ namespace Scikit.ML.OnnxHelper
                 tron2.SaveAsOnnx(ctx);
             }
 
-            var mapOuputType = new Dictionary<string, ColumnType>();
+            var mapOuputType = new Dictionary<string, DataViewType>();
             foreach (var it in uniqueVars.Where(c => c.position == TagHelper.GraphPositionEnum.last))
                 mapOuputType[it.variableName] = it.variableType;
 

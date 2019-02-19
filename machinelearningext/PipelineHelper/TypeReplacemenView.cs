@@ -18,7 +18,7 @@ namespace Scikit.ML.PipelineHelper
     public sealed class TypeReplacementDataView : IDataView
     {
         private readonly IDataView _source;
-        private readonly Schema _schema;
+        private readonly DataViewSchema _schema;
 
         public IDataView SourceTags { get { return _source; } }
 
@@ -33,7 +33,7 @@ namespace Scikit.ML.PipelineHelper
             get { return _source.CanShuffle; }
         }
 
-        public Schema Schema
+        public DataViewSchema Schema
         {
             get { return _schema; }
         }
@@ -43,7 +43,7 @@ namespace Scikit.ML.PipelineHelper
             return _source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             var res = new TypeReplacementCursor(_source.GetRowCursor(columnsNeeded, rand), Schema);
 #if(DEBUG)
@@ -53,32 +53,32 @@ namespace Scikit.ML.PipelineHelper
             return res;
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _source.GetRowCursorSet(columnsNeeded, n, rand)
                           .Select(c => new TypeReplacementCursor(c, Schema)).ToArray();
         }
 
-        class TypeReplacementCursor : RowCursor
+        class TypeReplacementCursor : DataViewRowCursor
         {
-            RowCursor _cursor;
-            Schema _schema;
+            DataViewRowCursor _cursor;
+            DataViewSchema _schema;
 
-            public TypeReplacementCursor(RowCursor cursor, ISchema newSchema)
+            public TypeReplacementCursor(DataViewRowCursor cursor, ISchema newSchema)
             {
                 _cursor = cursor;
                 _schema = ExtendedSchema.Create(newSchema);
             }
 
-            public TypeReplacementCursor(RowCursor cursor, Schema newSchema)
+            public TypeReplacementCursor(DataViewRowCursor cursor, DataViewSchema newSchema)
             {
                 _cursor = cursor;
                 _schema = newSchema;
             }
 
-            public override Schema Schema { get { return _schema; } }
+            public override DataViewSchema Schema { get { return _schema; } }
             public override bool IsColumnActive(int col) { return _cursor.IsColumnActive(col); }
-            public override ValueGetter<RowId> GetIdGetter() { return _cursor.GetIdGetter(); }
+            public override ValueGetter<DataViewRowId> GetIdGetter() { return _cursor.GetIdGetter(); }
             public override long Batch { get { return _cursor.Batch; } }
             public override long Position { get { return _cursor.Position; } }
             public override bool MoveNext() { return _cursor.MoveNext(); }

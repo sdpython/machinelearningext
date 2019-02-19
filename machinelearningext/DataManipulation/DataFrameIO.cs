@@ -17,7 +17,7 @@ namespace Scikit.ML.DataManipulation
     {
         #region kinds
 
-        static ColumnType GuessKind(int col, List<string[]> read)
+        static DataViewType GuessKind(int col, List<string[]> read)
         {
             DataKind res = DataKind.TX;
             int nbline = 0;
@@ -122,16 +122,16 @@ namespace Scikit.ML.DataManipulation
             }
             switch (res)
             {
-                case DataKind.BL: return BoolType.Instance;
-                case DataKind.I4: return NumberType.I4;
-                case DataKind.I8: return NumberType.I8;
-                case DataKind.U4: return NumberType.U4;
-                case DataKind.U8: return NumberType.U8;
-                case DataKind.R4: return NumberType.R4;
-                case DataKind.R8: return NumberType.R8;
-                case DataKind.TX: return TextType.Instance;
+                case DataKind.BL: return BooleanDataViewType.Instance;
+                case DataKind.I4: return NumberDataViewType.Int32;
+                case DataKind.I8: return NumberDataViewType.Int64;
+                case DataKind.U4: return NumberDataViewType.UInt32;
+                case DataKind.U8: return NumberDataViewType.UInt64;
+                case DataKind.R4: return NumberDataViewType.Single;
+                case DataKind.R8: return NumberDataViewType.Double;
+                case DataKind.TX: return TextDataViewType.Instance;
                 default:
-                    throw Contracts.Except($"Unable to guess ColumnType from '{res}'.");
+                    throw Contracts.Except($"Unable to guess DataViewType from '{res}'.");
             }
         }
 
@@ -216,7 +216,7 @@ namespace Scikit.ML.DataManipulation
 
         public static IDataView ReadCsvToTextLoader(string filename,
                                         char sep = ',', bool header = true,
-                                        string[] names = null, ColumnType[] dtypes = null,
+                                        string[] names = null, DataViewType[] dtypes = null,
                                         int nrows = -1, int guess_rows = 10,
                                         Encoding encoding = null, bool useThreads = true,
                                         bool index = false, IHost host = null)
@@ -243,7 +243,7 @@ namespace Scikit.ML.DataManipulation
         /// <returns>TextLoader</returns>
         public static IDataView ReadCsvToTextLoader(string[] filenames,
                                         char sep = ',', bool header = true,
-                                        string[] names = null, ColumnType[] dtypes = null,
+                                        string[] names = null, DataViewType[] dtypes = null,
                                         int nrows = -1, int guess_rows = 10,
                                         Encoding encoding = null, bool useThreads = true,
                                         bool index = false, IHost host = null)
@@ -255,7 +255,7 @@ namespace Scikit.ML.DataManipulation
             for (int i = 0; i < cols.Length; ++i)
                 cols[i] = TextLoader.Column.Parse(df.NameType(i));
 
-            var args = new TextLoader.Arguments()
+            var args = new TextLoader.Options()
             {
                 AllowQuoting = false,
                 Separators = new[] { sep },
@@ -286,7 +286,7 @@ namespace Scikit.ML.DataManipulation
         /// <returns>DataFrame</returns>
         public static DataFrame ReadStr(string content,
                                     char sep = ',', bool header = true,
-                                    string[] names = null, ColumnType[] dtypes = null,
+                                    string[] names = null, DataViewType[] dtypes = null,
                                     int nrows = -1, int guess_rows = 10, bool index = false)
         {
             return ReadStream(() => new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(content))),
@@ -310,7 +310,7 @@ namespace Scikit.ML.DataManipulation
         /// <returns>DataFrame</returns>
         public static DataFrame ReadCsv(string filename,
                                 char sep = ',', bool header = true,
-                                string[] names = null, ColumnType[] dtypes = null,
+                                string[] names = null, DataViewType[] dtypes = null,
                                 int nrows = -1, int guess_rows = 10,
                                 Encoding encoding = null, bool index = false)
         {
@@ -336,7 +336,7 @@ namespace Scikit.ML.DataManipulation
         /// <returns>DataFrame</returns>
         public static DataFrame ReadStream(FunctionCreateStreamReader createStream,
                                 char sep = ',', bool header = true,
-                                string[] names = null, ColumnType[] dtypes = null,
+                                string[] names = null, DataViewType[] dtypes = null,
                                 int nrows = -1, int guess_rows = 10, bool index = false)
         {
             var lines = new List<string[]>();

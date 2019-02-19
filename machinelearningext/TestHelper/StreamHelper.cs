@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 
 
@@ -13,7 +14,7 @@ namespace Scikit.ML.TestHelper
 {
     public static class StreamHelper
     {
-        public static int[] GetColumnsIndex(Schema schema, IEnumerable<string> subsetColumns = null)
+        public static int[] GetColumnsIndex(DataViewSchema schema, IEnumerable<string> subsetColumns = null)
         {
             if (subsetColumns == null)
                 return Enumerable.Range(0, schema.Count).Where(c => !schema[c].IsHidden).ToArray();
@@ -32,7 +33,7 @@ namespace Scikit.ML.TestHelper
         {
             using (var fs = File.OpenRead(modelPath))
             {
-                var deserializedData = env.LoadTransforms(fs, data);
+                var deserializedData = ModelFileUtils.LoadTransforms(env, data, fs);
                 var saver2 = env.CreateSaver("Text");
                 var columns = GetColumnsIndex(data.Schema, subsetColumns);
                 using (var fs2 = File.Create(outFilePath))

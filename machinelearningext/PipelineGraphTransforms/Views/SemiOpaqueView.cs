@@ -21,11 +21,11 @@ namespace Scikit.ML.PipelineGraphTransforms
     public sealed class SemiOpaqueDataView : IDataView
     {
         private readonly IDataView _source;
-        private readonly Schema _newSchema;
+        private readonly DataViewSchema _newSchema;
 
         public IDataView SourceTags { get { return _source; } }
 
-        public SemiOpaqueDataView(IDataView source, Schema newSchema = null)
+        public SemiOpaqueDataView(IDataView source, DataViewSchema newSchema = null)
         {
             _source = source;
             _newSchema = newSchema;
@@ -36,7 +36,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             get { return _source.CanShuffle; }
         }
 
-        public Schema Schema
+        public DataViewSchema Schema
         {
             get { return _newSchema == null ? _source.Schema : _newSchema; }
         }
@@ -46,12 +46,12 @@ namespace Scikit.ML.PipelineGraphTransforms
             return _source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return _source.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _source.GetRowCursorSet(columnsNeeded, n, rand);
         }

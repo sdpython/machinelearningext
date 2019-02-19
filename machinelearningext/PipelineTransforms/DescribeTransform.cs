@@ -182,7 +182,7 @@ namespace Scikit.ML.PipelineTransforms
             _lock = new object();
         }
 
-        public Schema Schema { get { return _input.Schema; } }
+        public DataViewSchema Schema { get { return _input.Schema; } }
 
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
@@ -192,14 +192,14 @@ namespace Scikit.ML.PipelineTransforms
             return Source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
             return _input.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
@@ -222,9 +222,9 @@ namespace Scikit.ML.PipelineTransforms
                         if (_args.showSchema)
                         {
                             if (_args.jsonFormat)
-                                ch.Info("    <{0}>{{\"Schema\":\"{1}\"}},</{0}>", _args.name, SchemaHelper.ToString(_input.Schema));
+                                ch.Info("    <{0}>{{\"DataViewSchema\":\"{1}\"}},</{0}>", _args.name, SchemaHelper.ToString(_input.Schema));
                             else
-                                ch.Info("    <{0}>Schema: {1}</{0}>", _args.name, SchemaHelper.ToString(_input.Schema));
+                                ch.Info("    <{0}>DataViewSchema: {1}</{0}>", _args.name, SchemaHelper.ToString(_input.Schema));
                         }
 
                         if (_args.dimension)
@@ -248,11 +248,11 @@ namespace Scikit.ML.PipelineTransforms
                         {
                             int index = SchemaHelper.GetColumnIndex(sch, textCols[i]);
                             var ty = sch[index].Type;
-                            if (!(ty == NumberType.R4 || ty == NumberType.U4 ||
-                                ty == NumberType.I4 || ty == TextType.Instance ||
-                                ty == BoolType.Instance || ty == NumberType.I8 ||
+                            if (!(ty == NumberDataViewType.Single || ty == NumberDataViewType.UInt32 ||
+                                ty == NumberDataViewType.Int32 || ty == TextDataViewType.Instance ||
+                                ty == BooleanDataViewType.Instance || ty == NumberDataViewType.Int64 ||
                                 (ty.IsKey() && ty.AsKey().RawKind() == DataKind.U4) ||
-                                (ty.IsVector() && ty.AsVector().ItemType() == NumberType.R4)))
+                                (ty.IsVector() && ty.AsVector().ItemType() == NumberDataViewType.Single)))
                                 throw ch.Except("Unsupported type {0} (schema={1}).", _args.columns[i], SchemaHelper.ToString(sch));
                             indexesCol.Add(index);
                         }
@@ -262,20 +262,20 @@ namespace Scikit.ML.PipelineTransforms
                         var requiredIndexes = required.OrderBy(c => c).ToArray();
                         using (var cur = _input.GetRowCursor(Schema.Where(i => required.Contains(i.Index))))
                         {
-                            bool[] isText = requiredIndexes.Select(c => sch[c].Type == TextType.Instance).ToArray();
-                            bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BoolType.Instance).ToArray();
-                            bool[] isFloat = requiredIndexes.Select(c => sch[c].Type == NumberType.R4).ToArray();
-                            bool[] isUint = requiredIndexes.Select(c => sch[c].Type == NumberType.U4 || sch[c].Type.RawKind() == DataKind.U4).ToArray();
-                            bool[] isInt = requiredIndexes.Select(c => sch[c].Type == NumberType.I4 || sch[c].Type.RawKind() == DataKind.I4).ToArray();
-                            bool[] isInt8 = requiredIndexes.Select(c => sch[c].Type == NumberType.I8 || sch[c].Type.RawKind() == DataKind.I8).ToArray();
+                            bool[] isText = requiredIndexes.Select(c => sch[c].Type == TextDataViewType.Instance).ToArray();
+                            bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BooleanDataViewType.Instance).ToArray();
+                            bool[] isFloat = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Single).ToArray();
+                            bool[] isUint = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.UInt32 || sch[c].Type.RawKind() == DataKind.U4).ToArray();
+                            bool[] isInt = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Int32 || sch[c].Type.RawKind() == DataKind.I4).ToArray();
+                            bool[] isInt8 = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Int64 || sch[c].Type.RawKind() == DataKind.I8).ToArray();
 
-                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BoolType.Instance || sch[i].Type.RawKind() == DataKind.BL ? cur.GetGetter<bool>(i) : null).ToArray();
-                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberType.U4 || sch[i].Type.RawKind() == DataKind.U4 ? cur.GetGetter<uint>(i) : null).ToArray();
-                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(i) : null).ToArray();
-                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberType.R4 ? cur.GetGetter<float>(i) : null).ToArray();
+                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BooleanDataViewType.Instance || sch[i].Type.RawKind() == DataKind.BL ? cur.GetGetter<bool>(i) : null).ToArray();
+                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.UInt32 || sch[i].Type.RawKind() == DataKind.U4 ? cur.GetGetter<uint>(i) : null).ToArray();
+                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextDataViewType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(i) : null).ToArray();
+                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Single ? cur.GetGetter<float>(i) : null).ToArray();
                             ValueGetter<VBuffer<float>>[] vectorGetters = requiredIndexes.Select(i => sch[i].Type.IsVector() ? cur.GetGetter<VBuffer<float>>(i) : null).ToArray();
-                            ValueGetter<int>[] intGetters = requiredIndexes.Select(i => sch[i].Type == NumberType.I4 || sch[i].Type.RawKind() == DataKind.I4 ? cur.GetGetter<int>(i) : null).ToArray();
-                            ValueGetter<long>[] int8Getters = requiredIndexes.Select(i => sch[i].Type == NumberType.I8 || sch[i].Type.RawKind() == DataKind.I8 ? cur.GetGetter<long>(i) : null).ToArray();
+                            ValueGetter<int>[] intGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Int32 || sch[i].Type.RawKind() == DataKind.I4 ? cur.GetGetter<int>(i) : null).ToArray();
+                            ValueGetter<long>[] int8Getters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Int64 || sch[i].Type.RawKind() == DataKind.I8 ? cur.GetGetter<long>(i) : null).ToArray();
 
                             var cols = _args.columns == null ? null : new HashSet<string>(_args.columns);
                             var hists = _args.hists == null ? null : new HashSet<string>(_args.hists);

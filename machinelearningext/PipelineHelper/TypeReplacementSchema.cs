@@ -16,7 +16,7 @@ namespace Scikit.ML.PipelineHelper
     public class TypeReplacementSchema : ISchema
     {
         readonly ISchema _schemaInput;
-        readonly Dictionary<int, ColumnType> _types;
+        readonly Dictionary<int, DataViewType> _types;
         readonly Dictionary<int, int> _mappedColumns;
 
         /// <summary>
@@ -25,14 +25,14 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="inputSchema">existing schema</param>
         /// <param name="names">new columns</param>
         /// <param name="types">corresponding types</param>
-        public TypeReplacementSchema(ISchema inputSchema, string[] names, ColumnType[] types)
+        public TypeReplacementSchema(ISchema inputSchema, string[] names, DataViewType[] types)
         {
             _schemaInput = inputSchema;
             if (names == null || names.Length == 0)
                 throw Contracts.ExceptEmpty("The extended schema must contain new names.");
             if (types == null || types.Length != names.Length)
                 throw Contracts.Except("names and types must have the same length.");
-            _types = new Dictionary<int, ColumnType>();
+            _types = new Dictionary<int, DataViewType>();
             _mappedColumns = new Dictionary<int, int>();
             Contracts.Assert(types.Length == names.Length);
             int index;
@@ -51,14 +51,14 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="inputSchema">existing schema</param>
         /// <param name="names">new columns</param>
         /// <param name="types">corresponding types</param>
-        public TypeReplacementSchema(Schema inputSchema, string[] names, ColumnType[] types)
+        public TypeReplacementSchema(DataViewSchema inputSchema, string[] names, DataViewType[] types)
         {
             _schemaInput = new ExtendedSchema(inputSchema);
             if (names == null || names.Length == 0)
                 throw Contracts.ExceptEmpty("The extended schema must contain new names.");
             if (types == null || types.Length != names.Length)
                 throw Contracts.Except("names and types must have the same length.");
-            _types = new Dictionary<int, ColumnType>();
+            _types = new Dictionary<int, DataViewType>();
             _mappedColumns = new Dictionary<int, int>();
             Contracts.Assert(types.Length == names.Length);
             int index;
@@ -94,7 +94,7 @@ namespace Scikit.ML.PipelineHelper
             return _schemaInput.GetColumnName(col);
         }
 
-        public ColumnType GetColumnType(int col)
+        public DataViewType GetColumnType(int col)
         {
             if (_types.ContainsKey(col))
                 return _types[col];
@@ -113,7 +113,7 @@ namespace Scikit.ML.PipelineHelper
             throw new IndexOutOfRangeException();
         }
 
-        public ColumnType GetMetadataTypeOrNull(string kind, int col)
+        public DataViewType GetMetadataTypeOrNull(string kind, int col)
         {
             int count = _schemaInput.ColumnCount;
             if (col < count)
@@ -121,7 +121,7 @@ namespace Scikit.ML.PipelineHelper
             return null;
         }
 
-        public IEnumerable<KeyValuePair<string, ColumnType>> GetMetadataTypes(int col)
+        public IEnumerable<KeyValuePair<string, DataViewType>> GetMetadataTypes(int col)
         {
             int count = _schemaInput.ColumnCount;
             if (col < count)

@@ -93,10 +93,10 @@ namespace Scikit.ML.TimeSeries
         IDataTransform _transform;      // templated transform (not the serialized version)
         IPredictor _trend;              // Trend predictor
         Arguments _args;                // parameters
-        Schema _schema;                 // We need the schema the transform outputs.
+        DataViewSchema _schema;                 // We need the schema the transform outputs.
         object _lock;
 
-        public override Schema OutputSchema { get { return _schema; } }
+        public override DataViewSchema OutputSchema { get { return _schema; } }
 
         #endregion
 
@@ -113,7 +113,7 @@ namespace Scikit.ML.TimeSeries
             SchemaHelper.GetColumnIndex(input.Schema, args.columns[0].Source);
             _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                        new[] { _args.columns[0].Name },
-                                                       new[] { NumberType.R4 /*input.Schema.GetColumnType(index)*/ }));
+                                                       new[] { NumberDataViewType.Single /*input.Schema.GetColumnType(index)*/ }));
             _trend = null;
             _transform = null;
             _lock = new object();
@@ -155,7 +155,7 @@ namespace Scikit.ML.TimeSeries
 
             _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                             new[] { _args.columns[0].Name },
-                                            new[] { NumberType.R4 /*input.Schema.GetColumnType(index)*/ }));
+                                            new[] { NumberDataViewType.Single /*input.Schema.GetColumnType(index)*/ }));
             _lock = new object();
             _transform = BuildTransform(_trend);
         }
@@ -180,7 +180,7 @@ namespace Scikit.ML.TimeSeries
             return null;
         }
 
-        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        protected override DataViewRowCursor GetRowCursorCore(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             if (_transform == null)
                 lock (_lock)
@@ -191,7 +191,7 @@ namespace Scikit.ML.TimeSeries
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public override DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             if (_transform == null)
                 lock (_lock)
@@ -206,7 +206,7 @@ namespace Scikit.ML.TimeSeries
 
         #region transform own logic
 
-        private void ValidateInputs(out int indexLabel, out int indexTime, out ColumnType typeLabel, out ColumnType typeTime)
+        private void ValidateInputs(out int indexLabel, out int indexTime, out DataViewType typeLabel, out DataViewType typeTime)
         {
             indexLabel = SchemaHelper.GetColumnIndex(Source.Schema, _args.columns[0].Source);
             typeLabel = Source.Schema[indexLabel].Type;
@@ -226,7 +226,7 @@ namespace Scikit.ML.TimeSeries
         private RoleMappedData BuildViewBeforeTraining(out string slotName, out string slotTime, bool train)
         {
             int index, indexTime;
-            ColumnType type, typeTime;
+            DataViewType type, typeTime;
             ValidateInputs(out index, out indexTime, out type, out typeTime);
             IDataView input = Source;
             slotName = _args.columns[0].Source;
@@ -235,7 +235,7 @@ namespace Scikit.ML.TimeSeries
             {
                 slotName = input.Schema.GetTempColumnName() + "in";
                 input = LambdaColumnHelper.Create(Host, "takeslot", input, _args.columns[0].Source, slotName,
-                                            new VectorType(NumberType.R4), NumberType.R4,
+                                            new VectorType(NumberDataViewType.Single), NumberDataViewType.Single,
                                             (in VBuffer<float> src, ref float dst) =>
                                             {
                                                 dst = src.GetItemOrDefault(0);
@@ -247,7 +247,7 @@ namespace Scikit.ML.TimeSeries
             {
                 slotTime = input.Schema.GetTempColumnName() + "time";
                 input = LambdaColumnHelper.Create(Host, "makevect", input, _args.timeColumn, slotTime,
-                                            NumberType.R4, new VectorType(NumberType.R4, 2),
+                                            NumberDataViewType.Single, new VectorType(NumberDataViewType.Single, 2),
                                             (in float src, ref VBuffer<float> dst) =>
                                             {
                                                 if (dst.Values != null)
@@ -299,8 +299,8 @@ namespace Scikit.ML.TimeSeries
             var concat = ColumnConcatenatingTransformer.Create(Host, cargs, predict);
 
             var lambdaView = LambdaColumnHelper.Create(Host,
-                "DeTrendTransform", concat, tempColumn, _args.columns[0].Name, new VectorType(NumberType.R4, 2),
-                NumberType.R4,
+                "DeTrendTransform", concat, tempColumn, _args.columns[0].Name, new VectorType(NumberDataViewType.Single, 2),
+                NumberDataViewType.Single,
                 (in VBuffer<float> src, ref float dst) =>
                 {
                     dst = src.Values[1] - src.Values[0];

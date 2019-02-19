@@ -21,7 +21,7 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="view">IDataView</param>
         /// <param name="predicate">column selector (null for all)</param>
         /// <returns>number of rows</returns>
-        public static long ComputeRowCount(IDataView view, IEnumerable<Schema.Column> columnsNeeded = null)
+        public static long ComputeRowCount(IDataView view, IEnumerable<DataViewSchema.Column> columnsNeeded = null)
         {
             var res = view.GetRowCount();
             if (res.HasValue)

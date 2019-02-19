@@ -6,6 +6,7 @@ using System.IO;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.ScikitAPI;
 using Scikit.ML.TestHelper;
@@ -60,7 +61,7 @@ namespace TestMachineLearningExt
             {
                 ComponentHelper.AddStandardComponents(env);
 
-                var df = Scikit.ML.DataManipulation.DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new ColumnType[] { NumberType.R4 });
+                var df = Scikit.ML.DataManipulation.DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
                 var conc = env.CreateTransform("Concat{col=Feature:Sepal_length,Sepal_width}", df);
                 var roleMap = env.CreateExamples(conc, "Feature", label: "Label");
                 var trainer = CreateTrainer(env, "km");
@@ -74,7 +75,7 @@ namespace TestMachineLearningExt
 
                 IPredictor ipred;
                 using (var fs = File.OpenRead(outModelFilePath))
-                    ipred = env.LoadPredictorOrNull(fs);
+                    ipred = ModelFileUtils.LoadPredictorOrNull(env, fs);
 
                 var scorer = ScoreUtils.GetScorer(ipred, roleMap, env, null);
                 var dfout = Scikit.ML.DataManipulation.DataFrameIO.ReadView(scorer);

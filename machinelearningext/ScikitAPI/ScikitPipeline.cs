@@ -157,7 +157,7 @@ namespace Scikit.ML.ScikitAPI
         protected void Load(Stream fs)
         {
             var transformPipe = ModelFileUtils.LoadPipeline(_env, fs, new MultiFileSource(null), true);
-            var ipred = _env.LoadPredictorOrNull(fs);
+            var ipred = ModelFileUtils.LoadPredictorOrNull(_env, fs);
 
             IDataView root;
             for (root = transformPipe; root is IDataTransform && !(root is PassThroughTransform); root = ((IDataTransform)root).Source) ;

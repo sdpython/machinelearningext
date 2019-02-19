@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Microsoft.ML.Transforms;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
@@ -292,7 +293,7 @@ namespace TestMachineLearningExt
 
                 using (var fs = File.OpenRead(outModelFilePath))
                 {
-                    var deserializedData = env.LoadTransforms(fs, loader);
+                    var deserializedData = ModelFileUtils.LoadTransforms(env, loader, fs);
                     var saver = env.CreateSaver("Text");
                     using (var fs2 = File.Create(outputDataFilePath))
                         saver.SaveData(fs2, deserializedData,
@@ -354,7 +355,7 @@ namespace TestMachineLearningExt
 
                 using (var fs = File.OpenRead(outModelFilePath))
                 {
-                    var deserializedData = env.LoadTransforms(fs, loader);
+                    var deserializedData = ModelFileUtils.LoadTransforms(env, loader, fs);
                     var saver = env.CreateSaver("Text");
                     using (var fs2 = File.Create(outputDataFilePath))
                         saver.SaveData(fs2, deserializedData,

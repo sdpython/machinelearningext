@@ -23,7 +23,7 @@ namespace TestProfileBenchmark
         {
             bool normalize = true;
 
-            var args = new TextLoader.Arguments()
+            var args = new TextLoader.Options()
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
@@ -79,7 +79,7 @@ namespace TestProfileBenchmark
 
         private static ITransformer _TrainSentiment2()
         {
-            var args = new TextLoader.Arguments()
+            var args = new TextLoader.Options()
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
@@ -104,7 +104,7 @@ namespace TestProfileBenchmark
                                 string engine, IDataScorerTransform scorer, ITransformer transformer,
                                 int N, int ncall, bool cacheScikit)
         {
-            var args = new TextLoader.Arguments()
+            var args = new TextLoader.Options()
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,

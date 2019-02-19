@@ -27,8 +27,8 @@ namespace Scikit.ML.ProductionPrediction
         readonly bool _disposeEnv;
         ValueMapperDispose<TRowInput, TRowOutput> _valueMapperDispose;
 
-        public ColumnType InputType => null;
-        public ColumnType OutputType => null;
+        public DataViewType InputType => null;
+        public DataViewType OutputType => null;
 
         /// <summary>
         /// Constructor.

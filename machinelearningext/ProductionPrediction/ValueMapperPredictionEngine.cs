@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 
 
@@ -26,7 +27,7 @@ namespace Scikit.ML.ProductionPrediction
             public float Score;
             public float Probability;
 
-            public Delegate[] GetCursorGetter(RowCursor cursor)
+            public Delegate[] GetCursorGetter(DataViewRowCursor cursor)
             {
                 int indexL = SchemaHelper.GetColumnIndex(cursor.Schema, "PredictedLabel");
                 int indexS = SchemaHelper.GetColumnIndex(cursor.Schema, "Score");
@@ -94,11 +95,11 @@ namespace Scikit.ML.ProductionPrediction
             var view = DataViewConstructionUtils.CreateFromEnumerable<TRowValue>(_env, inputs);
 
             long modelPosition = modelStream.Position;
-            _predictor = ComponentCreation.LoadPredictorOrNull(_env, modelStream);
+            _predictor = ModelFileUtils.LoadPredictorOrNull(_env, modelStream);
             if (_predictor == null)
                 throw _env.Except("Unable to load a model.");
             modelStream.Seek(modelPosition, SeekOrigin.Begin);
-            _transforms = ComponentCreation.LoadTransforms(_env, modelStream, view);
+            _transforms = ModelFileUtils.LoadTransforms(_env, view, modelStream);
             if (_transforms == null)
                 throw _env.Except("Unable to load a model.");
 

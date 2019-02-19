@@ -14,8 +14,8 @@ namespace Scikit.ML.ProductionPrediction
         public ValueMapper<TSrc, TDst> _mapper;
         public IDisposable[] _toDispose;
 
-        public ColumnType InputType => SchemaHelper.GetColumnType<TSrc>();
-        public ColumnType OutputType => SchemaHelper.GetColumnType<TDst>();
+        public DataViewType InputType => SchemaHelper.GetColumnType<TSrc>();
+        public DataViewType OutputType => SchemaHelper.GetColumnType<TDst>();
 
         public ValueMapperDispose(ValueMapper<TSrc, TDst> mapper, IDisposable[] toDispose)
         {

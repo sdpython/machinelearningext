@@ -5,8 +5,8 @@ using System;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
-using Microsoft.Data.DataView;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.TestHelper;
 using Scikit.ML.ModelSelection;
@@ -160,7 +160,7 @@ namespace TestMachineLearningExt
 
                 using (var fs = File.OpenRead(outModelFilePath))
                 {
-                    var deserializedData = env.LoadTransforms(fs, loader);
+                    var deserializedData = ModelFileUtils.LoadTransforms(env, loader, fs);
                     var saver = env.CreateSaver("Text");
                     var columns = new int[deserializedData.Schema.Count];
                     for (int i = 0; i < columns.Length; ++i)

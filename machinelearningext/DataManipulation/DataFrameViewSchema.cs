@@ -32,7 +32,7 @@ namespace Scikit.ML.DataManipulation
             _revmapping = li.ToArray();
         }
 
-        public DataFrameViewSchema(Schema schema, IEnumerable<int> colIndices)
+        public DataFrameViewSchema(DataViewSchema schema, IEnumerable<int> colIndices)
         {
             _schema = new ExtendedSchema(schema);
             _mapping = new Dictionary<int, int>();
@@ -57,9 +57,9 @@ namespace Scikit.ML.DataManipulation
             col = _mapping[col];
             return r;
         }
-        public ColumnType GetColumnType(int col) { return _schema.GetColumnType(_revmapping[col]); }
-        public ColumnType GetMetadataTypeOrNull(string kind, int col) { return _schema.GetMetadataTypeOrNull(kind, _revmapping[col]); }
+        public DataViewType GetColumnType(int col) { return _schema.GetColumnType(_revmapping[col]); }
+        public DataViewType GetMetadataTypeOrNull(string kind, int col) { return _schema.GetMetadataTypeOrNull(kind, _revmapping[col]); }
         public void GetMetadata<TValue>(string kind, int col, ref TValue value) { _schema.GetMetadata(kind, _revmapping[col], ref value); }
-        public IEnumerable<KeyValuePair<string, ColumnType>> GetMetadataTypes(int col) { return _schema.GetMetadataTypes(_revmapping[col]); }
+        public IEnumerable<KeyValuePair<string, DataViewType>> GetMetadataTypes(int col) { return _schema.GetMetadataTypes(_revmapping[col]); }
     }
 }

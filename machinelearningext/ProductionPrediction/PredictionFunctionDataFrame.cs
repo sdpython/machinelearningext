@@ -25,7 +25,7 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="transformer">The model (transformer) to use for prediction.</param>
         /// <param name="inputSchema">Input schema.</param>
         /// <param name="conc">Number of threads.</param>
-        public PredictionFunctionDataFrame(IHostEnvironment env, ITransformer transformer, Schema inputSchema, int conc = 1)
+        public PredictionFunctionDataFrame(IHostEnvironment env, ITransformer transformer, DataViewSchema inputSchema, int conc = 1)
         {
             Contracts.CheckValue(env, nameof(env));
             env.CheckValue(transformer, nameof(transformer));
@@ -68,7 +68,7 @@ namespace Scikit.ML.ProductionPrediction
         /// It will be accepting instances of <typeparamref name="TSrc"/> as input, and produce
         /// instances of <typeparamref name="TDst"/> as output.
         /// </summary>
-        public static PredictionFunctionDataFrame MakePredictionFunctionDataFrame(this ITransformer transformer, IHostEnvironment env, Schema inputSchema, int conc = 1)
+        public static PredictionFunctionDataFrame MakePredictionFunctionDataFrame(this ITransformer transformer, IHostEnvironment env, DataViewSchema inputSchema, int conc = 1)
             => new PredictionFunctionDataFrame(env, transformer, inputSchema, conc);
     }
 }

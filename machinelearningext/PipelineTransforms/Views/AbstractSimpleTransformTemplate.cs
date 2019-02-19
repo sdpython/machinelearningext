@@ -59,9 +59,9 @@ namespace Scikit.ML.PipelineTransforms
         public virtual IDataView SourceEnd { get { return _sourcePipe; } }
 
         /// <summary>
-        /// Schema.
+        /// DataViewSchema.
         /// </summary>
-        public virtual Schema Schema
+        public virtual DataViewSchema Schema
         {
             get
             {
@@ -140,7 +140,7 @@ namespace Scikit.ML.PipelineTransforms
             return _sourcePipe.GetRowCount();
         }
 
-        public virtual RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public virtual DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.CheckValue(_sourceCtx, "_sourceCtx");
             if (!IsInitialized())
@@ -153,7 +153,7 @@ namespace Scikit.ML.PipelineTransforms
             return _sourcePipe.GetRowCursor(columnsNeeded, rand);
         }
 
-        public virtual RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public virtual DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_sourceCtx, "_sourceCtx");
             _host.AssertValue(_sourcePipe, "_sourcePipe");

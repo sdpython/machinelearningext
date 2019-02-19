@@ -37,7 +37,7 @@ namespace Scikit.ML.DataManipulation
 
         #region IDataView API
 
-        public Schema Schema => ExtendedSchema.Create(_schema);
+        public DataViewSchema Schema => ExtendedSchema.Create(_schema);
         public ISchema SchemaI => _schema;
         public int ColumnCount => _columns == null ? _src.ColumnCount : _columns.Length;
 
@@ -86,22 +86,22 @@ namespace Scikit.ML.DataManipulation
             return SchemaHelper.GetColumnIndex(Schema, name);
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return _src.GetRowCursor(_rows, _columns, columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _src.GetRowCursorSet(_rows, _columns, columnsNeeded, n, rand);
         }
 
-        public RowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             throw Contracts.ExceptNotSupp("Not applicable here, consider building a DataFrameView.");
         }
 
-        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             throw Contracts.ExceptNotSupp("Not applicable here, consider building a DataFrame.");
         }
@@ -171,7 +171,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns the list of types.
         /// </summary>
-        public ColumnType[] Kinds => _columns == null ? _src.Kinds : _columns.Select(c => _src.Kinds[c]).ToArray();
+        public DataViewType[] Kinds => _columns == null ? _src.Kinds : _columns.Select(c => _src.Kinds[c]).ToArray();
 
         /// <summary>
         /// A view cannot be modified by adding a column.

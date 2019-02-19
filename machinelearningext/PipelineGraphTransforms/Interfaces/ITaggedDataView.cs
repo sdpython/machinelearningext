@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineTransforms;
 
 
@@ -165,7 +166,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             {
                 using (Stream modelStream = new FileStream(tag, FileMode.Open, FileAccess.Read))
                 {
-                    var ipred = ComponentCreation.LoadPredictorOrNull(env, modelStream);
+                    var ipred = ModelFileUtils.LoadPredictorOrNull(env, modelStream);
                     return ipred;
                 }
             }

@@ -25,7 +25,7 @@ namespace TestMachineLearningExt
             {
                 var methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
                 var iris = FileHelper.GetTestFile("iris.txt");
-                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new ColumnType[] { NumberType.R4 });
+                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
                 using (var pipe = new ScikitPipeline(new[] { "Concat{col=Feature:Sepal_length,Sepal_width}",
                                                              "TreeFeat{tr=ft{iter=2} lab=Label feat=Feature}"}))
                 {

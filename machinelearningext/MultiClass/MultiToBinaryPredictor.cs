@@ -82,7 +82,7 @@ namespace Scikit.ML.MultiClass
                 case DataKind.R4:
                     _impl = new ImplRawBinary<float>(ctx, env);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     _impl = new ImplRawBinary<byte>(ctx, env);
                     break;
                 case DataKind.U2:

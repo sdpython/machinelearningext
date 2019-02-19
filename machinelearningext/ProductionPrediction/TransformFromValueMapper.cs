@@ -26,7 +26,7 @@ namespace Scikit.ML.ProductionPrediction
         readonly IValueMapper _mapper;
         readonly string _inputColumn;
         readonly string _outputColumn;
-        readonly Schema _schema;
+        readonly DataViewSchema _schema;
 
         #endregion
 
@@ -71,22 +71,22 @@ namespace Scikit.ML.ProductionPrediction
             _transform = CreateMemoryTransform();
         }
 
-        public ColumnType InputType { get { return _mapper.InputType; } }
-        public ColumnType OutputType { get { return _mapper.OutputType; } }
+        public DataViewType InputType { get { return _mapper.InputType; } }
+        public DataViewType OutputType { get { return _mapper.OutputType; } }
         public string InputName { get { return _inputColumn; } }
         public string OutputName { get { return _outputColumn; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>() { return _mapper.GetMapper<TSrc, TDst>(); }
         public IDataView Source { get { return _source; } }
         public bool CanShuffle { get { return _source.CanShuffle; } }
         public long? GetRowCount() { return _source.GetRowCount(); }
-        public Schema Schema { get { return _schema; } }
+        public DataViewSchema Schema { get { return _schema; } }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
         }
@@ -174,16 +174,16 @@ namespace Scikit.ML.ProductionPrediction
             }
 
             public TransformFromValueMapper Parent { get { return _parent; } }
-            public ColumnType InputType { get { return _parent.InputType; } }
-            public ColumnType OutputType { get { return _parent.OutputType; } }
+            public DataViewType InputType { get { return _parent.InputType; } }
+            public DataViewType OutputType { get { return _parent.OutputType; } }
             public ValueMapper<TTSrc, TTDst> GetMapper<TTSrc, TTDst>() { return _parent.GetMapper<TTSrc, TTDst>(); }
             public IDataView Source { get { return _parent.Source; } }
             public bool CanShuffle { get { return _parent.CanShuffle; } }
             public long? GetRowCount() { return _parent.GetRowCount(); }
-            public Schema Schema { get { return _parent.Schema; } }
+            public DataViewSchema Schema { get { return _parent.Schema; } }
             public void Save(ModelSaveContext ctx) { throw Contracts.ExceptNotSupp("Not meant to be serialized. You need to serialize whatever it takes to instantiate it."); }
 
-            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+            public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 int index = SchemaHelper.GetColumnIndex(Source.Schema, _parent.InputName);
                 if (columnsNeeded.Where(c => c.Index == index).Any())
@@ -198,7 +198,7 @@ namespace Scikit.ML.ProductionPrediction
                     return new SameCursor(Source.GetRowCursor(columnsNeeded, rand), Schema);
             }
 
-            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+            public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
             {
                 int index = SchemaHelper.GetColumnIndex(Source.Schema, _parent.InputName);
                 if (columnsNeeded.Where(c => c.Index == index).Any())
@@ -220,13 +220,13 @@ namespace Scikit.ML.ProductionPrediction
 
         #region cursor
 
-        class MemoryCursor<TSrc, TDst> : RowCursor
+        class MemoryCursor<TSrc, TDst> : DataViewRowCursor
         {
             readonly MemoryTransform<TSrc, TDst> _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly int _inputCol;
 
-            public MemoryCursor(MemoryTransform<TSrc, TDst> view, RowCursor cursor, int inputCol)
+            public MemoryCursor(MemoryTransform<TSrc, TDst> view, DataViewRowCursor cursor, int inputCol)
             {
                 _view = view;
                 _inputCursor = cursor;
@@ -239,11 +239,11 @@ namespace Scikit.ML.ProductionPrediction
                 return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 // We do not change the ID (row to row transform).
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -251,7 +251,7 @@ namespace Scikit.ML.ProductionPrediction
 
             public override long Batch { get { return _inputCursor.Batch; } }        // No change.
             public override long Position { get { return _inputCursor.Position; } }  // No change.
-            public override Schema Schema { get { return _view.Schema; } }          // No change.
+            public override DataViewSchema Schema { get { return _view.Schema; } }          // No change.
 
             protected override void Dispose(bool disposing)
             {

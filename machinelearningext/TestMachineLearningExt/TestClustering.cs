@@ -223,22 +223,22 @@ namespace TestMachineLearningExt
 
             using (var env = EnvHelper.NewTestEnvironment(conc: 1))
             {
-                //var loader = env.CreateLoader("text{col=RowId:I4:0 col=Features:R4:1-2 header=+}", new MultiFileSource(dataFilePath));
-                var loader = new TextLoader(env, new TextLoader.Arguments()
+                //var loader = env.CreateLoader("text{col=DataViewRowId:I4:0 col=Features:R4:1-2 header=+}", new MultiFileSource(dataFilePath));
+                var loader = new TextLoader(env, new TextLoader.Options()
                 {
                     HasHeader = true,
-                    Columns = new[] { TextLoader.Column.Parse("RowId:R4:0"),
+                    Columns = new[] { TextLoader.Column.Parse("DataViewRowId:R4:0"),
                                      TextLoader.Column.Parse("Features:R4:1-2")}
                 }).Read(new MultiFileSource(dataFilePath));
                 var xf = env.CreateTransform("DBScan{col=Features}", loader);
 
                 string schema = SchemaHelper.ToString(xf.Schema);
                 if (string.IsNullOrEmpty(schema))
-                    throw new Exception("Schema is null.");
+                    throw new Exception("DataViewSchema is null.");
                 if (!schema.Contains("Cluster"))
-                    throw new Exception("Schema does not contain Cluster.");
+                    throw new Exception("DataViewSchema does not contain Cluster.");
                 if (!schema.Contains("Score"))
-                    throw new Exception("Schema does not contain Score.");
+                    throw new Exception("DataViewSchema does not contain Score.");
 
                 StreamHelper.SaveModel(env, xf, outModelFilePath);
 
@@ -443,17 +443,17 @@ namespace TestMachineLearningExt
 
             using (var env = EnvHelper.NewTestEnvironment())
             {
-                var loader = env.CreateLoader("text{col=RowId:I4:0 col=Features:R4:1-2 header=+}",
+                var loader = env.CreateLoader("text{col=DataViewRowId:I4:0 col=Features:R4:1-2 header=+}",
                                               new MultiFileSource(dataFilePath));
                 var xf = env.CreateTransform("Optics{col=Features epsilons=0.3 minPoints=6}", loader);
 
                 string schema = SchemaHelper.ToString(xf.Schema);
                 if (string.IsNullOrEmpty(schema))
-                    throw new Exception("Schema is null.");
+                    throw new Exception("DataViewSchema is null.");
                 if (!schema.Contains("ClusterId"))
-                    throw new Exception("Schema does not contain Cluster.");
+                    throw new Exception("DataViewSchema does not contain Cluster.");
                 if (!schema.Contains("Score"))
-                    throw new Exception("Schema does not contain Score.");
+                    throw new Exception("DataViewSchema does not contain Score.");
 
                 StreamHelper.SaveModel(env, xf, outModelFilePath);
 
@@ -487,17 +487,17 @@ namespace TestMachineLearningExt
 
             using (var env = EnvHelper.NewTestEnvironment())
             {
-                var loader = env.CreateLoader("text{col=RowId:I4:0 col=Features:R4:1-2 header=+}",
+                var loader = env.CreateLoader("text{col=DataViewRowId:I4:0 col=Features:R4:1-2 header=+}",
                                               new MultiFileSource(dataFilePath));
                 var xf = env.CreateTransform("OpticsOrd{col=Features epsilon=0.3 minPoints=6}", loader);
 
                 string schema = SchemaHelper.ToString(xf.Schema);
                 if (string.IsNullOrEmpty(schema))
-                    throw new Exception("Schema is null.");
+                    throw new Exception("DataViewSchema is null.");
                 if (!schema.Contains("Ordering"))
-                    throw new Exception("Schema does not contain Ordering.");
+                    throw new Exception("DataViewSchema does not contain Ordering.");
                 if (!schema.Contains("Reachability"))
-                    throw new Exception("Schema does not contain Reachability.");
+                    throw new Exception("DataViewSchema does not contain Reachability.");
                 StreamHelper.SaveModel(env, xf, outModelFilePath);
 
                 var saver = env.CreateSaver("Text{header=- schema=-}");

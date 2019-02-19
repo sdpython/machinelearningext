@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
 using Scikit.ML.PipelineLambdaTransforms;
@@ -44,7 +45,7 @@ namespace Scikit.ML.TestHelper
             // We load it again.
             using (var fs = File.OpenRead(outModelFilePath))
             {
-                var tr2 = env.LoadTransforms(fs, source);
+                var tr2 = ModelFileUtils.LoadTransforms(env, source, fs);
                 if (tr2 == null)
                     throw new Exception(string.Format("Unable to load '{0}'", outModelFilePath));
                 if (transform.GetType() != tr2.GetType())
@@ -65,7 +66,7 @@ namespace Scikit.ML.TestHelper
             // Check we have the same output.
             using (var fs = File.OpenRead(outModelFilePath))
             {
-                var tr = env.LoadTransforms(fs, source);
+                var tr = ModelFileUtils.LoadTransforms(env, source, fs);
                 saver = env.CreateSaver(forceDense ? "Text{dense=+}" : "Text");
                 using (var fs2 = File.Create(outData2))
                     saver.SaveData(fs2, tr, columns);
@@ -110,8 +111,8 @@ namespace Scikit.ML.TestHelper
                 {
                     var name = schema[i].Name;
                     view = LambdaColumnHelper.Create(env,
-                                    "Lambda", view, name, name, new VectorType(NumberType.R4),
-                                    TextType.Instance,
+                                    "Lambda", view, name, name, new VectorType(NumberDataViewType.Single),
+                                    TextDataViewType.Instance,
                                     (in VBuffer<float> src, ref ReadOnlyMemory<char> dst) =>
                                     {
                                         var st = string.Join(";", src.Values.Select(c => c.ToString()));

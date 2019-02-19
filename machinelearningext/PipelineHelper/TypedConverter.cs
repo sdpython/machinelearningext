@@ -73,7 +73,7 @@ namespace Scikit.ML.PipelineHelper
                     mapperBL = SchemaHelper.GetConverter<TLabel, bool>(out identity);
                     mapperFromBL = SchemaHelper.GetConverter<bool, TLabel>(out identity);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     mapperU1 = SchemaHelper.GetConverter<TLabel, byte>(out identity);
                     mapperFromU1 = SchemaHelper.GetConverter<byte, TLabel>(out identity);
                     break;
@@ -118,7 +118,7 @@ namespace Scikit.ML.PipelineHelper
             {
                 case DataKind.BL:
                     return mapperBL as ValueMapper<TLabel, TDest>;
-                case DataKind.U1:
+                case DataKind.I1:
                     return mapperU1 as ValueMapper<TLabel, TDest>;
                 case DataKind.U2:
                     return mapperU2 as ValueMapper<TLabel, TDest>;
@@ -142,7 +142,7 @@ namespace Scikit.ML.PipelineHelper
             {
                 case DataKind.BL:
                     return mapperBL as ValueMapper<TDest, TLabel>;
-                case DataKind.U1:
+                case DataKind.I1:
                     return mapperU1 as ValueMapper<TDest, TLabel>;
                 case DataKind.U2:
                     return mapperU2 as ValueMapper<TDest, TLabel>;
@@ -163,7 +163,7 @@ namespace Scikit.ML.PipelineHelper
                     mapperBL(in value, ref _bl);
                     ctx.Writer.Write(_bl);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     mapperU1(in value, ref _u1);
                     ctx.Writer.Write(_u1);
                     break;
@@ -192,7 +192,7 @@ namespace Scikit.ML.PipelineHelper
                     var b = ctx.Reader.ReadBoolByte();
                     mapperFromBL(in _bl, ref res);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     _u1 = ctx.Reader.ReadByte();
                     mapperFromU1(in _u1, ref res);
                     break;

@@ -166,7 +166,7 @@ namespace Scikit.ML.MultiClass
         {
             var lab = data.Schema.Label.Value;
             Host.Assert(!data.Schema.Schema[lab.Index].IsHidden);
-            Host.Assert(lab.Type.GetKeyCount() > 0 || lab.Type == NumberType.R4 || lab.Type == NumberType.R8);
+            Host.Assert(lab.Type.GetKeyCount() > 0 || lab.Type == NumberDataViewType.Single || lab.Type == NumberDataViewType.Double);
 
             // Get the destination label column name.
             dstName = data.Schema.Schema.GetTempColumnName();
@@ -176,37 +176,37 @@ namespace Scikit.ML.MultiClass
             {
                 uint key = (uint)(cls + 1);
                 if (_args.downsampling > 0)
-                    return CreateTrainingView(data, key, 1f, -1f, 0f, NumberType.U4, NumberType.Float, ch);
+                    return CreateTrainingView(data, key, 1f, -1f, 0f, NumberDataViewType.UInt32, NumberDataViewType.Single, ch);
                 else
                     return LambdaColumnMapper.Create(Host, "LabelColumnMapper in oOVA (1)", FilterNA(data.Data, lab.Name),
-                        lab.Name, dstName, NumberType.U4, NumberType.Float,
+                        lab.Name, dstName, NumberDataViewType.UInt32, NumberDataViewType.Single,
                         (in uint src, ref float dst) => { dst = src == key ? 1 : default(float); });
             }
-            if (lab.Type == NumberType.R4)
+            if (lab.Type == NumberDataViewType.Single)
             {
                 float key = cls;
                 if (_args.downsampling > 0)
-                    return CreateTrainingView(data, key, 1f, -1f, 0f, NumberType.R4, NumberType.Float, ch);
+                    return CreateTrainingView(data, key, 1f, -1f, 0f, NumberDataViewType.Single, NumberDataViewType.Single, ch);
                 else
                     return LambdaColumnMapper.Create(Host, "LabelColumnMapper in oOVA (2)", FilterNA(data.Data, lab.Name),
-                        lab.Name, dstName, NumberType.R4, NumberType.Float,
+                        lab.Name, dstName, NumberDataViewType.Single, NumberDataViewType.Single,
                         (in float src, ref float dst) => { dst = src == key ? 1 : default(float); });
             }
-            if (lab.Type == NumberType.R8)
+            if (lab.Type == NumberDataViewType.Double)
             {
                 double key = cls;
                 if (_args.downsampling > 0)
-                    return CreateTrainingView(data, key, 1f, -1f, 0f, NumberType.R8, NumberType.Float, ch);
+                    return CreateTrainingView(data, key, 1f, -1f, 0f, NumberDataViewType.Double, NumberDataViewType.Single, ch);
                 else
                     return LambdaColumnMapper.Create(Host, "LabelColumnMapper in oOVA (3)", FilterNA(data.Data, lab.Name),
-                        lab.Name, dstName, NumberType.R8, NumberType.Float,
+                        lab.Name, dstName, NumberDataViewType.Double, NumberDataViewType.Single,
                         (in double src, ref float dst) => { dst = src == key ? 1 : default(float); });
             }
 
             throw Host.ExceptNotSupp("Label column type is not supported by OVA: {0}", lab.Type);
         }
 
-        IDataView CreateTrainingView<T1, T2>(RoleMappedData data, T1 cls, T2 one, T2 mone, T2 zero, ColumnType c1, ColumnType c2, IChannel ch)
+        IDataView CreateTrainingView<T1, T2>(RoleMappedData data, T1 cls, T2 one, T2 mone, T2 zero, DataViewType c1, DataViewType c2, IChannel ch)
             where T1 : IEquatable<T1>
             where T2 : IEquatable<T2>
         {

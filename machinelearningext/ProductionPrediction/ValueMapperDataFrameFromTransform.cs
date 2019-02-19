@@ -25,8 +25,8 @@ namespace Scikit.ML.ProductionPrediction
         IHostEnvironment _computeEnv;
         readonly bool _disposeEnv;
 
-        public ColumnType InputType => null;
-        public ColumnType OutputType => null;
+        public DataViewType InputType => null;
+        public DataViewType OutputType => null;
 
         /// <summary>
         /// Constructor.

@@ -36,8 +36,8 @@ namespace TestMachineLearningExt
             var sch = df.Schema;
             Assert.AreEqual(sch[0].Name, "Label");
             Assert.AreEqual(sch[1].Name, "Sepal_length");
-            Assert.AreEqual(sch[0].Type, NumberType.I4);
-            Assert.AreEqual(sch[1].Type, NumberType.R4);
+            Assert.AreEqual(sch[0].Type, NumberDataViewType.Int32);
+            Assert.AreEqual(sch[1].Type, NumberDataViewType.Single);
         }
 
         [TestMethod]
@@ -49,8 +49,8 @@ namespace TestMachineLearningExt
             var sch = df.Schema;
             Assert.AreEqual(sch[0].Name, "Label");
             Assert.AreEqual(sch[1].Name, "Sepal_length");
-            Assert.AreEqual(sch[0].Type, NumberType.I4);
-            Assert.AreEqual(sch[1].Type, NumberType.R4);
+            Assert.AreEqual(sch[0].Type, NumberDataViewType.Int32);
+            Assert.AreEqual(sch[1].Type, NumberDataViewType.Single);
             Assert.AreEqual(df.iloc[0, 0], (int)0);
             Assert.AreEqual(df.iloc[1, 0], (int)0);
             Assert.AreEqual(df.iloc[140, 0], (int)2);
@@ -82,8 +82,8 @@ namespace TestMachineLearningExt
                 var sch = df.Schema;
                 Assert.AreEqual(sch[0].Name, "Label");
                 Assert.AreEqual(sch[1].Name, "Sepal_length");
-                Assert.AreEqual(sch[0].Type, NumberType.I4);
-                Assert.AreEqual(sch[1].Type, NumberType.R4);
+                Assert.AreEqual(sch[0].Type, NumberDataViewType.Int32);
+                Assert.AreEqual(sch[1].Type, NumberDataViewType.Single);
                 Assert.AreEqual(df.iloc[0, 0], (int)0);
                 Assert.AreEqual(df.iloc[1, 0], (int)0);
                 Assert.AreEqual(df.iloc[140, 0], (int)2);
@@ -154,7 +154,7 @@ namespace TestMachineLearningExt
             using (var env = EnvHelper.NewTestEnvironment(conc: 1))
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
-                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new ColumnType[] { NumberType.R4 });
+                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
                 var conc = env.CreateTransform("Concat{col=Features:Sepal_length,Sepal_width}", df);
                 var trainingData = env.CreateExamples(conc, "Features", label: "Label");
                 var trainer = env.CreateTrainer("ova{p=ap}");
@@ -179,7 +179,7 @@ namespace TestMachineLearningExt
             using (var env = EnvHelper.NewTestEnvironment(conc: 1))
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
-                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new ColumnType[] { NumberType.R4 });
+                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
                 var conc = env.CreateTransform("Concat{col=Feature:Sepal_length,Sepal_width}", df);
                 var trainingData = env.CreateExamples(conc, "Feature", label: "Label");
                 var trainer = env.CreateTrainer("lr");
@@ -204,7 +204,7 @@ namespace TestMachineLearningExt
             using (var env = EnvHelper.NewTestEnvironment(conc: 1))
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
-                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new ColumnType[] { NumberType.R4 });
+                var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
                 var conc = env.CreateTransform("Concat{col=Feature:Sepal_length,Sepal_width}", df);
                 var trainingData = env.CreateExamples(conc, "Feature", label: "Label");
                 ITrainerExtended trainer = env.CreateTrainer("lr");

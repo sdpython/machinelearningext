@@ -109,7 +109,7 @@ namespace Scikit.ML.PipelineTransforms
             var sch = SchemaHelper.ToString(Source.Schema);
             var sch2 = SchemaHelper.ToString(source.Schema);
             if (sch != sch2)
-                throw _host.Except("Schema mismatch. Expected:\n{0}\nGot:\n{1}", sch, sch2);
+                throw _host.Except("DataViewSchema mismatch. Expected:\n{0}\nGot:\n{1}", sch, sch2);
             _input = source;
         }
 
@@ -158,7 +158,7 @@ namespace Scikit.ML.PipelineTransforms
             _saved = false;
         }
 
-        public Schema Schema { get { return _input.Schema; } }
+        public DataViewSchema Schema { get { return _input.Schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         public long? GetRowCount()
@@ -167,14 +167,14 @@ namespace Scikit.ML.PipelineTransforms
             return Source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_input, "_input");
             DumpView();
             return Source.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_input, "_input");
             DumpView();

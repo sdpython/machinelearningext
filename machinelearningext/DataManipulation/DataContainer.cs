@@ -20,10 +20,10 @@ namespace Scikit.ML.DataManipulation
         #region All possible types to hold data.
 
         List<string> _names;
-        List<ColumnType> _kinds;
+        List<DataViewType> _kinds;
         int _length;
         Dictionary<string, int> _naming;
-        Dictionary<int, Tuple<ColumnType, int>> _mapping;
+        Dictionary<int, Tuple<DataViewType, int>> _mapping;
         ISchema _schema;
 
         List<IDataColumn> _colsBL;
@@ -49,10 +49,10 @@ namespace Scikit.ML.DataManipulation
         {
             var dc = new DataContainer();
             dc._names = new List<string>(_names);
-            dc._kinds = new List<ColumnType>(_kinds);
+            dc._kinds = new List<DataViewType>(_kinds);
             dc._length = _length;
             dc._naming = new Dictionary<string, int>(_naming);
-            dc._mapping = new Dictionary<int, Tuple<ColumnType, int>>(_mapping);
+            dc._mapping = new Dictionary<int, Tuple<DataViewType, int>>(_mapping);
             dc._schema = new DataContainerSchema(dc);
 
             dc._colsBL = _colsBL == null ? null : new List<IDataColumn>(_colsBL.Select(c => c.Copy()));
@@ -148,7 +148,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns the list of columns.
         /// </summary>
-        public ColumnType[] Kinds => _kinds.ToArray();
+        public DataViewType[] Kinds => _kinds.ToArray();
 
         /// <summary>
         /// Returns the name of a column.
@@ -163,7 +163,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns the type of a column.
         /// </summary>
-        public ColumnType GetDType(int col) { return _kinds[col]; }
+        public DataViewType GetDType(int col) { return _kinds[col]; }
 
         /// <summary>
         /// Returns the number of rows actually allocated.
@@ -324,7 +324,7 @@ namespace Scikit.ML.DataManipulation
             _colsAR4 = null;
             _colsAR8 = null;
             _colsATX = null;
-            _mapping = new Dictionary<int, Tuple<ColumnType, int>>();
+            _mapping = new Dictionary<int, Tuple<DataViewType, int>>();
             _naming = new Dictionary<string, int>();
             _schema = new DataContainerSchema(this);
             _schemaCache = null;
@@ -337,7 +337,7 @@ namespace Scikit.ML.DataManipulation
         /// the first row.
         /// </summary>
         public DataContainer(IEnumerable<Dictionary<string, object>> rows,
-                             Dictionary<string, ColumnType> kinds = null)
+                             Dictionary<string, DataViewType> kinds = null)
         {
             _init();
             var array = rows.ToArray();
@@ -355,7 +355,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        public DataContainer(Schema schema, int nb = 1)
+        public DataContainer(DataViewSchema schema, int nb = 1)
         {
             _init();
             for (int i = 0; i < schema.Count; ++i)
@@ -366,12 +366,12 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        public bool CheckSharedSchema(Schema schema)
+        public bool CheckSharedSchema(DataViewSchema schema)
         {
             if (schema.Count != ColumnCount)
                 throw Contracts.Except($"Different number of columns ${ColumnCount} != ${schema.Count}.");
             string name;
-            ColumnType colType;
+            DataViewType colType;
             for (int i = 0; i < ColumnCount; ++i)
             {
                 name = schema[i].Name;
@@ -384,9 +384,9 @@ namespace Scikit.ML.DataManipulation
             return true;
         }
 
-        Dictionary<string, ColumnType> GuessKinds(Dictionary<string, object>[] rows)
+        Dictionary<string, DataViewType> GuessKinds(Dictionary<string, object>[] rows)
         {
-            var res = new Dictionary<string, ColumnType>();
+            var res = new Dictionary<string, DataViewType>();
             foreach (var row in rows.Take(10))
             {
                 foreach (var pair in row)
@@ -397,37 +397,37 @@ namespace Scikit.ML.DataManipulation
                         continue;
                     if (pair.Value is bool || pair.Value is bool)
                     {
-                        res[pair.Key] = BoolType.Instance;
+                        res[pair.Key] = BooleanDataViewType.Instance;
                         continue;
                     }
                     if (pair.Value is int || pair.Value is int)
                     {
-                        res[pair.Key] = NumberType.I4;
+                        res[pair.Key] = NumberDataViewType.Int32;
                         continue;
                     }
                     if (pair.Value is uint)
                     {
-                        res[pair.Key] = NumberType.U4;
+                        res[pair.Key] = NumberDataViewType.UInt32;
                         continue;
                     }
                     if (pair.Value is long || pair.Value is Int64)
                     {
-                        res[pair.Key] = NumberType.I8;
+                        res[pair.Key] = NumberDataViewType.Int64;
                         continue;
                     }
                     if (pair.Value is float)
                     {
-                        res[pair.Key] = NumberType.R4;
+                        res[pair.Key] = NumberDataViewType.Single;
                         continue;
                     }
                     if (pair.Value is double)
                     {
-                        res[pair.Key] = NumberType.R8;
+                        res[pair.Key] = NumberDataViewType.Double;
                         continue;
                     }
                     if (pair.Value is ReadOnlyMemory<char> || pair.Value is string || pair.Value is DvText)
                     {
-                        res[pair.Key] = TextType.Instance;
+                        res[pair.Key] = TextDataViewType.Instance;
                         continue;
                     }
                     throw Contracts.ExceptNotImpl($"Type '{pair.Value.GetType()}' is not implemented.");
@@ -436,7 +436,7 @@ namespace Scikit.ML.DataManipulation
             return res;
         }
 
-        IDataColumn CreateColumn(ColumnType kind, IEnumerable<object> values)
+        IDataColumn CreateColumn(DataViewType kind, IEnumerable<object> values)
         {
             if (kind.IsVector())
                 throw new NotImplementedException();
@@ -500,7 +500,7 @@ namespace Scikit.ML.DataManipulation
         /// <param name="kind">column type</param>
         /// <param name="length">changes the length</param>
         /// <param name="values">values (can be null)</param>
-        public int AddColumn(string name, ColumnType kind, int? length, IDataColumn values = null)
+        public int AddColumn(string name, DataViewType kind, int? length, IDataColumn values = null)
         {
             if (_naming.ContainsKey(name))
             {
@@ -531,7 +531,7 @@ namespace Scikit.ML.DataManipulation
             if (_names == null)
                 _names = new List<string>();
             if (_kinds == null)
-                _kinds = new List<ColumnType>();
+                _kinds = new List<DataViewType>();
             if (length.HasValue && Length > 0 && length.Value != Length)
                 throw new DataTypeError(string.Format("Length mismatch, expected {0} got {1}", Length, length.Value));
 
@@ -641,7 +641,7 @@ namespace Scikit.ML.DataManipulation
                         throw new DataTypeError(string.Format("Type {0} is not handled.", kind));
                 }
             }
-            _mapping[last] = new Tuple<ColumnType, int>(kind, pos);
+            _mapping[last] = new Tuple<DataViewType, int>(kind, pos);
             _naming[name] = last;
             return last;
         }
@@ -745,7 +745,7 @@ namespace Scikit.ML.DataManipulation
         #region IDataView API
 
         /// <summary>
-        /// Implements Schema interface for this container.
+        /// Implements DataViewSchema interface for this container.
         /// </summary>
         public class DataContainerSchema : ISchema
         {
@@ -758,9 +758,9 @@ namespace Scikit.ML.DataManipulation
                 return _cont._naming.TryGetValue(name, out col);
             }
 
-            public ColumnType GetColumnType(int col) { return _cont._kinds[col]; }
+            public DataViewType GetColumnType(int col) { return _cont._kinds[col]; }
 
-            public ColumnType GetMetadataTypeOrNull(string kind, int col)
+            public DataViewType GetMetadataTypeOrNull(string kind, int col)
             {
                 if (kind == _cont._kinds[col].ToString())
                     return GetColumnType(col);
@@ -817,11 +817,11 @@ namespace Scikit.ML.DataManipulation
                     throw new IndexOutOfRangeException();
             }
 
-            public IEnumerable<KeyValuePair<string, ColumnType>> GetMetadataTypes(int col)
+            public IEnumerable<KeyValuePair<string, DataViewType>> GetMetadataTypes(int col)
             {
                 if (col < 0 || col >= _cont.ColumnCount)
                     throw new IndexOutOfRangeException();
-                yield return new KeyValuePair<string, ColumnType>(_cont._names[col], _cont._kinds[col]);
+                yield return new KeyValuePair<string, DataViewType>(_cont._names[col], _cont._kinds[col]);
             }
         }
 
@@ -829,7 +829,7 @@ namespace Scikit.ML.DataManipulation
         /// Returns the schema. It should not be used unless it is necessary
         /// as it makes a copy of the existing schema.
         /// </summary>
-        public Schema Schema
+        public DataViewSchema Schema
         {
             get
             {
@@ -852,7 +852,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        private Schema _schemaCache;
+        private DataViewSchema _schemaCache;
         private object _lock;
 
         public ISchema SchemaI => _schema;
@@ -920,10 +920,10 @@ namespace Scikit.ML.DataManipulation
         }
 
         /// <summary>
-        /// Fills the value with values coming from a RowCursor.
+        /// Fills the value with values coming from a DataViewRowCursor.
         /// Called by the previous method.
         /// </summary>
-        void FillValues(RowCursor cursor, Dictionary<int, Tuple<int, int>> memory)
+        void FillValues(DataViewRowCursor cursor, Dictionary<int, Tuple<int, int>> memory)
         {
             var getterBL = new ValueGetter<bool>[_colsBL == null ? 0 : _colsBL.Count];
             var getterI4 = new ValueGetter<int>[_colsI4 == null ? 0 : _colsI4.Count];
@@ -1121,7 +1121,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a getter of a certain type.
         /// </summary>
-        ValueGetter<DType> GetGetterCursor<DType>(RowCursor cursor, int col, int index, DType defaultValue)
+        ValueGetter<DType> GetGetterCursor<DType>(DataViewRowCursor cursor, int col, int index, DType defaultValue)
         {
             var dt = cursor.Schema[col].Type;
             if (dt.IsVector())
@@ -1196,7 +1196,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a getter of a certain type.
         /// </summary>
-        ValueGetter<VBuffer<DType>> GetGetterCursorVector<DType>(RowCursor cursor, int col, int index, DType defaultValue)
+        ValueGetter<VBuffer<DType>> GetGetterCursorVector<DType>(DataViewRowCursor cursor, int col, int index, DType defaultValue)
         {
             var dt = cursor.Schema[col].Type;
             if (dt.IsVector())
@@ -1219,7 +1219,7 @@ namespace Scikit.ML.DataManipulation
         public delegate void RowFillerDelegate(DataContainer cont, int row);
         public delegate void RowColumnSetterDelegate(DataContainer cont, int row);
 
-        public static RowFillerDelegate GetRowFiller(RowCursor cur)
+        public static RowFillerDelegate GetRowFiller(DataViewRowCursor cur)
         {
             var setters = GetAllSetters(cur);
 
@@ -1233,7 +1233,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Builds setters for each column in the DataFrame based on the schema of a cursor.
         /// </summary>
-        public static RowColumnSetterDelegate[] GetAllSetters(RowCursor cur)
+        public static RowColumnSetterDelegate[] GetAllSetters(DataViewRowCursor cur)
         {
             var sch = cur.Schema;
             var res = new List<RowColumnSetterDelegate>();
@@ -1255,7 +1255,7 @@ namespace Scikit.ML.DataManipulation
         /// option based on the type. It deals with ambiguities introduced by
         /// DvText and VBufferEqSort.
         /// </summary>
-        public static RowColumnSetterDelegate GetColumnSetter(RowCursor cur, Delegate getter, int col, ColumnType colType)
+        public static RowColumnSetterDelegate GetColumnSetter(DataViewRowCursor cur, Delegate getter, int col, DataViewType colType)
         {
             if (colType.IsVector())
             {
@@ -1289,7 +1289,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        public static RowColumnSetterDelegate GetColumnSetter<DType>(RowCursor cur, Delegate getter, int col)
+        public static RowColumnSetterDelegate GetColumnSetter<DType>(DataViewRowCursor cur, Delegate getter, int col)
              where DType : IEquatable<DType>, IComparable<DType>
         {
             var typedGetter = getter as ValueGetter<DType>;
@@ -1303,7 +1303,7 @@ namespace Scikit.ML.DataManipulation
             };
         }
 
-        public static RowColumnSetterDelegate GetColumnSetterVector<DType>(RowCursor cur, Delegate getter, int col)
+        public static RowColumnSetterDelegate GetColumnSetterVector<DType>(DataViewRowCursor cur, Delegate getter, int col)
             where DType : IEquatable<DType>, IComparable<DType>
         {
             var typedGetter2 = getter as ValueGetter<VBufferEqSort<DType>>;
@@ -1329,7 +1329,7 @@ namespace Scikit.ML.DataManipulation
             throw new DataTypeError($"Unable to convert a getter {getter.GetType()} for type {typeof(DType)}.");
         }
 
-        public static RowColumnSetterDelegate GetColumnSetterVectorText(RowCursor cur, Delegate getter, int col)
+        public static RowColumnSetterDelegate GetColumnSetterVectorText(DataViewRowCursor cur, Delegate getter, int col)
         {
             var typedGetter3 = getter as ValueGetter<VBufferEqSort<DvText>>;
             if (typedGetter3 != null)
@@ -1368,7 +1368,7 @@ namespace Scikit.ML.DataManipulation
             throw new DataTypeError($"Unable to convert a getter {getter.GetType()} for type VBufferEqSort<DvText> or equivalent.");
         }
 
-        public static RowColumnSetterDelegate GetColumnSetterText(RowCursor cur, Delegate getter, int col)
+        public static RowColumnSetterDelegate GetColumnSetterText(DataViewRowCursor cur, Delegate getter, int col)
         {
             var typedGetter2 = getter as ValueGetter<DvText>;
             if (typedGetter2 != null)
@@ -1400,7 +1400,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a cursor on the data.
         /// </summary>
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return new DataRowCursor(this, columnsNeeded, rand);
         }
@@ -1408,7 +1408,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a cursor on a subset of the data.
         /// </summary>
-        public DataRowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataRowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return new DataRowCursor(this, columnsNeeded, rand, rows: rows, columns: columns);
         }
@@ -1416,7 +1416,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a set of aliased cursors on the data.
         /// </summary>
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return GetRowCursorSet(null, null, columnsNeeded, n, rand);
         }
@@ -1424,7 +1424,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns a set of aliased cursors on the data.
         /// </summary>
-        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             var host = new ConsoleEnvironment().Register("Estimate n threads");
             n = DataViewUtils.GetThreadCount(host, n);
@@ -1432,10 +1432,10 @@ namespace Scikit.ML.DataManipulation
                 n = Length;
 
             if (n <= 1)
-                return new RowCursor[] { GetRowCursor(rows, columns, columnsNeeded, rand) };
+                return new DataViewRowCursor[] { GetRowCursor(rows, columns, columnsNeeded, rand) };
             else
             {
-                var cursors = new RowCursor[n];
+                var cursors = new DataViewRowCursor[n];
                 for (int i = 0; i < cursors.Length; ++i)
                     cursors[i] = new DataRowCursor(this, columnsNeeded, rand, n, i, rows: rows, columns: columns);
                 return cursors;
@@ -1445,12 +1445,12 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Implements a cursor for this container.
         /// </summary>
-        public class DataRowCursor : RowCursor
+        public class DataRowCursor : DataViewRowCursor
         {
             DataContainer _cont;
             public override long Batch => _first;
             Random _rand;
-            IEnumerable<Schema.Column> _columnsNeeded;
+            IEnumerable<DataViewSchema.Column> _columnsNeeded;
             long _inc;
             readonly long _first;
             long _position;
@@ -1458,10 +1458,10 @@ namespace Scikit.ML.DataManipulation
             int[] _rowsSet;
             int[] _colsSet;
             Dictionary<int, int> _revColsSet;
-            Schema _schema;
+            DataViewSchema _schema;
             int[] _shuffled;
 
-            public DataRowCursor(DataContainer cont, IEnumerable<Schema.Column> columnsNeeded,
+            public DataRowCursor(DataContainer cont, IEnumerable<DataViewSchema.Column> columnsNeeded,
                              Random rand = null, int inc = 1, int first = 0,
                              int[] rows = null, int[] columns = null)
             {
@@ -1493,9 +1493,9 @@ namespace Scikit.ML.DataManipulation
                     _shuffled = null;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
-                return (ref RowId idrow) => { idrow = new RowId(Position >= 0 ? (ulong)Position : (ulong)(-Position), Position >= 0 ? (ulong)1 : (ulong)0); };
+                return (ref DataViewRowId idrow) => { idrow = new DataViewRowId(Position >= 0 ? (ulong)Position : (ulong)(-Position), Position >= 0 ? (ulong)1 : (ulong)0); };
             }
 
             protected override void Dispose(bool disposing)
@@ -1503,7 +1503,7 @@ namespace Scikit.ML.DataManipulation
             }
 
             public override bool IsColumnActive(int col) { return Schema.Where(c => c.Index == col).Any(); }
-            public override Schema Schema => _colsSet == null ? _cont.Schema : _schema;
+            public override DataViewSchema Schema => _colsSet == null ? _cont.Schema : _schema;
 
             public override long Position => _rowsSet == null
                                         ? _position
@@ -1583,7 +1583,7 @@ namespace Scikit.ML.DataManipulation
             var new_kinds = colind.Select(i => _kinds[i]).ToList();
             var new_length = columns.Length;
             var new_naming = new Dictionary<string, int>();
-            var new_mapping = new Dictionary<int, Tuple<ColumnType, int>>();
+            var new_mapping = new Dictionary<int, Tuple<DataViewType, int>>();
             for (int i = 0; i < new_length; ++i)
             {
                 new_naming[new_names[i]] = i;

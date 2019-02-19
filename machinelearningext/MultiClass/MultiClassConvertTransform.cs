@@ -58,10 +58,10 @@ namespace Scikit.ML.MultiClass
         {
             public readonly DataKind Kind;
             public readonly bool HasKeyRange;
-            public readonly ColumnType TypeDst;
+            public readonly DataViewType TypeDst;
             public readonly VectorType SlotTypeDst;
 
-            public ColInfoEx(DataKind kind, bool hasKeyRange, ColumnType type, VectorType slotType)
+            public ColInfoEx(DataKind kind, bool hasKeyRange, DataViewType type, VectorType slotType)
             {
                 Contracts.AssertValue(type);
                 Contracts.AssertValueOrNull(slotType);
@@ -130,7 +130,7 @@ namespace Scikit.ML.MultiClass
                 }
                 Host.CheckUserArg(Enum.IsDefined(typeof(DataKind), kind), "resultType");
 
-                PrimitiveType itemType;
+                PrimitiveDataViewType itemType;
                 if (!TryCreateEx(Host, Infos[i], kind, range, out itemType, out _exes[i]))
                     throw Host.ExceptUserArg("source",
                         "Source column '{0}' with item type '{1}' is not compatible with destination type '{2}'",
@@ -148,7 +148,7 @@ namespace Scikit.ML.MultiClass
                 using (var bldr = md.BuildMetadata(iinfo, Source.Schema, info.Source, PassThrough))
                 {
                     if (info.TypeSrc.IsBool() && _exes[iinfo].TypeDst.ItemType().IsNumber())
-                        bldr.AddPrimitive(MetadataUtils.Kinds.IsNormalized, BoolType.Instance, true);
+                        bldr.AddPrimitive(MetadataUtils.Kinds.IsNormalized, BooleanDataViewType.Instance, true);
                 }
             }
             md.Seal();
@@ -199,7 +199,7 @@ namespace Scikit.ML.MultiClass
                     }
                 }
 
-                PrimitiveType itemType;
+                PrimitiveDataViewType itemType;
                 if (!TryCreateEx(Host, Infos[i], kind, range, out itemType, out _exes[i]))
                     throw Host.ExceptDecode("source is not of compatible type");
             }
@@ -279,7 +279,7 @@ namespace Scikit.ML.MultiClass
         }
 
         private static bool TryCreateEx(IExceptionContext ectx, ColInfo info, DataKind kind, KeyCount range,
-                                        out PrimitiveType itemType, out ColInfoEx ex)
+                                        out PrimitiveDataViewType itemType, out ColInfoEx ex)
         {
             ectx.AssertValue(info);
             ectx.Assert(Enum.IsDefined(typeof(DataKind), kind));
@@ -368,7 +368,7 @@ namespace Scikit.ML.MultiClass
                     return false;
             }
 
-            ColumnType typeDst = itemType;
+            DataViewType typeDst = itemType;
             if (typeSrc.IsVector())
                 typeDst = new VectorType(itemType, typeSrc.AsVector().Dimensions.ToArray());
 
@@ -381,14 +381,14 @@ namespace Scikit.ML.MultiClass
             return true;
         }
 
-        protected override ColumnType GetColumnTypeCore(int iinfo)
+        protected override DataViewType GetColumnTypeCore(int iinfo)
         {
             Host.Assert(0 <= iinfo & iinfo < Infos.Length);
             Host.Assert(_exes.Length == Infos.Length);
             return _exes[iinfo].TypeDst;
         }
 
-        public static Delegate GetGetterAs(ColumnType typeDst, Row row, int col)
+        public static Delegate GetGetterAs(DataViewType typeDst, DataViewRow row, int col)
         {
             Contracts.CheckValue(typeDst, "typeDst");
             Contracts.CheckParam(typeDst.IsPrimitive(), "typeDst");
@@ -399,12 +399,12 @@ namespace Scikit.ML.MultiClass
             var typeSrc = row.Schema[col].Type;
             Contracts.Check(typeSrc.IsPrimitive(), "Source column type must be primitive");
 
-            Func<ColumnType, ColumnType, Row, int, ValueGetter<int>> del = GetGetterAsCore<int, int>;
+            Func<DataViewType, DataViewType, DataViewRow, int, ValueGetter<int>> del = GetGetterAsCore<int, int>;
             var methodInfo = del.GetMethodInfo().GetGenericMethodDefinition().MakeGenericMethod(typeSrc.RawType, typeDst.RawType);
             return (Delegate)methodInfo.Invoke(null, new object[] { typeSrc, typeDst, row, col });
         }
 
-        private static ValueGetter<TDst> GetGetterAsCore<TSrc, TDst>(ColumnType typeSrc, ColumnType typeDst, Row row, int col)
+        private static ValueGetter<TDst> GetGetterAsCore<TSrc, TDst>(DataViewType typeSrc, DataViewType typeDst, DataViewRow row, int col)
         {
             Contracts.Assert(typeof(TSrc) == typeSrc.RawType);
             Contracts.Assert(typeof(TDst) == typeDst.RawType);
@@ -477,7 +477,7 @@ namespace Scikit.ML.MultiClass
             }
         }
 
-        protected override Delegate GetGetterCore(IChannel ch, Row input, int iinfo, out Action disposer)
+        protected override Delegate GetGetterCore(IChannel ch, DataViewRow input, int iinfo, out Action disposer)
         {
             Host.AssertValueOrNull(ch);
             Host.AssertValue(input);

@@ -11,7 +11,7 @@ namespace Scikit.ML.DataManipulation
 {
     public static class DataFrameMissingValue
     {
-        public static object GetMissingValue(ColumnType kind, object subcase = null)
+        public static object GetMissingValue(DataViewType kind, object subcase = null)
         {
             if (kind.IsVector())
                 return null;
@@ -39,7 +39,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        public static object GetMissingOrDefaultValue(ColumnType kind, object subcase = null)
+        public static object GetMissingOrDefaultValue(DataViewType kind, object subcase = null)
         {
             if (kind.IsVector())
                 return null;
@@ -67,7 +67,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        public static object GetMissingOrDefaultMissingValue(ColumnType kind, object subcase = null)
+        public static object GetMissingOrDefaultMissingValue(DataViewType kind, object subcase = null)
         {
             if (kind.IsVector())
                 return null;

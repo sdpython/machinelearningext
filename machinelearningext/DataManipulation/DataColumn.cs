@@ -136,7 +136,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns type data kind.
         /// </summary>
-        public ColumnType Kind => SchemaHelper.GetColumnType<DType>();
+        public DataViewType Kind => SchemaHelper.GetColumnType<DType>();
 
         public IEnumerator<DType> GetEnumerator() { foreach (var v in _data) yield return v; }
         IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
@@ -457,7 +457,7 @@ namespace Scikit.ML.DataManipulation
         /// </summary>
         /// <param name="colType"column type></param>
         /// <returns>new column</returns>
-        public IDataColumn AsType(ColumnType colType)
+        public IDataColumn AsType(DataViewType colType)
         {
             if (Kind == colType)
                 return this;
@@ -552,7 +552,7 @@ namespace Scikit.ML.DataManipulation
         /// Creates a getter on the column. The getter returns the element at
         /// cursor.Position.
         /// </summary>
-        public ValueGetter<DType2> GetGetter<DType2>(RowCursor cursor)
+        public ValueGetter<DType2> GetGetter<DType2>(DataViewRowCursor cursor)
         {
             if (typeof(DType2) == typeof(ReadOnlyMemory<char>))
             {
@@ -576,7 +576,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        private ValueGetter<ReadOnlyMemory<char>> GetGetterReadOnlyMemory(RowCursor cursor)
+        private ValueGetter<ReadOnlyMemory<char>> GetGetterReadOnlyMemory(DataViewRowCursor cursor)
         {
             var _data2 = _data as DvText[];
             if (_data2 == null)
@@ -602,7 +602,7 @@ namespace Scikit.ML.DataManipulation
         /// Creates a getter on the column. The getter returns the element at
         /// cursor.Position.
         /// </summary>
-        public ValueGetter<VBuffer<DType2>> GetGetterVector<DType2>(RowCursor cursor)
+        public ValueGetter<VBuffer<DType2>> GetGetterVector<DType2>(DataViewRowCursor cursor)
         {
             var colType = SchemaHelper.GetColumnType<DType2>();
             if (colType.IsVector())
@@ -624,7 +624,7 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        public ValueGetter<VBuffer<DType2>> GetGetterVectorEqSort<DType2>(RowCursor cursor)
+        public ValueGetter<VBuffer<DType2>> GetGetterVectorEqSort<DType2>(DataViewRowCursor cursor)
             where DType2 : IEquatable<DType2>, IComparable<DType2>
         {
             var _data2 = _data as VBufferEqSort<DType2>[];
@@ -637,7 +637,7 @@ namespace Scikit.ML.DataManipulation
             };
         }
 
-        public ValueGetter<VBuffer<DType2>> GetGetterVectorEqSortText<DType2>(RowCursor cursor)
+        public ValueGetter<VBuffer<DType2>> GetGetterVectorEqSortText<DType2>(DataViewRowCursor cursor)
         {
             if (typeof(DType2) == typeof(DvText))
                 return GetGetterVectorEqSort<DvText>(cursor) as ValueGetter<VBuffer<DType2>>;
@@ -649,7 +649,7 @@ namespace Scikit.ML.DataManipulation
             return getter;
         }
 
-        public ValueGetter<VBuffer<ReadOnlyMemory<char>>> GetGetterVectorEqSortReadOnlyMemoryChar(RowCursor cursor)
+        public ValueGetter<VBuffer<ReadOnlyMemory<char>>> GetGetterVectorEqSortReadOnlyMemoryChar(DataViewRowCursor cursor)
         {
             var _data2 = _data as VBufferEqSort<DvText>[];
             var missing = new VBuffer<ReadOnlyMemory<char>>();

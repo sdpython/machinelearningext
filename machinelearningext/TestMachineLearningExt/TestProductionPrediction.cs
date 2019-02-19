@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Microsoft.ML.Transforms;
 using Scikit.ML.TestHelper;
 using Scikit.ML.PipelineLambdaTransforms;
@@ -232,11 +233,11 @@ namespace TestMachineLearningExt
             public ValueMapperExample(string modelName, string features)
             {
                 _env = EnvHelper.NewTestEnvironment();
-                _predictor = _env.LoadPredictorOrNull(File.OpenRead(modelName));
+                _predictor = ModelFileUtils.LoadPredictorOrNull(_env, File.OpenRead(modelName));
                 var inputs = new Input[0];
 
                 var view = DataViewConstructionUtils.CreateFromEnumerable(_env, inputs);
-                _transforms = ComponentCreation.LoadTransforms(_env, File.OpenRead(modelName), view);
+                _transforms = ModelFileUtils.LoadTransforms(_env, view, File.OpenRead(modelName));
                 var data = _env.CreateExamples(_transforms, features);
                 var scorer = _env.CreateDefaultScorer(data, _predictor);
 
@@ -476,8 +477,8 @@ namespace TestMachineLearningExt
 
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var lambdaView = LambdaColumnHelper.Create<VBuffer<float>, VBuffer<float>>(host,
-                                "Lambda", data, "X", "XX", new VectorType(NumberType.R4, 2),
-                                new VectorType(NumberType.R4, 2),
+                                "Lambda", data, "X", "XX", new VectorType(NumberDataViewType.Single, 2),
+                                new VectorType(NumberDataViewType.Single, 2),
                                 (in VBuffer<float> src, ref VBuffer<float> dst) =>
                                 {
                                     dst = new VBuffer<float>(2, new float[2]);

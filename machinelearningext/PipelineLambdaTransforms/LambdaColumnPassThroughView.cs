@@ -32,7 +32,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
         /// <param name="mapper">mapper to apply</param>
         /// <returns>IDataView</returns>
         public static IDataView Create<TSrc, TDst>(IHostEnvironment env, string name, IDataView input,
-                        string src, string dst, ColumnType typeSrc, ColumnType typeDst,
+                        string src, string dst, DataViewType typeSrc, DataViewType typeDst,
                         ValueMapper<TSrc, TDst> mapper)
         {
             return new LambdaColumnPassThroughView<TSrc, TDst>(env, name, input, src, dst, typeSrc, typeDst, mapper);
@@ -49,10 +49,10 @@ namespace Scikit.ML.PipelineLambdaTransforms
         readonly IDataView _source;
         readonly string _columnSrc;
         readonly string _columnDst;
-        readonly ColumnType _typeSrc;
-        readonly ColumnType _typeDst;
+        readonly DataViewType _typeSrc;
+        readonly DataViewType _typeDst;
         readonly ValueMapper<TSrc, TDst> _mapper;
-        readonly Schema _newSchema;
+        readonly DataViewSchema _newSchema;
         readonly IHost _host;
         readonly int _srcIndex;
 
@@ -60,7 +60,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
         protected IHost Host { get { return _host; } }
 
         public LambdaColumnPassThroughView(IHostEnvironment env, string name, IDataView input,
-                        string src, string dst, ColumnType typeSrc, ColumnType typeDst,
+                        string src, string dst, DataViewType typeSrc, DataViewType typeDst,
                         ValueMapper<TSrc, TDst> mapper)
         {
             _host = env.Register(name);
@@ -80,7 +80,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
             get { return _source.CanShuffle; }
         }
 
-        public Schema Schema
+        public DataViewSchema Schema
         {
             get { return _newSchema; }
         }
@@ -90,7 +90,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
             return _source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             if (columnsNeeded.Where(c => c.Index == _source.Schema.Count).Any())
             {
@@ -103,7 +103,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 return new SameCursor(_source.GetRowCursor(columnsNeeded, rand), Schema);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             if (columnsNeeded.Where(c => c.Index == _source.Schema.Count).Any())
             {
@@ -118,12 +118,12 @@ namespace Scikit.ML.PipelineLambdaTransforms
                               .ToArray();
         }
 
-        public class LambdaCursor : RowCursor
+        public class LambdaCursor : DataViewRowCursor
         {
             readonly LambdaColumnPassThroughView<TSrc, TDst> _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
 
-            public LambdaCursor(LambdaColumnPassThroughView<TSrc, TDst> view, RowCursor cursor)
+            public LambdaCursor(LambdaColumnPassThroughView<TSrc, TDst> view, DataViewRowCursor cursor)
             {
                 _view = view;
                 _inputCursor = cursor;
@@ -136,10 +136,10 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 return true;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -147,7 +147,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _view.Schema; } }
+            public override DataViewSchema Schema { get { return _view.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

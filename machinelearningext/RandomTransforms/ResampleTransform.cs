@@ -99,7 +99,7 @@ namespace Scikit.ML.RandomTransforms
         IDataTransform _transform;          // templated transform (not the serialized version)
         Arguments _args;
         IHost _host;
-        Dictionary<RowId, int> _cacheReplica;
+        Dictionary<DataViewRowId, int> _cacheReplica;
 
         public IDataView Source { get { return _input; } }
 
@@ -164,7 +164,7 @@ namespace Scikit.ML.RandomTransforms
 
         #region IDataTransform API
 
-        public Schema Schema { get { return Source.Schema; } }
+        public DataViewSchema Schema { get { return Source.Schema; } }
 
         public bool CanShuffle { get { return true; } }
         public long? GetRowCount()
@@ -176,7 +176,7 @@ namespace Scikit.ML.RandomTransforms
                 return null;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             int classColumn = -1;
             if (!string.IsNullOrEmpty(_args.column))
@@ -223,7 +223,7 @@ namespace Scikit.ML.RandomTransforms
             }
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             int classColumn = -1;
             if (!string.IsNullOrEmpty(_args.column))
@@ -305,9 +305,9 @@ namespace Scikit.ML.RandomTransforms
                 {
                     if (string.IsNullOrEmpty(_args.column))
                     {
-                        _cacheReplica = new Dictionary<RowId, int>();
+                        _cacheReplica = new Dictionary<DataViewRowId, int>();
                         var gid = cur.GetIdGetter();
-                        RowId did = default(RowId);
+                        DataViewRowId did = default(DataViewRowId);
                         int rep;
                         while (cur.MoveNext())
                         {
@@ -351,13 +351,13 @@ namespace Scikit.ML.RandomTransforms
             }
         }
 
-        void LoadCache<TClass>(Random rand, RowCursor cur, int classColumn, TClass valueClass, IChannel ch)
+        void LoadCache<TClass>(Random rand, DataViewRowCursor cur, int classColumn, TClass valueClass, IChannel ch)
         {
-            _cacheReplica = new Dictionary<RowId, int>();
+            _cacheReplica = new Dictionary<DataViewRowId, int>();
             var hist = new Dictionary<TClass, long>();
             var gid = cur.GetIdGetter();
             var gcl = cur.GetGetter<TClass>(classColumn);
-            RowId did = default(RowId);
+            DataViewRowId did = default(DataViewRowId);
             TClass cl = default(TClass);
             long nbIn = 0;
             long nbOut = 0;
@@ -399,27 +399,27 @@ namespace Scikit.ML.RandomTransforms
 
         #region Cursor with no cache
 
-        class ResampleCursor<TClass> : RowCursor
+        class ResampleCursor<TClass> : DataViewRowCursor
         {
             readonly ResampleTransform _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly Random _rand;
-            readonly IEnumerable<Schema.Column> _neededColumns;
+            readonly IEnumerable<DataViewSchema.Column> _neededColumns;
             readonly float _lambda;
             readonly int _maxReplica;
             readonly int _shift;
-            readonly Dictionary<RowId, int> _cache;
-            readonly ValueGetter<RowId> _idGetter;
+            readonly Dictionary<DataViewRowId, int> _cache;
+            readonly ValueGetter<DataViewRowId> _idGetter;
             readonly ValueGetter<TClass> _classGetter;
             readonly TClass _classValue;
             readonly int _classColumn;
 
             int _copy;
-            RowId _currentId;
+            DataViewRowId _currentId;
             TClass _currentCl;
 
-            public ResampleCursor(ResampleTransform view, RowCursor cursor, IEnumerable<Schema.Column> neededColumns,
-                                    float lambda, int? seed, Random rand, Dictionary<RowId, int> cache,
+            public ResampleCursor(ResampleTransform view, DataViewRowCursor cursor, IEnumerable<DataViewSchema.Column> neededColumns,
+                                    float lambda, int? seed, Random rand, Dictionary<DataViewRowId, int> cache,
                                     int classColumn, TClass classValue)
             {
                 _view = view;
@@ -444,14 +444,14 @@ namespace Scikit.ML.RandomTransforms
                 _classColumn = classColumn;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
 #if (DEBUG)
-                Dictionary<RowId, int> localCache = new Dictionary<RowId, int>();
+                Dictionary<DataViewRowId, int> localCache = new Dictionary<DataViewRowId, int>();
 #endif
                 // We do not change the ID (row to row transform).
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                     if (_shift > 0)
@@ -463,7 +463,7 @@ namespace Scikit.ML.RandomTransforms
                         ulong lo = pos.Low << _shift;
                         ulong hi = pos.High << _shift;
                         hi += left >> (64 - _shift);
-                        pos = new RowId(lo + (ulong)_copy, hi);
+                        pos = new DataViewRowId(lo + (ulong)_copy, hi);
 #if (DEBUG)
                         if (localCache.ContainsKey(pos))
                             throw Contracts.Except("Id already taken: {0}", pos);
@@ -482,7 +482,7 @@ namespace Scikit.ML.RandomTransforms
 
             public override long Batch { get { return _inputCursor.Batch; } }        // No change.
             public override long Position { get { return _inputCursor.Position; } }  // No change.
-            public override Schema Schema { get { return _view.Schema; } }          // No change.
+            public override DataViewSchema Schema { get { return _view.Schema; } }          // No change.
 
             protected override void Dispose(bool disposing)
             {

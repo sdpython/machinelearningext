@@ -123,7 +123,7 @@ namespace Scikit.ML.MultiClass
                     var tf = MinMaxLabel<float>(tr, index);
                     nb = (int)tf.Item2 + 1;
                     return new Tuple<int, int>((int)tf.Item1, (int)tf.Item2);
-                case DataKind.U1:
+                case DataKind.I1:
                     // key is 1 based
                     var tb = MinMaxLabel<byte>(tr, index);
                     nb = tb.Item2;
@@ -403,7 +403,7 @@ namespace Scikit.ML.MultiClass
         {
             var lab = data.Schema.Label.Value;
             Host.Assert(!data.Schema.Schema[lab.Index].IsHidden);
-            Host.Assert(lab.Type.GetKeyCount() > 0 || lab.Type == NumberType.R4);
+            Host.Assert(lab.Type.GetKeyCount() > 0 || lab.Type == NumberDataViewType.Single);
 
             IDataView source = data.Data;
             if (train)

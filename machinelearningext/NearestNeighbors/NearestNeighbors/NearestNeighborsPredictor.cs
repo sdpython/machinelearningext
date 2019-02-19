@@ -18,7 +18,7 @@ namespace Scikit.ML.NearestNeighbors
         protected NearestNeighborsTrees _nearestTrees;
         protected INearestNeighborsValueMapper _nearestPredictor;
 
-        public ColumnType InputType { get { return _nearestTrees.InputType; } }
+        public DataViewType InputType { get { return _nearestTrees.InputType; } }
 
         public void SaveCore(ModelSaveContext ctx)
         {
@@ -44,7 +44,7 @@ namespace Scikit.ML.NearestNeighbors
                 case DataKind.BL:
                     _nearestPredictor = new NearestNeighborsValueMapper<bool>(host, ctx);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     _nearestPredictor = new NearestNeighborsValueMapper<byte>(host, ctx);
                     break;
                 case DataKind.U2:

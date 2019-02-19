@@ -96,7 +96,7 @@ namespace Scikit.ML.NearestNeighbors
         IDataView _input;
         Arguments _args;
         IHost _host;
-        Schema _extendedSchema;
+        DataViewSchema _extendedSchema;
         NearestNeighborsTrees _trees;
         object _lock;
 
@@ -157,14 +157,14 @@ namespace Scikit.ML.NearestNeighbors
             _extendedSchema = ComputeExtendedSchema();
         }
 
-        Schema ComputeExtendedSchema()
+        DataViewSchema ComputeExtendedSchema()
         {
             return ExtendedSchema.Create(new ExtendedSchema(_input.Schema, new string[] { _args.distColumn, _args.idNeighborsColumn },
-                                       new ColumnType[] { new VectorType(NumberType.R4, _args.k),
-                                       new VectorType(NumberType.I8, _args.k) }));
+                                       new DataViewType[] { new VectorType(NumberDataViewType.Single, _args.k),
+                                       new VectorType(NumberDataViewType.Int64, _args.k) }));
         }
 
-        public Schema Schema { get { return _extendedSchema; } }
+        public DataViewSchema Schema { get { return _extendedSchema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Scikit.ML.NearestNeighbors
         /// When the last column is requested, we also need the column used to compute it.
         /// This function ensures that this column is requested when the last one is.
         /// </summary>
-        IEnumerable<Schema.Column> PredicatePropagation(IEnumerable<Schema.Column> columnsNeeded)
+        IEnumerable<DataViewSchema.Column> PredicatePropagation(IEnumerable<DataViewSchema.Column> columnsNeeded)
         {
             var cols = columnsNeeded.ToList();
             if (cols.Where(c => c.Index == _input.Schema.Count).Any())
@@ -197,7 +197,7 @@ namespace Scikit.ML.NearestNeighbors
             return cols;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             ComputeNearestNeighbors();
             _host.AssertValue(_input, "_input");
@@ -218,7 +218,7 @@ namespace Scikit.ML.NearestNeighbors
             }
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             ComputeNearestNeighbors();
             _host.AssertValue(_input, "_input");
@@ -276,9 +276,9 @@ namespace Scikit.ML.NearestNeighbors
 
         #region Cursor
 
-        public class NearestNeighborsCursor : RowCursor
+        public class NearestNeighborsCursor : DataViewRowCursor
         {
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly NearestNeighborsTransform _parent;
             readonly ValueGetter<VBuffer<float>> _getterFeatures;
             readonly NearestNeighborsTrees _trees;
@@ -288,7 +288,7 @@ namespace Scikit.ML.NearestNeighbors
             VBuffer<float> _distance;
             VBuffer<long> _idn;
 
-            public NearestNeighborsCursor(RowCursor cursor, NearestNeighborsTransform parent, IEnumerable<Schema.Column> columnsNeeded, int colFeatures)
+            public NearestNeighborsCursor(DataViewRowCursor cursor, NearestNeighborsTransform parent, IEnumerable<DataViewSchema.Column> columnsNeeded, int colFeatures)
             {
                 _inputCursor = cursor;
                 _parent = parent;
@@ -305,10 +305,10 @@ namespace Scikit.ML.NearestNeighbors
                 return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -316,7 +316,7 @@ namespace Scikit.ML.NearestNeighbors
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _parent.Schema; } }
+            public override DataViewSchema Schema { get { return _parent.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

@@ -32,7 +32,7 @@ namespace Scikit.ML.NearestNeighbors
             int nt = args.numThreads ?? 1;
             Random rand = RandomUtils.Create(args.seed);
             var cursors = (nt == 1)
-                                ? new RowCursor[] { data.GetRowCursor(data.Schema.Where(c=>indexes.Contains(c.Index)), rand) }
+                                ? new DataViewRowCursor[] { data.GetRowCursor(data.Schema.Where(c=>indexes.Contains(c.Index)), rand) }
                                 : data.GetRowCursorSet(data.Schema.Where(c => indexes.Contains(c.Index)), nt, rand);
             KdTree[] kdtrees;
             Dictionary<long, Tuple<TLabel, float>>[] labelsWeights;
@@ -105,7 +105,7 @@ namespace Scikit.ML.NearestNeighbors
             return new NearestNeighborsTrees(ch, kdtrees);
         }
 
-        private static KdTree BuildKDTree<TLabel>(IDataView data, RowCursor cursor,
+        private static KdTree BuildKDTree<TLabel>(IDataView data, DataViewRowCursor cursor,
                         int featureIndex, int labelIndex, int idIndex, int weightIndex,
                         out Dictionary<long, Tuple<TLabel, float>> labelsWeights, NearestNeighborsArguments args)
             where TLabel : IComparable<TLabel>

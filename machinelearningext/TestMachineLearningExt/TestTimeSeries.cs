@@ -51,7 +51,7 @@ namespace TestMachineLearningExt
                     var df = DataFrameIO.ReadView(view).Head(4).Copy();
                     df["diff"] = df["Score"] - df["X"];
                     var exp = DataFrameIO.ReadStr("null\n0\n0\n0\n0");
-                    df["diff"].AssertAlmostEqual(exp["null"].AsType(NumberType.R4), precision: 1e-1);
+                    df["diff"].AssertAlmostEqual(exp["null"].AsType(NumberDataViewType.Single), precision: 1e-1);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace TestMachineLearningExt
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
                     var type = cursor.Schema[pos].Type;
-                    if (type != NumberType.R4)
+                    if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
                     var colGetter = cursor.GetGetter<float>(pos);
                     float got = -1f;
@@ -127,7 +127,7 @@ namespace TestMachineLearningExt
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
                     var type = cursor.Schema[pos].Type;
-                    if (type != NumberType.R4)
+                    if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
                     var colGetter = cursor.GetGetter<float>(pos);
                     float got = -1f;
@@ -171,7 +171,7 @@ namespace TestMachineLearningExt
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
                     var type = cursor.Schema[pos].Type;
-                    if (type != NumberType.R4)
+                    if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
                     var colGetter = cursor.GetGetter<float>(pos);
                     float got = -1f;
@@ -221,7 +221,7 @@ namespace TestMachineLearningExt
                     var outValues = new List<float>();
                     int pos = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
                     var type = cursor.Schema[pos].Type;
-                    if (type != NumberType.R4)
+                    if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
                     var colGetter = cursor.GetGetter<float>(pos);
                     float got = -1f;

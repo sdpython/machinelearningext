@@ -122,7 +122,7 @@ namespace Scikit.ML.NearestNeighbors
                 case DataKind.R4:
                     predictor = TrainPredictorLabel<float>(ch, data);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     predictor = TrainPredictorLabel<byte>(ch, data);
                     break;
                 case DataKind.U2:

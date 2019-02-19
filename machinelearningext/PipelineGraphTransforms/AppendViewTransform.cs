@@ -151,7 +151,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _mergedView = Setup(input);
         }
 
-        public Schema Schema { get { return _mergedView.Schema; } }
+        public DataViewSchema Schema { get { return _mergedView.Schema; } }
         public bool CanShuffle { get { return _mergedView.CanShuffle; } }
         public long? GetRowCount()
         {
@@ -159,13 +159,13 @@ namespace Scikit.ML.PipelineGraphTransforms
             return _mergedView.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_source, "_source");
             return _mergedView.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_source, "_source");
             return _mergedView.GetRowCursorSet(columnsNeeded, n, rand);

@@ -51,14 +51,14 @@ namespace Scikit.ML.MultiClass
 
         private readonly ImplBase _impl;
 
-        private readonly ColumnType _outputType;
+        private readonly DataViewType _outputType;
 
         public override PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
 
-        public ColumnType InputType { get { return _impl.InputType; } }
-        public ColumnType OutputType { get { return _outputType; } }
+        public DataViewType InputType { get { return _impl.InputType; } }
+        public DataViewType OutputType { get { return _outputType; } }
 #if IMPLIValueMapperDist
-        public ColumnType DistType { get { return _outputType; } }
+        public DataViewType DistType { get { return _outputType; } }
 #endif
 
         internal static OptimizedOVAPredictor Create(IHost host, bool useProb, TScalarPredictor[] predictors)
@@ -70,8 +70,8 @@ namespace Scikit.ML.MultiClass
                 IValueMapperDist ivmd = null;
                 if (useProb &&
                     ((ivmd = predictors[0] as IValueMapperDist) == null ||
-                        ivmd.OutputType != NumberType.Float ||
-                        ivmd.DistType != NumberType.Float))
+                        ivmd.OutputType != NumberDataViewType.Single ||
+                        ivmd.DistType != NumberDataViewType.Single))
                 {
                     ch.Warning("useProbabilities specified with basePredictor that can't produce probabilities.");
                     ivmd = null;
@@ -97,7 +97,7 @@ namespace Scikit.ML.MultiClass
             Host.Assert(Utils.Size(impl.Predictors) > 0);
 
             _impl = impl;
-            _outputType = new VectorType(NumberType.Float, _impl.Predictors.Length);
+            _outputType = new VectorType(NumberDataViewType.Single, _impl.Predictors.Length);
         }
 
         private OptimizedOVAPredictor(IHostEnvironment env, ModelLoadContext ctx) : base(env, RegistrationName, ctx)
@@ -122,7 +122,7 @@ namespace Scikit.ML.MultiClass
                 _impl = new ImplRaw(predictors);
             }
 
-            _outputType = new VectorType(NumberType.Float, _impl.Predictors.Length);
+            _outputType = new VectorType(NumberDataViewType.Single, _impl.Predictors.Length);
         }
 
         public static OptimizedOVAPredictor Create(IHostEnvironment env, ModelLoadContext ctx)
@@ -207,7 +207,7 @@ namespace Scikit.ML.MultiClass
 
         private abstract class ImplBase
         {
-            public abstract ColumnType InputType { get; }
+            public abstract DataViewType InputType { get; }
             public abstract IValueMapper[] Predictors { get; }
             public abstract ValueMapper<VBuffer<float>, VBuffer<float>> GetMapper();
 
@@ -266,13 +266,13 @@ namespace Scikit.ML.MultiClass
                     src.CopyTo(ref dst);
             }
 
-            protected bool IsValid(IValueMapper mapper, ref ColumnType inputType)
+            protected bool IsValid(IValueMapper mapper, ref DataViewType inputType)
             {
                 if (mapper == null)
                     return false;
-                if (mapper.OutputType != NumberType.Float)
+                if (mapper.OutputType != NumberDataViewType.Single)
                     return false;
-                if (!mapper.InputType.IsVector() || mapper.InputType.ItemType() != NumberType.Float)
+                if (!mapper.InputType.IsVector() || mapper.InputType.ItemType() != NumberDataViewType.Single)
                     return false;
                 if (inputType == null)
                     inputType = mapper.InputType;
@@ -289,10 +289,10 @@ namespace Scikit.ML.MultiClass
 
         private sealed class ImplRaw : ImplBase
         {
-            private readonly ColumnType _inputType;
+            private readonly DataViewType _inputType;
             private readonly IValueMapper[] _mappers;
 
-            public override ColumnType InputType { get { return _inputType; } }
+            public override DataViewType InputType { get { return _inputType; } }
             public override IValueMapper[] Predictors { get { return _mappers; } }
 
             internal ImplRaw(TScalarPredictor[] predictors)
@@ -333,10 +333,10 @@ namespace Scikit.ML.MultiClass
 
         private sealed class ImplDist : ImplBase
         {
-            private readonly ColumnType _inputType;
+            private readonly DataViewType _inputType;
             private readonly IValueMapperDist[] _mappers;
 
-            public override ColumnType InputType { get { return _inputType; } }
+            public override DataViewType InputType { get { return _inputType; } }
             public override IValueMapper[] Predictors { get { return _mappers; } }
 
             internal ImplDist(IValueMapperDist[] predictors)
@@ -352,11 +352,11 @@ namespace Scikit.ML.MultiClass
                 }
             }
 
-            private bool IsValid(IValueMapperDist mapper, ref ColumnType inputType)
+            private bool IsValid(IValueMapperDist mapper, ref DataViewType inputType)
             {
                 if (!base.IsValid(mapper, ref inputType))
                     return false;
-                if (mapper.DistType != NumberType.Float)
+                if (mapper.DistType != NumberDataViewType.Single)
                     return false;
                 return true;
             }

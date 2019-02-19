@@ -93,7 +93,7 @@ namespace Scikit.ML.FeaturesTransforms
         Dictionary<int, ScalingFactor> _scalingFactors;
         Dictionary<int, int> _revIndex;
         IHost _host;
-        Schema _extendedSchema;
+        DataViewSchema _extendedSchema;
         object _lock;
 
         public IDataView Source { get { return _input; } }
@@ -180,10 +180,10 @@ namespace Scikit.ML.FeaturesTransforms
             }
         }
 
-        Schema ComputeExtendedSchema()
+        DataViewSchema ComputeExtendedSchema()
         {
             int index;
-            Func<string, ColumnType> getType = (string col) =>
+            Func<string, DataViewType> getType = (string col) =>
             {
                 var schema = _input.Schema;
                 index = SchemaHelper.GetColumnIndex(schema, col);
@@ -197,7 +197,7 @@ namespace Scikit.ML.FeaturesTransforms
                         : _input.Schema;
         }
 
-        public Schema Schema { get { return _extendedSchema; } }
+        public DataViewSchema Schema { get { return _extendedSchema; } }
 
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
@@ -210,7 +210,7 @@ namespace Scikit.ML.FeaturesTransforms
             return Source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
@@ -220,7 +220,7 @@ namespace Scikit.ML.FeaturesTransforms
             return new ScalerCursor(cursor, this, newColumnsNeeded);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
@@ -254,8 +254,8 @@ namespace Scikit.ML.FeaturesTransforms
                         {
                             int index = SchemaHelper.GetColumnIndex(sch, textCols[i]);
                             var ty = sch[index].Type;
-                            if (!(ty == NumberType.R4 || ty == NumberType.U4 || ty == TextType.Instance || ty == BoolType.Instance ||
-                                (ty.IsKey() && ty.AsKey().RawKind() == DataKind.U4) || (ty.IsVector() && ty.AsVector().ItemType() == NumberType.R4)))
+                            if (!(ty == NumberDataViewType.Single || ty == NumberDataViewType.UInt32 || ty == TextDataViewType.Instance || ty == BooleanDataViewType.Instance ||
+                                (ty.IsKey() && ty.AsKey().RawKind() == DataKind.U4) || (ty.IsVector() && ty.AsVector().ItemType() == NumberDataViewType.Single)))
                                 throw ch.Except("Only a float or a vector of floats or a uint or a text or a bool is allowed for column {0} (schema={1}).", _args.columns[i], SchemaHelper.ToString(sch));
                             indexesCol.Add(index);
                         }
@@ -265,14 +265,14 @@ namespace Scikit.ML.FeaturesTransforms
                         var requiredIndexes = required.OrderBy(c => c).ToArray();
                         using (var cur = _input.GetRowCursor(Schema.Where(c => required.Contains(c.Index))))
                         {
-                            bool[] isText = requiredIndexes.Select(c => sch[c].Type == TextType.Instance).ToArray();
-                            bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BoolType.Instance).ToArray();
-                            bool[] isFloat = requiredIndexes.Select(c => sch[c].Type == NumberType.R4).ToArray();
-                            bool[] isUint = requiredIndexes.Select(c => sch[c].Type == NumberType.U4 || sch[c].Type.RawKind() == DataKind.U4).ToArray();
-                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BoolType.Instance || sch[i].Type.RawKind() == DataKind.BL ? cur.GetGetter<bool>(i) : null).ToArray();
-                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberType.U4 || sch[i].Type.RawKind() == DataKind.U4 ? cur.GetGetter<uint>(i) : null).ToArray();
-                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(i) : null).ToArray();
-                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberType.R4 ? cur.GetGetter<float>(i) : null).ToArray();
+                            bool[] isText = requiredIndexes.Select(c => sch[c].Type == TextDataViewType.Instance).ToArray();
+                            bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BooleanDataViewType.Instance).ToArray();
+                            bool[] isFloat = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Single).ToArray();
+                            bool[] isUint = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.UInt32 || sch[c].Type.RawKind() == DataKind.U4).ToArray();
+                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BooleanDataViewType.Instance || sch[i].Type.RawKind() == DataKind.BL ? cur.GetGetter<bool>(i) : null).ToArray();
+                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.UInt32 || sch[i].Type.RawKind() == DataKind.U4 ? cur.GetGetter<uint>(i) : null).ToArray();
+                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextDataViewType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(i) : null).ToArray();
+                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Single ? cur.GetGetter<float>(i) : null).ToArray();
                             ValueGetter<VBuffer<float>>[] vectorGetters = requiredIndexes.Select(i => sch[i].Type.IsVector() ? cur.GetGetter<VBuffer<float>>(i) : null).ToArray();
 
                             var schema = _input.Schema;
@@ -515,14 +515,14 @@ namespace Scikit.ML.FeaturesTransforms
 
         #region Cursor
 
-        public class ScalerCursor : RowCursor
+        public class ScalerCursor : DataViewRowCursor
         {
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly ScalerTransform _parent;
             readonly Dictionary<int, ScalingFactor> _scalingFactors;
-            readonly IEnumerable<Schema.Column> _columnsNeeded;
+            readonly IEnumerable<DataViewSchema.Column> _columnsNeeded;
 
-            public ScalerCursor(RowCursor cursor, ScalerTransform parent, IEnumerable<Schema.Column> columnsNeeded)
+            public ScalerCursor(DataViewRowCursor cursor, ScalerTransform parent, IEnumerable<DataViewSchema.Column> columnsNeeded)
             {
                 _inputCursor = cursor;
                 _parent = parent;
@@ -544,10 +544,10 @@ namespace Scikit.ML.FeaturesTransforms
                 return false;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -555,7 +555,7 @@ namespace Scikit.ML.FeaturesTransforms
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _parent.Schema; } }
+            public override DataViewSchema Schema { get { return _parent.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

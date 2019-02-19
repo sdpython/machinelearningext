@@ -11,13 +11,13 @@ namespace Scikit.ML.PipelineHelper
     /// Combines an existing cursor with a schema not necessarily related.
     /// Used in <see cref="ScalerTransform"/>.
     /// </summary>
-    public class SameCursor : RowCursor
+    public class SameCursor : DataViewRowCursor
     {
-        readonly RowCursor _inputCursor;
-        readonly Schema _schema;
-        readonly Schema _cursorSchema;
+        readonly DataViewRowCursor _inputCursor;
+        readonly DataViewSchema _schema;
+        readonly DataViewSchema _cursorSchema;
 
-        public SameCursor(RowCursor cursor, Schema schema)
+        public SameCursor(DataViewRowCursor cursor, DataViewSchema schema)
         {
             _schema = schema;
             _inputCursor = cursor;
@@ -38,10 +38,10 @@ namespace Scikit.ML.PipelineHelper
             GC.SuppressFinalize(this);
         }
 
-        public override ValueGetter<RowId> GetIdGetter() { return _inputCursor.GetIdGetter(); }
+        public override ValueGetter<DataViewRowId> GetIdGetter() { return _inputCursor.GetIdGetter(); }
         public override long Batch { get { return _inputCursor.Batch; } }
         public override long Position { get { return _inputCursor.Position; } }
-        public override Schema Schema { get { return _schema; } }
+        public override DataViewSchema Schema { get { return _schema; } }
         public override bool MoveNext() { return _inputCursor.MoveNext(); }
         public override ValueGetter<TValue> GetGetter<TValue>(int col) { return _inputCursor.GetGetter<TValue>(col); }
     }

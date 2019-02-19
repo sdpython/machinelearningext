@@ -82,7 +82,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// type of the column 
         /// </summary>
-        ColumnType Kind { get; }
+        DataViewType Kind { get; }
 
         /// <summary>
         /// Returns a copy.
@@ -109,7 +109,7 @@ namespace Scikit.ML.DataManipulation
         /// </summary>
         /// <param name="colType">column type</param>
         /// <returns>new column</returns>
-        IDataColumn AsType(ColumnType colType);
+        IDataColumn AsType(DataViewType colType);
 
         /// <summary>
         /// Returns the element at position row
@@ -173,7 +173,7 @@ namespace Scikit.ML.DataManipulation
         /// The returned getter returns the element
         /// at position <pre>cursor.Position</pre>
         /// </summary>
-        ValueGetter<DType> GetGetter<DType>(RowCursor cursor);
+        ValueGetter<DType> GetGetter<DType>(DataViewRowCursor cursor);
 
         /// <summary>
         /// Raises an exception if two columns do not have the same
@@ -189,7 +189,7 @@ namespace Scikit.ML.DataManipulation
         /// The returned getter returns the element
         /// at position <pre>cursor.Position</pre>
         /// </summary>
-        ValueGetter<VBuffer<DType>> GetGetterVector<DType>(RowCursor cursor);
+        ValueGetter<VBuffer<DType>> GetGetterVector<DType>(DataViewRowCursor cursor);
 
         /// <summary>
         /// exact comparison
@@ -281,7 +281,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns the list of types.
         /// </summary>
-        ColumnType[] Kinds { get; }
+        DataViewType[] Kinds { get; }
 
         /// <summary>
         /// Returns the number of columns.
@@ -306,12 +306,12 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Sames a GetRowCursor but on a subset of the data.
         /// </summary>
-        RowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null);
+        DataViewRowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null);
 
         /// <summary>
         /// Sames a GetRowCursorSet but on a subset of the data.
         /// </summary>
-        RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null);
+        DataViewRowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null);
 
         /// <summary>
         /// Retrieves a column by its name.

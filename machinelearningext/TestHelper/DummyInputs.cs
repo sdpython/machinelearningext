@@ -76,7 +76,7 @@ namespace Scikit.ML.TestHelper
             }
         }
 
-        public Delegate[] GetCursorGetter(RowCursor cursor)
+        public Delegate[] GetCursorGetter(DataViewRowCursor cursor)
         {
             return new Delegate[]
             {
@@ -119,8 +119,8 @@ namespace Scikit.ML.TestHelper
 
     public class ExampleValueMapper : IValueMapper
     {
-        public ColumnType InputType { get { return new VectorType(NumberType.R4, 2); } }
-        public ColumnType OutputType { get { return NumberType.R4; } }
+        public DataViewType InputType { get { return new VectorType(NumberDataViewType.Single, 2); } }
+        public DataViewType OutputType { get { return NumberDataViewType.Single; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>()
         {
             return GetMapper_() as ValueMapper<TSrc, TDst>;
@@ -146,8 +146,8 @@ namespace Scikit.ML.TestHelper
 
     public class SHExampleValueMapper : IValueMapper
     {
-        public ColumnType InputType { get { return new VectorType(NumberType.R4, 2); } }
-        public ColumnType OutputType { get { return NumberType.R4; } }
+        public DataViewType InputType { get { return new VectorType(NumberDataViewType.Single, 2); } }
+        public DataViewType OutputType { get { return NumberDataViewType.Single; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>()
         {
             return GetMapper_() as ValueMapper<TSrc, TDst>;
@@ -161,8 +161,8 @@ namespace Scikit.ML.TestHelper
 
     public class ExampleValueMapperVector : IValueMapper
     {
-        public ColumnType InputType { get { return new VectorType(NumberType.R4, 2); } }
-        public ColumnType OutputType { get { return new VectorType(NumberType.R4); } }
+        public DataViewType InputType { get { return new VectorType(NumberDataViewType.Single, 2); } }
+        public DataViewType OutputType { get { return new VectorType(NumberDataViewType.Single); } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>()
         {
             return GetMapper_() as ValueMapper<TSrc, TDst>;

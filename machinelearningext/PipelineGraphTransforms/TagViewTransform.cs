@@ -178,7 +178,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _parallelViews.Add(new Tuple<string, ITaggedDataView>(_args.tag, this));
         }
 
-        public Schema Schema { get { return _source.Schema; } }
+        public DataViewSchema Schema { get { return _source.Schema; } }
         public bool CanShuffle { get { return _source.CanShuffle; } }
         public long? GetRowCount()
         {
@@ -186,13 +186,13 @@ namespace Scikit.ML.PipelineGraphTransforms
             return _source.GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_source, "_source");
             return _source.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_source, "_source");
             return _source.GetRowCursorSet(columnsNeeded, n, rand);

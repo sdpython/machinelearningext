@@ -224,7 +224,7 @@ namespace Scikit.ML.RandomTransforms
 
         #region IDataTransform API
 
-        public Schema Schema { get { return _transform.Schema; } }
+        public DataViewSchema Schema { get { return _transform.Schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         /// <summary>
@@ -245,13 +245,13 @@ namespace Scikit.ML.RandomTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -279,7 +279,7 @@ namespace Scikit.ML.RandomTransforms
                 case DataKind.BL:
                     transform = new ShakeInputState<bool>(_host, transform ?? Source, _toShake, _args);
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     transform = new ShakeInputState<Byte>(_host, transform ?? Source, _toShake, _args);
                     break;
                 case DataKind.U2:
@@ -307,7 +307,7 @@ namespace Scikit.ML.RandomTransforms
             IDataView _input;
             IValueMapper[] _toShake;
 
-            readonly Schema _schema;
+            readonly DataViewSchema _schema;
             readonly Arguments _args;
             readonly int _inputCol;
             TInput[][] _shakingValues;
@@ -315,7 +315,7 @@ namespace Scikit.ML.RandomTransforms
             object _lock;
 
             public IDataView Source { get { return _input; } }
-            public Schema Schema { get { return _schema; } }
+            public DataViewSchema Schema { get { return _schema; } }
 
             public ShakeInputState(IHostEnvironment host, IDataView input, IValueMapper[] toShake, Arguments args)
             {
@@ -337,7 +337,7 @@ namespace Scikit.ML.RandomTransforms
                 if (_shakingValues.Length != _args.inputFeaturesInt.Length)
                     throw _host.Except("Shaking Values and columns to shake do not have the same dimension {0} and '{1}'.", _args.inputFeaturesInt.Length, _args.values);
 
-                var colTypes = new List<ColumnType>();
+                var colTypes = new List<DataViewType>();
 
                 switch (_args.aggregation)
                 {
@@ -379,7 +379,7 @@ namespace Scikit.ML.RandomTransforms
             {
                 bool identity;
                 var ty = _input.Schema[_inputCol].Type;
-                var conv = Conversions.Instance.GetStandardConversion<ReadOnlyMemory<char>, TInput>(TextType.Instance, ty.AsVector().ItemType(), out identity);
+                var conv = Conversions.Instance.GetStandardConversion<ReadOnlyMemory<char>, TInput>(TextDataViewType.Instance, ty.AsVector().ItemType(), out identity);
                 if (string.IsNullOrEmpty(_args.values))
                     throw _host.ExceptParam("_args.values cannot be null.");
                 string[][] values = _args.values.Split(';').Select(c => c.Split(',')).ToArray();
@@ -407,7 +407,7 @@ namespace Scikit.ML.RandomTransforms
             /// When the last column is requested, we also need the column used to compute it.
             /// This function ensures that this column is requested when the last one is.
             /// </summary>
-            IEnumerable<Schema.Column> PredicatePropagation(IEnumerable<Schema.Column> columnsNeeded)
+            IEnumerable<DataViewSchema.Column> PredicatePropagation(IEnumerable<DataViewSchema.Column> columnsNeeded)
             {
                 var colSet = new HashSet<string>(_args.outputColumns);
                 var cols = columnsNeeded.ToList();
@@ -420,7 +420,7 @@ namespace Scikit.ML.RandomTransforms
                 return cols;
             }
 
-            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+            public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 var kind = _toShake[0].OutputType.IsVector()
                                 ? _toShake[0].OutputType.ItemType().RawKind()
@@ -440,7 +440,7 @@ namespace Scikit.ML.RandomTransforms
                 }
             }
 
-            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+            public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
             {
                 DataKind kind;
                 if (_toShake[0].OutputType.IsVector())
@@ -467,10 +467,10 @@ namespace Scikit.ML.RandomTransforms
 
         #region Cursor
 
-        public class ShakeInputCursor<TInput, TOutput> : RowCursor
+        public class ShakeInputCursor<TInput, TOutput> : DataViewRowCursor
         {
             readonly ShakeInputState<TInput> _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly Arguments _args;
             readonly TInput[][] _shakingValues;
             readonly IValueMapper[] _toShake;
@@ -482,7 +482,7 @@ namespace Scikit.ML.RandomTransforms
             ValueMapper<VBuffer<TInput>, TOutput>[] _mappers;
             Func<TOutput, TOutput, TOutput> _aggregation;
 
-            public ShakeInputCursor(ShakeInputState<TInput> view, RowCursor cursor, IEnumerable<Schema.Column> columnsNeeded,
+            public ShakeInputCursor(ShakeInputState<TInput> view, DataViewRowCursor cursor, IEnumerable<DataViewSchema.Column> columnsNeeded,
                                     Arguments args, int column, IValueMapper[] toShake, TInput[][] shakingValues,
                                     Func<TOutput, TOutput, TOutput> aggregation)
             {
@@ -514,10 +514,10 @@ namespace Scikit.ML.RandomTransforms
                 return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -525,7 +525,7 @@ namespace Scikit.ML.RandomTransforms
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _view.Schema; } }
+            public override DataViewSchema Schema { get { return _view.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

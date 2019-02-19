@@ -115,7 +115,7 @@ namespace Scikit.ML.PipelineGraphTransforms
                                 i == 0 ? input : _dataTransforms[i - 1]);
         }
 
-        public Schema Schema { get { return _dataTransforms.Last().Schema; } }
+        public DataViewSchema Schema { get { return _dataTransforms.Last().Schema; } }
         public bool CanShuffle { get { return _dataTransforms.Select(c => c.CanShuffle).All(c => true); } }
 
         public long? GetRowCount()
@@ -123,13 +123,13 @@ namespace Scikit.ML.PipelineGraphTransforms
             return _dataTransforms.Last().GetRowCount();
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_dataTransforms, "_dataTransforms");
             return _dataTransforms.Last().GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_dataTransforms, "_dataTransforms");
             return _dataTransforms.Last().GetRowCursorSet(columnsNeeded, n, rand);

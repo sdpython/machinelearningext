@@ -138,7 +138,7 @@ namespace Scikit.ML.ModelSelection
         IDataTransform _pipedTransform;
         readonly string _saverSettings;
 
-        public override Schema OutputSchema { get { return _pipedTransform.Schema; } }
+        public override DataViewSchema OutputSchema { get { return _pipedTransform.Schema; } }
         public IPredictor TaggedPredictor { get { return null; } }
 
         #endregion
@@ -305,13 +305,13 @@ namespace Scikit.ML.ModelSelection
             return true;
         }
 
-        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        protected override DataViewRowCursor GetRowCursorCore(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
             return _pipedTransform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public override DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.AssertValue(_pipedTransform, "_pipedTransform");
             return _pipedTransform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -369,7 +369,7 @@ namespace Scikit.ML.ModelSelection
             int index = SchemaHelper.GetColumnIndex(currentTr.Schema, columnName);
             var ct = currentTr.Schema[index].Type;
             var view = LambdaColumnMapper.Create(Host, "Key to part mapper", currentTr,
-                                    columnName, _newColumn, ct, NumberType.I4, mapper);
+                                    columnName, _newColumn, ct, NumberDataViewType.Int32, mapper);
 
             // We cache the result to avoid the pipeline to change the random number.
             var args3 = new ExtendedCacheTransform.Arguments()
@@ -410,7 +410,7 @@ namespace Scikit.ML.ModelSelection
                         var ar1 = new RangeFilter.Options() { Column = _newColumn, Min = i, Max = i, IncludeMax = true };
                         int pardId = i;
                         var filtView = LambdaFilter.Create<int>(Host, string.Format("Select part {0}", i), currentTr,
-                                                                   _newColumn, NumberType.I4,
+                                                                   _newColumn, NumberDataViewType.Int32,
                                                                    (in int part) => { return part.Equals(pardId); });
 #if (DEBUG)
                         long count = DataViewUtils.ComputeRowCount(filtView);

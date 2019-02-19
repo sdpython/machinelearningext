@@ -15,8 +15,8 @@ using ArgumentType = Microsoft.ML.CommandLine.ArgumentType;
 using DataKind = Microsoft.ML.Data.DataKind;
 using IDataTransform = Microsoft.ML.Data.IDataTransform;
 using IDataView = Microsoft.Data.DataView.IDataView;
-using RowCursor = Microsoft.Data.DataView.RowCursor;
-using Schema = Microsoft.Data.DataView.Schema;
+using DataViewRowCursor = Microsoft.Data.DataView.DataViewRowCursor;
+using DataViewSchema = Microsoft.Data.DataView.DataViewSchema;
 using TransformBase = Microsoft.ML.Data.TransformBase;
 
 using ModelLoadContext = Microsoft.ML.Model.ModelLoadContext;
@@ -101,7 +101,7 @@ namespace Scikit.ML.PipelineTransforms
         readonly bool _reverse;             // sorting order
         readonly int? _numThreads;           // filling the cache with or without multithreading
 
-        public override Schema OutputSchema { get { return Source.Schema; } }
+        public override DataViewSchema OutputSchema { get { return Source.Schema; } }
 
         #endregion
 
@@ -193,7 +193,7 @@ namespace Scikit.ML.PipelineTransforms
             return false;
         }
 
-        protected override RowCursor GetRowCursorCore(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        protected override DataViewRowCursor GetRowCursorCore(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             Host.Check(string.IsNullOrEmpty(_sortColumn) || rand == null, "Random access is not allowed on sorted data. (5)");
             Host.AssertValue(_transform, "_transform");
@@ -203,7 +203,7 @@ namespace Scikit.ML.PipelineTransforms
             return _transform.GetRowCursor(SchemaHelper.ColumnsNeeded(columnsNeeded, _transform.Schema, _sortColumn), rand);
         }
 
-        public override RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public override DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             Host.Check(string.IsNullOrEmpty(_sortColumn) || rand == null, "Random access is not allowed on sorted data. (6)");
             Host.AssertValue(_transform, "_transform");
@@ -308,7 +308,7 @@ namespace Scikit.ML.PipelineTransforms
             object _lock;
 
             public IDataView Source { get { return _source; } }
-            public Schema Schema { get { return _source.Schema; } }
+            public DataViewSchema Schema { get { return _source.Schema; } }
 
             public SortInDataFrameState(IHostEnvironment host, IDataView input, int sortColumn, bool reverse, int? numThreads)
             {
@@ -368,7 +368,7 @@ namespace Scikit.ML.PipelineTransforms
                 return _autoView.Length;
             }
 
-            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+            public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 FillCacheIfNotFilled();
                 _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (1).");
@@ -376,7 +376,7 @@ namespace Scikit.ML.PipelineTransforms
                 return _autoView.GetRowCursor(columnsNeeded, rand);
             }
 
-            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+            public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
             {
                 FillCacheIfNotFilled();
                 _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (2).");

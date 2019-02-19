@@ -20,7 +20,7 @@ namespace Scikit.ML.DataManipulation
         IHostEnvironment _env;
 
         public IDataView Source => _source;
-        public Schema Schema => _source.Schema;
+        public DataViewSchema Schema => _source.Schema;
 
         public StreamingDataFrame(IDataView source, IHostEnvironment env = null)
         {
@@ -53,15 +53,15 @@ namespace Scikit.ML.DataManipulation
 
         public bool CanShuffle => Source.CanShuffle;
         public long? GetRowCount() { return Source.GetRowCount(); }
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null) { return Source.GetRowCursor(columnsNeeded, rand); }
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null) { return Source.GetRowCursor(columnsNeeded, rand); }
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return Source.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         public static StreamingDataFrame ReadCsv(string filename,
                                         char sep = ',', bool header = true,
-                                        string[] names = null, ColumnType[] dtypes = null,
+                                        string[] names = null, DataViewType[] dtypes = null,
                                         int nrows = -1, int guess_rows = 10,
                                         Encoding encoding = null, bool useThreads = true,
                                         bool index = false, IHost host = null)
@@ -72,7 +72,7 @@ namespace Scikit.ML.DataManipulation
 
         public static StreamingDataFrame ReadCsv(string[] filenames,
                                         char sep = ',', bool header = true,
-                                        string[] names = null, ColumnType[] dtypes = null,
+                                        string[] names = null, DataViewType[] dtypes = null,
                                         int nrows = -1, int guess_rows = 10,
                                         Encoding encoding = null, bool useThreads = true,
                                         bool index = false, IHost host = null)

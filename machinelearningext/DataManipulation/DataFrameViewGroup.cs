@@ -14,11 +14,11 @@ namespace Scikit.ML.DataManipulation
     public struct DataFrameGroupKey
     {
         string _key;
-        ColumnType _kind;
+        DataViewType _kind;
         object _value;
 
         public string Key => _key;
-        public ColumnType Kind => _kind;
+        public DataViewType Kind => _kind;
         public object Value => _value;
 
         public static DataFrameGroupKey[] Create<T1>(string[] name, ImmutableTuple<T1> value)

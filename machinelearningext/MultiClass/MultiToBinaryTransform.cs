@@ -190,7 +190,7 @@ namespace Scikit.ML.MultiClass
         #region IDataTransform API
 
         public IDataView Source { get { return _input; } }
-        public Schema Schema { get { return _transform.Schema; } }
+        public DataViewSchema Schema { get { return _transform.Schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         public long? GetRowCount()
@@ -208,13 +208,13 @@ namespace Scikit.ML.MultiClass
             return true;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -235,7 +235,7 @@ namespace Scikit.ML.MultiClass
                     return new MultiToBinaryState<float, float>(_host, _input, _args);
                 case DataKind.BL:
                     return new MultiToBinaryState<bool, bool>(_host, _input, _args);
-                case DataKind.U1:
+                case DataKind.I1:
                     return new MultiToBinaryState<byte, byte>(_host, _input, _args);
                 case DataKind.U2:
                     return new MultiToBinaryState<ushort, ushort>(_host, _input, _args);
@@ -257,7 +257,7 @@ namespace Scikit.ML.MultiClass
                     return new MultiToBinaryState<float, float>(ctx, _host, _input, _args);
                 case DataKind.BL:
                     return new MultiToBinaryState<bool, bool>(ctx, _host, _input, _args);
-                case DataKind.U1:
+                case DataKind.I1:
                     return new MultiToBinaryState<byte, byte>(ctx, _host, _input, _args);
                 case DataKind.U2:
                     return new MultiToBinaryState<ushort, ushort>(ctx, _host, _input, _args);
@@ -320,7 +320,7 @@ namespace Scikit.ML.MultiClass
         {
             IHost _host;
             IDataView _input;
-            Schema _schema;
+            DataViewSchema _schema;
             Arguments _args;
             Dictionary<TLabel, float> _labelDistribution;
             float _averageMultiplication;
@@ -374,7 +374,7 @@ namespace Scikit.ML.MultiClass
             object _lock;
 
             public IDataView Source { get { return _input; } }
-            public Schema Schema { get { return _schema; } }
+            public DataViewSchema Schema { get { return _schema; } }
 
             public MultiToBinaryState(IHostEnvironment host, IDataView input, Arguments args)
             {
@@ -402,13 +402,13 @@ namespace Scikit.ML.MultiClass
                     case MultiplicationAlgorithm.Reweight:
                         _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                 new string[] { _args.newColumn },
-                                                new ColumnType[] { BoolType.Instance },
+                                                new DataViewType[] { BooleanDataViewType.Instance },
                                                 true, true));
                         break;
                     case MultiplicationAlgorithm.Ranking:
                         _schema = ExtendedSchema.Create(new ExtendedSchema(input.Schema,
                                                 new string[] { _args.newColumn },
-                                                new ColumnType[] { NumberType.U4 },
+                                                new DataViewType[] { NumberDataViewType.UInt32 },
                                                 true, true));
                         break;
                     default:
@@ -451,7 +451,7 @@ namespace Scikit.ML.MultiClass
                 {
                     var typeLabel = _input.Schema[_colLabel].Type;
                     bool identity;
-                    ValueMapper<long, TLabel> mapper = Conversions.Instance.GetStandardConversion<long, TLabel>(NumberType.I8, typeLabel, out identity);
+                    ValueMapper<long, TLabel> mapper = Conversions.Instance.GetStandardConversion<long, TLabel>(NumberDataViewType.Int64, typeLabel, out identity);
 
                     _labelDistribution = new Dictionary<TLabel, float>();
                     for (int i = 0; i < nb; ++i)
@@ -645,7 +645,7 @@ namespace Scikit.ML.MultiClass
             public bool CanShuffle { get { return true; } }
             public long? GetRowCount() { return null; }
 
-            public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+            public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema, new[] { _colLabel, _colWeight }).ToArray();
                 var oldCols = SchemaHelper.ColumnsNeeded(cols, _input.Schema);
@@ -664,7 +664,7 @@ namespace Scikit.ML.MultiClass
                 }
             }
 
-            public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+            public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
             {
                 var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema, new[] { _colLabel, _colWeight }).ToArray();
                 var oldCols = SchemaHelper.ColumnsNeeded(cols, _input.Schema);
@@ -688,11 +688,11 @@ namespace Scikit.ML.MultiClass
 
         #region Cursor
 
-        public class MultiToBinaryCursor<TFeatures, TLabel, TLabelInter> : RowCursor
+        public class MultiToBinaryCursor<TFeatures, TLabel, TLabelInter> : DataViewRowCursor
             where TLabel : IEquatable<TLabel>
         {
             readonly MultiToBinaryState<TFeatures, TLabel> _view;
-            readonly RowCursor _inputCursor;
+            readonly DataViewRowCursor _inputCursor;
             readonly int _colLabel;
             readonly int _colWeight;
             readonly int _colName;
@@ -710,7 +710,7 @@ namespace Scikit.ML.MultiClass
             float _maxFreq, _minFreq;
             Random _rand;
 
-            public MultiToBinaryCursor(MultiToBinaryState<TFeatures, TLabel> view, RowCursor cursor, int colLabel, int colWeight, int maxReplica, MultiplicationAlgorithm algo, int seed)
+            public MultiToBinaryCursor(MultiToBinaryState<TFeatures, TLabel> view, DataViewRowCursor cursor, int colLabel, int colWeight, int maxReplica, MultiplicationAlgorithm algo, int seed)
             {
                 _view = view;
                 _colName = view.Source.Schema.Count;
@@ -736,10 +736,10 @@ namespace Scikit.ML.MultiClass
                 _copy = -1;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     if (_shift > 0)
                     {
@@ -751,7 +751,7 @@ namespace Scikit.ML.MultiClass
                         ulong lo = pos.Low << _shift;
                         ulong hi = pos.High << _shift;
                         hi += left >> (64 - _shift);
-                        pos = new RowId(lo + (ulong)_copy, hi);
+                        pos = new DataViewRowId(lo + (ulong)_copy, hi);
                     }
                     else
                         Contracts.Assert(_copy == 0);
@@ -771,7 +771,7 @@ namespace Scikit.ML.MultiClass
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _view.Schema; } }
+            public override DataViewSchema Schema { get { return _view.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

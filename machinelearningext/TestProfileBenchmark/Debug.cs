@@ -59,7 +59,7 @@ namespace TestProfileBenchmark
                 using (var env = new ConsoleEnvironment())
                 {
                     var df = DataFrameIO.ReadCsv(_dataset, sep: ',',
-                                                 dtypes: new ColumnType[] { NumberType.R4 });
+                                                 dtypes: new DataViewType[] { NumberDataViewType.Single });
                     var concat = "Concat{col=Features:F0,F1,F2,F3,F4,F5,F6,F7,F8,F9}";
                     var pipe = new ScikitPipeline(new[] { concat }, "ftr{iter=10}");
                     pipe.Train(df, "Features", "Label");

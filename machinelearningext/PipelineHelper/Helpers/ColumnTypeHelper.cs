@@ -12,70 +12,70 @@ namespace Scikit.ML.PipelineHelper
     /// </summary>
     public static class ColumnTypeHelper
     {
-        public static bool IsPrimitive(this ColumnType column)
+        public static bool IsPrimitive(this DataViewType column)
         {
-            return column is PrimitiveType;
+            return column is PrimitiveDataViewType;
         }
 
-        public static bool IsVector(this ColumnType column)
+        public static bool IsVector(this DataViewType column)
         {
             return column is VectorType;
         }
 
-        public static bool IsNumber(this ColumnType column)
+        public static bool IsNumber(this DataViewType column)
         {
-            return column is NumberType;
+            return column is NumberDataViewType;
         }
 
-        public static bool IsKey(this ColumnType column)
+        public static bool IsKey(this DataViewType column)
         {
             return column is KeyType;
         }
 
-        public static bool IsText(this ColumnType column)
+        public static bool IsText(this DataViewType column)
         {
-            if (!(column is TextType))
+            if (!(column is TextDataViewType))
                 return false;
-            Contracts.Assert(column == TextType.Instance);
+            Contracts.Assert(column == TextDataViewType.Instance);
             return true;
         }
 
-        public static KeyType AsKey(this ColumnType column)
+        public static KeyType AsKey(this DataViewType column)
         {
             return IsKey(column) ? (KeyType)column : null;
         }
 
-        public static PrimitiveType AsPrimitive(this ColumnType column)
+        public static PrimitiveDataViewType AsPrimitive(this DataViewType column)
         {
-            return IsPrimitive(column) ? (PrimitiveType)column : null;
+            return IsPrimitive(column) ? (PrimitiveDataViewType)column : null;
         }
 
-        public static VectorType AsVector(this ColumnType column)
+        public static VectorType AsVector(this DataViewType column)
         {
             return IsVector(column) ? (VectorType)column : null;
         }
 
-        public static int DimCount(this ColumnType column)
+        public static int DimCount(this DataViewType column)
         {
             return IsVector(column) ? AsVector(column).Dimensions.Length : 0;
         }
 
-        public static int GetDim(this ColumnType column, int dim)
+        public static int GetDim(this DataViewType column, int dim)
         {
             return IsVector(column) ? AsVector(column).Dimensions[dim] : 0;
         }
 
-        public static int ValueCount(this ColumnType column)
+        public static int ValueCount(this DataViewType column)
         {
             return IsVector(column) ? AsVector(column).Size : 1;
         }
 
-        public static PrimitiveType ItemType(this ColumnType column)
+        public static PrimitiveDataViewType ItemType(this DataViewType column)
         {
             return IsVector(column) ? AsVector(column).ItemType : AsPrimitive(column);
         }
 
-        public static DataKind RawKind(this ColumnType type)
+        public static DataKind RawKind(this DataViewType type)
         {
             DataKind kind;
             if (IsVector(type))
@@ -86,51 +86,51 @@ namespace Scikit.ML.PipelineHelper
             throw Contracts.ExceptNotSupp($"Unable to guess kind for type {type}.");
         }
 
-        public static int VectorSize(this ColumnType column)
+        public static int VectorSize(this DataViewType column)
         {
             return IsVector(column) ? AsVector(column).Size : 0;
         }
 
-        public static NumberType NumberFromKind(DataKind kind)
+        public static NumberDataViewType NumberFromKind(DataKind kind)
         {
             switch (kind)
             {
-                case DataKind.I1: return NumberType.I1;
-                case DataKind.U1: return NumberType.U1;
-                case DataKind.I2: return NumberType.I2;
-                case DataKind.U2: return NumberType.U2;
-                case DataKind.I4: return NumberType.I4;
-                case DataKind.U4: return NumberType.U4;
-                case DataKind.I8: return NumberType.I8;
-                case DataKind.U8: return NumberType.U8;
-                case DataKind.R4: return NumberType.R4;
-                case DataKind.R8: return NumberType.R8;
-                case DataKind.UG: return NumberType.UG;
+                case DataKind.I1: return NumberDataViewType.SByte;
+                case DataKind.U1: return NumberDataViewType.Byte;
+                case DataKind.I2: return NumberDataViewType.Int16;
+                case DataKind.U2: return NumberDataViewType.UInt16;
+                case DataKind.I4: return NumberDataViewType.Int32;
+                case DataKind.U4: return NumberDataViewType.UInt32;
+                case DataKind.I8: return NumberDataViewType.Int64;
+                case DataKind.U8: return NumberDataViewType.UInt64;
+                case DataKind.R4: return NumberDataViewType.Single;
+                case DataKind.R8: return NumberDataViewType.Double;
+                case DataKind.UG: return NumberDataViewType.DataViewRowId;
                 default:
                     throw Contracts.ExceptNotImpl($"Number from kind not implemented for kind {kind}.");
             }
         }
 
-        public static PrimitiveType PrimitiveFromKind(DataKind kind)
+        public static PrimitiveDataViewType PrimitiveFromKind(DataKind kind)
         {
             if (kind == DataKind.TX)
-                return TextType.Instance;
+                return TextDataViewType.Instance;
             if (kind == DataKind.BL)
-                return BoolType.Instance;
+                return BooleanDataViewType.Instance;
             if (kind == DataKind.TS)
-                return TimeSpanType.Instance;
+                return TimeSpanDataViewType.Instance;
             if (kind == DataKind.DT)
-                return DateTimeType.Instance;
+                return DateTimeDataViewType.Instance;
             if (kind == DataKind.DZ)
-                return DateTimeOffsetType.Instance;
+                return DateTimeOffsetDataViewType.Instance;
             return NumberFromKind(kind);
         }       
 
-        public static bool IsBool(this ColumnType column)
+        public static bool IsBool(this DataViewType column)
         {
-            if (!(column is BoolType))
+            if (!(column is BooleanDataViewType))
                 return false;
-            Contracts.Assert(column == BoolType.Instance);
+            Contracts.Assert(column == BooleanDataViewType.Instance);
             return true;
         }
 
@@ -138,7 +138,7 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (kind)
             {
-                case DataKind.U1:
+                case DataKind.I1:
                 case DataKind.U2:
                 case DataKind.U4:
                 case DataKind.U8:

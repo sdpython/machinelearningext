@@ -71,7 +71,7 @@ namespace TestMachineLearningExt
         {
             bool normalize = true;
 
-            var args = new TextLoader.Arguments()
+            var args = new TextLoader.Options()
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
@@ -123,7 +123,7 @@ namespace TestMachineLearningExt
 
         private ITransformer _TrainSentiment2Transformer()
         {
-            var args = new TextLoader.Arguments()
+            var args = new TextLoader.Options()
             {
                 Separators = new[] { '\t' },
                 HasHeader = true,
@@ -153,7 +153,7 @@ namespace TestMachineLearningExt
             {
                 if (engine == "mlnet")
                 {
-                    var args = new TextLoader.Arguments()
+                    var args = new TextLoader.Options()
                     {
                         Separators = new[] { '\t' },
                         HasHeader = true,
@@ -204,7 +204,7 @@ namespace TestMachineLearningExt
                 }
                 else if (engine == "scikit")
                 {
-                    var args = new TextLoader.Arguments()
+                    var args = new TextLoader.Options()
                     {
                         Separators = new[] { '\t' },
                         HasHeader = true,

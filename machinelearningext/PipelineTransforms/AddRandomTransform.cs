@@ -81,7 +81,7 @@ namespace Scikit.ML.PipelineTransforms
         IDataView _input;
         Arguments _args;
         IHost _host;
-        Schema _schema;
+        DataViewSchema _schema;
         Dictionary<int, int> _columnMapping;
 
         public IDataView Source { get { return _input; } }
@@ -144,7 +144,7 @@ namespace Scikit.ML.PipelineTransforms
 
         #region IDataTransform API
 
-        Schema BuildSchema()
+        DataViewSchema BuildSchema()
         {
             var sch = Source.Schema;
             var newNames = _args.columns.Select(c => c.Name).ToArray();
@@ -161,7 +161,7 @@ namespace Scikit.ML.PipelineTransforms
             return res;
         }
 
-        public Schema Schema { get { return _schema; } }
+        public DataViewSchema Schema { get { return _schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         public long? GetRowCount()
@@ -179,7 +179,7 @@ namespace Scikit.ML.PipelineTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             //var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
             var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Source.Schema);
@@ -187,13 +187,13 @@ namespace Scikit.ML.PipelineTransforms
             return new AddRandomCursor(this, cur);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             var host = new ConsoleEnvironment().Register("Estimate n threads");
             n = DataViewUtils.GetThreadCount(host, n);
 
             if (n <= 1)
-                return new RowCursor[] { GetRowCursor(columnsNeeded, rand) };
+                return new DataViewRowCursor[] { GetRowCursor(columnsNeeded, rand) };
             else
             {
                 //var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
@@ -209,14 +209,14 @@ namespace Scikit.ML.PipelineTransforms
 
         #region cursor
 
-        public class AddRandomCursor : RowCursor
+        public class AddRandomCursor : DataViewRowCursor
         {
             readonly AddRandomTransform _view;
-            readonly Schema _schema;
-            readonly RowCursor _inputCursor;
+            readonly DataViewSchema _schema;
+            readonly DataViewRowCursor _inputCursor;
             Random _rand;
 
-            public AddRandomCursor(AddRandomTransform view, RowCursor cursor)
+            public AddRandomCursor(AddRandomTransform view, DataViewRowCursor cursor)
             {
                 _view = view;
                 _inputCursor = cursor;
@@ -231,10 +231,10 @@ namespace Scikit.ML.PipelineTransforms
                 return true;
             }
 
-            public override ValueGetter<RowId> GetIdGetter()
+            public override ValueGetter<DataViewRowId> GetIdGetter()
             {
                 var getId = _inputCursor.GetIdGetter();
-                return (ref RowId pos) =>
+                return (ref DataViewRowId pos) =>
                 {
                     getId(ref pos);
                 };
@@ -242,7 +242,7 @@ namespace Scikit.ML.PipelineTransforms
 
             public override long Batch { get { return _inputCursor.Batch; } }
             public override long Position { get { return _inputCursor.Position; } }
-            public override Schema Schema { get { return _view.Schema; } }
+            public override DataViewSchema Schema { get { return _view.Schema; } }
 
             protected override void Dispose(bool disposing)
             {

@@ -36,8 +36,8 @@ namespace Scikit.ML.PipelineHelper
         }
         public PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
         public IPredictor Predictor { get { return _predictor; } }
-        public ColumnType InputType { get { return (_predictor as IValueMapper).InputType; } }
-        public ColumnType OutputType { get { return (_predictor as IValueMapper).OutputType; } }
+        public DataViewType InputType { get { return (_predictor as IValueMapper).InputType; } }
+        public DataViewType OutputType { get { return (_predictor as IValueMapper).OutputType; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>() { return (_predictor as IValueMapper).GetMapper<TSrc, TDst>(); }
 
         public void Save(ModelSaveContext ctx)

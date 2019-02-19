@@ -38,7 +38,7 @@ namespace TestMachineLearningExt
                 string schema = SchemaHelper.ToString(pipe.Schema);
                 string schema2 = SchemaHelper.ToString(cursor.Schema);
                 if (schema != schema2)
-                    throw new Exception("Schema mismatch.");
+                    throw new Exception("DataViewSchema mismatch.");
                 long count = DataViewUtils.ComputeRowCount(pipe);
                 if (count != 49)
                     throw new Exception(string.Format("Unexpected number of rows {0}", count));
@@ -86,7 +86,7 @@ namespace TestMachineLearningExt
                 var cursor = pipe.GetRowCursor(pipe.Schema);
                 string schema2 = SchemaHelper.ToString(cursor.Schema);
                 if (schema != schema2)
-                    throw new Exception("Schema mismatch.");
+                    throw new Exception("DataViewSchema mismatch.");
                 long count = DataViewUtils.ComputeRowCount(pipe);
                 if (count != 49)
                     throw new Exception(string.Format("Unexpected number of rows {0}", count));

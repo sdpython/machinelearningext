@@ -7,7 +7,7 @@ using Microsoft.ML.Data;
 
 namespace Scikit.ML.ProductionPrediction
 {
-    public class EmptyCursor : RowCursor
+    public class EmptyCursor : DataViewRowCursor
     {
         Func<int, bool> _needCol;
         IDataView _view;
@@ -21,8 +21,8 @@ namespace Scikit.ML.ProductionPrediction
         public override int Count() { return 0; }
         public override long Batch { get { return 0; } }
         public override long Position { get { return 0; } }
-        public override Schema Schema { get { return _view.Schema; } }
-        public override ValueGetter<RowId> GetIdGetter() { return (ref RowId uid) => { uid = new RowId(0, 1); }; }
+        public override DataViewSchema Schema { get { return _view.Schema; } }
+        public override ValueGetter<DataViewRowId> GetIdGetter() { return (ref DataViewRowId uid) => { uid = new DataViewRowId(0, 1); }; }
 
         protected override void Dispose(bool disposing)
         {

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 
 
@@ -49,7 +50,7 @@ namespace Scikit.ML.TestHelper
             // Loads the model back.
             using (var fs = File.OpenRead(outModelFilePath))
             {
-                var pred_local = env.LoadPredictorOrNull(fs);
+                var pred_local = ModelFileUtils.LoadPredictorOrNull(env, fs);
                 if (pred_local == null)
                     throw new Exception(string.Format("Unable to load '{0}'", outModelFilePath));
                 if (checkType && predictor.GetType() != pred_local.GetType())
@@ -78,7 +79,7 @@ namespace Scikit.ML.TestHelper
             // Check we have the same output.
             using (var fs = File.OpenRead(outModelFilePath))
             {
-                var model = env.LoadPredictorOrNull(fs);
+                var model = ModelFileUtils.LoadPredictorOrNull(env, fs);
                 scorer = PredictorHelper.CreateDefaultScorer(env, roles, model);
                 saver = env.CreateSaver("Text");
                 using (var fs2 = File.Create(outData2))

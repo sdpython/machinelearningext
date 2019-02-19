@@ -293,7 +293,7 @@ namespace Scikit.ML.OnnxHelper
             return model;
         }
 
-        public static ModelArgs GetModelArgs(ColumnType type, string colName,
+        public static ModelArgs GetModelArgs(DataViewType type, string colName,
             List<long> dims = null, List<bool> dimsParams = null)
         {
             Contracts.CheckValue(type, nameof(type));

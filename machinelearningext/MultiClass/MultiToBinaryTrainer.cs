@@ -157,7 +157,7 @@ namespace Scikit.ML.MultiClass
                 viewI = desc;
             else if (_args.singleColumn)
             {
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { NumberType.R4 });
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { NumberDataViewType.Single });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)
@@ -168,7 +168,7 @@ namespace Scikit.ML.MultiClass
             else if (data.Schema.Label.Value.Type.IsKey())
             {
                 ulong nb = data.Schema.Label.Value.Type.AsKey().GetKeyCount();
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberType.R4, (int)nb) });
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberDataViewType.Single, (int)nb) });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)
@@ -190,7 +190,7 @@ namespace Scikit.ML.MultiClass
                     MinMaxLabelOverDataSet(trans, labName, out nb);
                 else
                     nb = count;
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberType.R4, nb) });
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberDataViewType.Single, nb) });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)
@@ -247,7 +247,7 @@ namespace Scikit.ML.MultiClass
                     var p4 = MultiToBinaryPredictor.Create(Host, trans.GetClasses<float>(), predictors, reclassPredictor, args.singleColumn, false);
                     predictor = p4 as TVectorPredictor;
                     break;
-                case DataKind.U1:
+                case DataKind.I1:
                     var pu1 = MultiToBinaryPredictor.Create(Host, trans.GetClasses<byte>(), predictors, reclassPredictor, args.singleColumn, true);
                     predictor = pu1 as TVectorPredictor;
                     break;

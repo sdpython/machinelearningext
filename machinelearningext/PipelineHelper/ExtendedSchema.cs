@@ -13,7 +13,7 @@ namespace Scikit.ML.PipelineHelper
 {
     /// <summary>
     /// Legacy interface for schema information.
-    /// Please avoid implementing this interface, use <see cref="Schema"/>.
+    /// Please avoid implementing this interface, use <see cref="DataViewSchema"/>.
     /// </summary>
     public interface ISchema
     {
@@ -38,7 +38,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Get the type of the given column index. This must be non-null.
         /// </summary>
-        ColumnType GetColumnType(int col);
+        DataViewType GetColumnType(int col);
 
         /// <summary>
         /// Produces the metadata kinds and associated types supported by the given column.
@@ -46,13 +46,13 @@ namespace Scikit.ML.PipelineHelper
         /// The string key values are unique, non-empty, non-null strings. The type should
         /// be non-null.
         /// </summary>
-        IEnumerable<KeyValuePair<string, ColumnType>> GetMetadataTypes(int col);
+        IEnumerable<KeyValuePair<string, DataViewType>> GetMetadataTypes(int col);
 
         /// <summary>
         /// If the given column has metadata of the indicated kind, this returns the type of the metadata.
         /// Otherwise, it returns null.
         /// </summary>
-        ColumnType GetMetadataTypeOrNull(string kind, int col);
+        DataViewType GetMetadataTypeOrNull(string kind, int col);
 
         /// <summary>
         /// Fetches the indicated metadata for the indicated column.
@@ -72,20 +72,20 @@ namespace Scikit.ML.PipelineHelper
         /// <see cref="GetSlotType"/> (input argument is named col) specifies the type of all values at the col-th column of
         /// <see cref="IDataView"/>.  For example, if <see cref="IDataView.Schema"/>[i] is a scalar float column, then
         /// <see cref="GetSlotType"/> with col=i may return a <see cref="VectorType"/> whose <see cref="VectorType.ItemType"/>
-        /// field is <see cref="NumberType.R4"/>. If the i-th column can't be iterated column-wisely, this function may
+        /// field is <see cref="NumberDataViewType.Single"/>. If the i-th column can't be iterated column-wisely, this function may
         /// return <see langword="null"/>.
         /// </summary>
         VectorType GetSlotType(int col);
     }
 
     /// <summary>
-    /// Extends an existing Schema.
+    /// Extends an existing DataViewSchema.
     /// </summary>
     public class ExtendedSchema : ISchema
     {
         readonly ISchema _schemaInput;
         readonly string[] _names;
-        readonly ColumnType[] _types;
+        readonly DataViewType[] _types;
         readonly Dictionary<string, int> _maprev;
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="inputSchema">existing schema</param>
         /// <param name="names">new columns</param>
         /// <param name="types">corresponding types</param>
-        public ExtendedSchema(ISchema inputSchema, string[] names, ColumnType[] types, bool makeUnique = false)
+        public ExtendedSchema(ISchema inputSchema, string[] names, DataViewType[] types, bool makeUnique = false)
         {
             _schemaInput = inputSchema;
             if (names == null || names.Length == 0)
@@ -134,7 +134,7 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="names">new columns</param>
         /// <param name="types">corresponding types</param>
         /// <param name="keepHidden">keep hidden columns</param>
-        public ExtendedSchema(Schema inputSchema, string[] names, ColumnType[] types, bool keepHidden = false, bool makeUnique = false)
+        public ExtendedSchema(DataViewSchema inputSchema, string[] names, DataViewType[] types, bool keepHidden = false, bool makeUnique = false)
         {
             _schemaInput = inputSchema == null
                             ? null
@@ -163,7 +163,7 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="inputSchema">existing schema</param>
         /// <param name="names">new columns</param>
         /// <param name="types">corresponding types</param>
-        public ExtendedSchema(Schema inputSchema)
+        public ExtendedSchema(DataViewSchema inputSchema)
         {
             _schemaInput = inputSchema == null
                             ? null
@@ -196,7 +196,7 @@ namespace Scikit.ML.PipelineHelper
             if (sch1._schemaInput != sch2._schemaInput)
                 throw new Exception("ExtendedSchema can be merged if theyy share the same input schema.");
             var names = new List<string>();
-            var types = new List<ColumnType>();
+            var types = new List<DataViewType>();
             names.AddRange(sch1._names);
             names.AddRange(sch2._names);
             types.AddRange(sch1._types);
@@ -354,7 +354,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns the column type for column <i>col</i>.
         /// </summary>
-        public ColumnType GetColumnType(int col)
+        public DataViewType GetColumnType(int col)
         {
             int count;
             if (_schemaInput != null)
@@ -435,7 +435,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns the metadata.
         /// </summary>
-        public ColumnType GetMetadataTypeOrNull(string kind, int col)
+        public DataViewType GetMetadataTypeOrNull(string kind, int col)
         {
             int count = _schemaInput == null ? 0 : _schemaInput.ColumnCount;
             if (col < count)
@@ -444,7 +444,7 @@ namespace Scikit.ML.PipelineHelper
             {
                 var ty = GetColumnType(col);
                 if (ty.IsVector() && ty.AsVector().DimCount() == 1 && ty.AsVector().GetDim(0) > 0)
-                    return new VectorType(TextType.Instance, ty.AsVector().GetDim(0));
+                    return new VectorType(TextDataViewType.Instance, ty.AsVector().GetDim(0));
             }
             return null;
         }
@@ -452,7 +452,7 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns an enumerator on the metadata.
         /// </summary>
-        public IEnumerable<KeyValuePair<string, ColumnType>> GetMetadataTypes(int col)
+        public IEnumerable<KeyValuePair<string, DataViewType>> GetMetadataTypes(int col)
         {
             int count = _schemaInput == null ? 0 : _schemaInput.ColumnCount;
             if (col < count)
@@ -463,16 +463,16 @@ namespace Scikit.ML.PipelineHelper
             else if (col < ColumnCount)
             {
                 int c = col - count;
-                yield return new KeyValuePair<string, ColumnType>(_names[c], _types[c]);
+                yield return new KeyValuePair<string, DataViewType>(_names[c], _types[c]);
             }
             else
                 throw new IndexOutOfRangeException();
         }
 
         /// <summary>
-        /// Manufacture an instance of <see cref="Schema"/> out of any <see cref="ISchema"/>.
+        /// Manufacture an instance of <see cref="DataViewSchema"/> out of any <see cref="ISchema"/>.
         /// </summary>
-        public static Schema Create(ISchema inputSchema)
+        public static DataViewSchema Create(ISchema inputSchema)
         {
             Contracts.CheckValue(inputSchema, nameof(inputSchema));
 

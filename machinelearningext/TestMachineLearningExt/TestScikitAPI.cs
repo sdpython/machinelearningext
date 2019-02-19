@@ -337,7 +337,7 @@ namespace TestMachineLearningExt
         {
             var iris = FileHelper.GetTestFile("iris.txt");
             var df = DataFrameIO.ReadCsv(iris, sep: '\t');
-            df.AddColumn("LabelI", df["Label"].AsType(NumberType.R4));
+            df.AddColumn("LabelI", df["Label"].AsType(NumberDataViewType.Single));
             var pipe = new ScikitPipeline(new[] { $"Concat{{col=Features:{df.Columns[1]},{df.Columns[2]}}}" }, "mlr");
             pipe.Train(df, "Features", "LabelI");
             DataFrame pred = null;
@@ -375,7 +375,7 @@ namespace TestMachineLearningExt
         public void TestScikitAPI_TrainingDiabete()
         {
             var diab = FileHelper.GetTestFile("diabete.csv");
-            var cols = Enumerable.Range(0, 10).Select(c => NumberType.R4).ToArray();
+            var cols = Enumerable.Range(0, 10).Select(c => NumberDataViewType.Single).ToArray();
             var colsName = string.Join(',', Enumerable.Range(0, 10).Select(c => $"F{c}"));
             var df = DataFrameIO.ReadCsv(diab, sep: ',', dtypes: cols);
             var pipe = new ScikitPipeline(new string[] { $"Concat{{col=Features:{colsName}}}" }, "ols");

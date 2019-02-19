@@ -29,9 +29,9 @@ namespace Scikit.ML.ProductionPrediction
     public class InfiniteLoopViewCursorDataFrame : IDataView, IInfiniteLoopViewCursorDataFrame
     {
         readonly int[] _columns;
-        readonly Schema _schema;
-        readonly RowCursor _otherValues;
-        readonly Schema _columnsSchema;
+        readonly DataViewSchema _schema;
+        readonly DataViewRowCursor _otherValues;
+        readonly DataViewSchema _columnsSchema;
         CursorType _ownCursor;
 
         public int[] ReplacedCol => _columns;
@@ -42,7 +42,7 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="columns">columns to be replaced</param>
         /// <param name="schema">schema of the view</param>
         /// <param name="otherValues">cursor which contains the others values</param>
-        public InfiniteLoopViewCursorDataFrame(int[] columns = null, Schema schema = null, RowCursor otherValues = null)
+        public InfiniteLoopViewCursorDataFrame(int[] columns = null, DataViewSchema schema = null, DataViewRowCursor otherValues = null)
         {
             if (columns == null)
                 columns = Enumerable.Range(0, schema.Count).ToArray();
@@ -58,7 +58,7 @@ namespace Scikit.ML.ProductionPrediction
 
         public bool CanShuffle { get { return false; } }
         public long? GetRowCount() { return null; }
-        public Schema Schema { get { return _schema; } }
+        public DataViewSchema Schema { get { return _schema; } }
 
         public void Set(DataFrame value, int position = 0)
         {
@@ -67,7 +67,7 @@ namespace Scikit.ML.ProductionPrediction
             _ownCursor.Set(ref value, position);
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             if (_ownCursor != null)
                 throw Contracts.Except("GetRowCursor was called a second time which probably means this function was called from multiple threads. " +
@@ -76,35 +76,35 @@ namespace Scikit.ML.ProductionPrediction
             return _ownCursor;
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             var cur = GetRowCursor(columnsNeeded, rand);
             if (n >= 2)
             {
                 /*
                 var setColumns = new HashSet<int>(_columns);
-                var res = new RowCursor[n];
+                var res = new DataViewRowCursor[n];
                 var empty = new EmptyCursor(this,
                                     col => setColumns.Contains(col) || needCol(col) || (_otherValues != null && _otherValues.IsColumnActive(col)));
                 for (int i = 0; i < n; ++i)
                     res[i] = i == 0 ? cur : empty;
                 return res.Take(1).ToArray();
                 */
-                return new RowCursor[] { cur };
+                return new DataViewRowCursor[] { cur };
             }
             else
-                return new RowCursor[] { cur };
+                return new DataViewRowCursor[] { cur };
         }
 
         enum CursorState { Good, NotStarted, Done };
 
-        class CursorType : RowCursor
+        class CursorType : DataViewRowCursor
         {
-            readonly IEnumerable<Schema.Column> _columnsNeeded;
+            readonly IEnumerable<DataViewSchema.Column> _columnsNeeded;
             readonly InfiniteLoopViewCursorDataFrame _view;
-            readonly Schema _columnsSchema;
+            readonly DataViewSchema _columnsSchema;
             CursorState _state;
-            RowCursor _otherValues;
+            DataViewRowCursor _otherValues;
             DataFrame _container;
             int _positionDataFrame;
             Dictionary<int, int> _columns;
@@ -112,7 +112,7 @@ namespace Scikit.ML.ProductionPrediction
             long _position;
             long _batch;
 
-            public CursorType(InfiniteLoopViewCursorDataFrame view, IEnumerable<Schema.Column> columnsNeeded, RowCursor otherValues)
+            public CursorType(InfiniteLoopViewCursorDataFrame view, IEnumerable<DataViewSchema.Column> columnsNeeded, DataViewRowCursor otherValues)
             {
                 _columnsNeeded = columnsNeeded;
                 _view = view;
@@ -132,8 +132,8 @@ namespace Scikit.ML.ProductionPrediction
             public long? GetRowCount() { return 1; }
             public override long Batch { get { return _batch; } }
             public override long Position { get { return _position; } }
-            public override Schema Schema { get { return _view.Schema; } }
-            public override ValueGetter<RowId> GetIdGetter() { return (ref RowId uid) => { uid = new RowId(0, 1); }; }
+            public override DataViewSchema Schema { get { return _view.Schema; } }
+            public override ValueGetter<DataViewRowId> GetIdGetter() { return (ref DataViewRowId uid) => { uid = new DataViewRowId(0, 1); }; }
 
             protected override void Dispose(bool disposing)
             {

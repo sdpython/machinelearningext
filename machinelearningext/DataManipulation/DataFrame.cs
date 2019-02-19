@@ -79,7 +79,7 @@ namespace Scikit.ML.DataManipulation
         /// the first row.
         /// </summary>
         public DataFrame(IEnumerable<Dictionary<string, object>> rows,
-                         Dictionary<string, ColumnType> kinds = null)
+                         Dictionary<string, DataViewType> kinds = null)
         {
             _data = new DataContainer(rows, kinds);
         }
@@ -87,12 +87,12 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Creates a dataframe based on a schema.
         /// </summary>
-        public DataFrame(Schema schema, int nb = 1)
+        public DataFrame(DataViewSchema schema, int nb = 1)
         {
             _data = new DataContainer(schema, nb);
         }
 
-        public bool CheckSharedSchema(Schema schema)
+        public bool CheckSharedSchema(DataViewSchema schema)
         {
             return _data.CheckSharedSchema(schema);
         }
@@ -112,24 +112,24 @@ namespace Scikit.ML.DataManipulation
         public int Length => _data.Length;
         public int ColumnCount => _data.ColumnCount;
         public string[] Columns => _data.Columns;
-        public ColumnType[] Kinds => _data.Kinds;
+        public DataViewType[] Kinds => _data.Kinds;
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return _data.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _data.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
-        public RowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return _data.GetRowCursor(rows, columns, columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _data.GetRowCursorSet(rows, columns, columnsNeeded, n, rand);
         }
@@ -137,7 +137,7 @@ namespace Scikit.ML.DataManipulation
         /// <summary>
         /// Returns the schema of the dataframe, used schema used for IDataView.
         /// </summary>
-        public Schema Schema => _data.Schema;
+        public DataViewSchema Schema => _data.Schema;
         public ISchema SchemaI => _data.SchemaI;
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace Scikit.ML.DataManipulation
         /// <param name="name">column name</param>
         /// <param name="kind">column type</param>
         /// <param name="length">length is needed for the first column to allocated space</param>
-        public int AddColumn(string name, ColumnType kind, int? length)
+        public int AddColumn(string name, DataViewType kind, int? length)
         {
             return _data.AddColumn(name, kind, length);
         }
@@ -474,7 +474,7 @@ namespace Scikit.ML.DataManipulation
 
         public delegate void RowFillerDelegate(DataFrame df, int row);
 
-        public static RowFillerDelegate GetRowFiller(RowCursor cur)
+        public static RowFillerDelegate GetRowFiller(DataViewRowCursor cur)
         {
             var dele = DataContainer.GetRowFiller(cur);
             return (DataFrame df, int row) => { dele(df._data, row); };

@@ -88,14 +88,14 @@ namespace Scikit.ML.PipelineTraining
             var type = SchemaHelper.ReadType(ctx);
             _outputColumn = ctx.Reader.ReadString();
 
-            Schema schema;
+            DataViewSchema schema;
             IDataView data;
             if (type.IsVector())
             {
                 switch (type.AsVector().ItemType().RawKind())
                 {
                     case DataKind.R4:
-                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorType(NumberType.R4) }));
+                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorType(NumberDataViewType.Single) }));
                         data = new TemporaryViewCursorColumn<VBuffer<float>>(default(VBuffer<float>), 0, schema);
                         break;
                     default:
@@ -107,7 +107,7 @@ namespace Scikit.ML.PipelineTraining
                 switch (type.RawKind())
                 {
                     case DataKind.R4:
-                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { NumberType.R4 }));
+                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { NumberDataViewType.Single }));
                         data = new TemporaryViewCursorColumn<float>(default(float), 0, schema);
                         break;
                     default:
@@ -136,7 +136,7 @@ namespace Scikit.ML.PipelineTraining
 
         #region IValueMapper interface
 
-        public ColumnType InputType
+        public DataViewType InputType
         {
             get
             {
@@ -156,7 +156,7 @@ namespace Scikit.ML.PipelineTraining
             }
         }
 
-        public ColumnType OutputType
+        public DataViewType OutputType
         {
             get
             {
@@ -189,7 +189,7 @@ namespace Scikit.ML.PipelineTraining
             else
             {
                 var valuemapper = _preProcess as IValueMapper;
-                ColumnType outType;
+                DataViewType outType;
                 if (valuemapper != null)
                     outType = valuemapper.OutputType;
                 else

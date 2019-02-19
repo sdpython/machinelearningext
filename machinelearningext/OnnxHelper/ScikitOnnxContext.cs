@@ -216,7 +216,7 @@ namespace Scikit.ML.OnnxHelper
         /// <summary>
         /// Adds an intermediate column to the list.
         /// </summary>
-        public override string AddIntermediateVariable(ColumnType type, string colName, bool skip = false)
+        public override string AddIntermediateVariable(DataViewType type, string colName, bool skip = false)
         {
             colName = AddVariable(colName);
             // Let the runtime figure the shape.
@@ -231,7 +231,7 @@ namespace Scikit.ML.OnnxHelper
         /// <summary>
         /// Adds an output variable to the list.
         /// </summary>
-        public void AddOutputVariable(ColumnType type, string variableName, List<long> dim = null)
+        public void AddOutputVariable(DataViewType type, string variableName, List<long> dim = null)
         {
             _host.CheckValue(type, nameof(type));
             _host.CheckParam(IsVariableDefined(variableName), nameof(variableName));
@@ -241,7 +241,7 @@ namespace Scikit.ML.OnnxHelper
         /// <summary>
         /// Adds an input variable to the list.
         /// </summary>
-        public void AddInputVariable(ColumnType type, string colName)
+        public void AddInputVariable(DataViewType type, string colName)
         {
             _host.CheckValue(type, nameof(type));
             _host.CheckValue(colName, nameof(colName));

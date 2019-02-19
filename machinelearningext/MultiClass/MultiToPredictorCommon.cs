@@ -33,7 +33,7 @@ namespace Scikit.ML.MultiClass
 
         public override PredictionKind PredictionKind { get; }
 
-        public ColumnType InputType
+        public DataViewType InputType
         {
             get
             {
@@ -51,12 +51,12 @@ namespace Scikit.ML.MultiClass
             }
         }
 
-        public ColumnType OutputType { get { return _impl.OutputType; } }
+        public DataViewType OutputType { get { return _impl.OutputType; } }
 
 #if IMPLIValueMapperDist
-        public ColumnType DistType { get { return _impl.DistType; } }
+        public DataViewType DistType { get { return _impl.DistType; } }
 #endif
-        public ColumnType LabelType { get { return _impl.LabelType; } }
+        public DataViewType LabelType { get { return _impl.LabelType; } }
 
         protected MultiToPredictorCommon(IHostEnvironment env, IImplBase impl, string registrationName)
             : base(env, registrationName)
@@ -80,7 +80,7 @@ namespace Scikit.ML.MultiClass
             {
                 case DataKind.R4:
                     return _impl.GetClasses<float>() as TLabel[];
-                case DataKind.U1:
+                case DataKind.I1:
                     return _impl.GetClasses<byte>() as TLabel[];
                 case DataKind.U2:
                     return _impl.GetClasses<ushort>() as TLabel[];
@@ -159,11 +159,11 @@ namespace Scikit.ML.MultiClass
 
         protected interface IImplBase
         {
-            ColumnType InputType { get; }
-            ColumnType LabelType { get; }
-            ColumnType OutputType { get; }
+            DataViewType InputType { get; }
+            DataViewType LabelType { get; }
+            DataViewType OutputType { get; }
 #if IMPLIValueMapperDist
-            ColumnType DistType { get; }
+            DataViewType DistType { get; }
 #endif
             IValueMapper[] ValueMappers { get; }
             IPredictor[] Predictors { get; }
@@ -182,9 +182,9 @@ namespace Scikit.ML.MultiClass
 
         protected class ImplRaw<TLabel> : IImplBase
         {
-            ColumnType _inputType;
-            ColumnType _labelType;
-            ColumnType _outputType;
+            DataViewType _inputType;
+            DataViewType _labelType;
+            DataViewType _outputType;
             VBuffer<TLabel> _classes;
             IValueMapper[] _mappers;
             IPredictor[] _predictors;
@@ -194,9 +194,9 @@ namespace Scikit.ML.MultiClass
             bool _singleColumn;
             bool _labelKey;
 
-            public ColumnType InputType { get { return _inputType; } }
-            public ColumnType LabelType { get { return _labelType; } }
-            public ColumnType OutputType { get { return _outputType; } }
+            public DataViewType InputType { get { return _inputType; } }
+            public DataViewType LabelType { get { return _labelType; } }
+            public DataViewType OutputType { get { return _outputType; } }
             public IValueMapper[] ValueMappers { get { return _mappers; } }
             public IPredictor[] Predictors { get { return _predictors; } }
             public IPredictor ReclassificationPredictor { get { return _reclassificationPredictor; } }
@@ -205,8 +205,8 @@ namespace Scikit.ML.MultiClass
             public int MaxClassIndex() { return _dstIndices == null ? _classes.Count - 1 : _dstIndices.Max(); }
 
 #if IMPLIValueMapperDist
-            ColumnType _distType;
-            public ColumnType DistType { get { return _distType; } }
+            DataViewType _distType;
+            public DataViewType DistType { get { return _distType; } }
 #endif
 
             public int GetNbClasses() { return _classes.Length; }
@@ -219,14 +219,14 @@ namespace Scikit.ML.MultiClass
                 return res;
             }
 
-            bool IsValid(IValueMapper mapper, ref ColumnType inputType)
+            bool IsValid(IValueMapper mapper, ref DataViewType inputType)
             {
                 // inputType
                 if (mapper == null)
                     return false;
-                if (mapper.OutputType != NumberType.Float)
+                if (mapper.OutputType != NumberDataViewType.Single)
                     return false;
-                if (!mapper.InputType.IsVector() || mapper.InputType.ItemType() != NumberType.Float)
+                if (!mapper.InputType.IsVector() || mapper.InputType.ItemType() != NumberDataViewType.Single)
                     return false;
                 if (inputType == null)
                     inputType = mapper.InputType;
@@ -246,13 +246,13 @@ namespace Scikit.ML.MultiClass
                 host.Check(Classes.Count == Classes.Length, "The model cannot be saved, it was never trained.");
                 ctx.SetVersionInfo(versionInfo);
                 ctx.Writer.WriteIntArray(Classes.Indices);
-                if (LabelType == NumberType.R4)
+                if (LabelType == NumberDataViewType.Single)
                     ctx.Writer.WriteSingleArray(Classes.Values as float[]);
-                else if (LabelType == NumberType.U1)
+                else if (LabelType == NumberDataViewType.Byte)
                     ctx.Writer.WriteByteArray(Classes.Values as byte[]);
-                else if (LabelType == NumberType.U2)
+                else if (LabelType == NumberDataViewType.UInt16)
                     ctx.Writer.WriteUIntArray((Classes.Values as ushort[]).Select(c => (uint)c).ToArray());
-                else if (LabelType == NumberType.U4)
+                else if (LabelType == NumberDataViewType.UInt32)
                     ctx.Writer.WriteUIntArray(Classes.Values as uint[]);
                 else
                     throw host.Except("Unexpected type for LabelType.");
@@ -276,23 +276,23 @@ namespace Scikit.ML.MultiClass
                 int[] indices = ctx.Reader.ReadIntArray();
 
                 TLabel[] classes;
-                if (LabelType == NumberType.R4)
+                if (LabelType == NumberDataViewType.Single)
                 {
                     classes = ctx.Reader.ReadFloatArray() as TLabel[];
                     env.CheckValue(classes, "classes");
                 }
-                else if (LabelType == NumberType.U1)
+                else if (LabelType == NumberDataViewType.Byte)
                 {
                     classes = ctx.Reader.ReadByteArray() as TLabel[];
                     env.CheckValue(classes, "classes");
                 }
-                else if (LabelType == NumberType.U2)
+                else if (LabelType == NumberDataViewType.UInt16)
                 {
                     var val = ctx.Reader.ReadUIntArray();
                     env.CheckValue(val, "classes");
                     classes = val.Select(c => (ushort)c).ToArray() as TLabel[];
                 }
-                else if (LabelType == NumberType.U4)
+                else if (LabelType == NumberDataViewType.UInt32)
                 {
                     var val = ctx.Reader.ReadUIntArray();
                     env.CheckValue(val, "classes");
@@ -339,23 +339,23 @@ namespace Scikit.ML.MultiClass
                 var tlabels = new TLabel[0];
                 if ((tlabels as float[]) != null)
                 {
-                    _labelType = NumberType.R4;
+                    _labelType = NumberDataViewType.Single;
                     _labelConverter = GetFuncFloat() as Func<TLabel, float>;
                     var func = GetFuncFloat2Int() as Func<TLabel, int>;
                 }
                 else if ((tlabels as byte[]) != null)
                 {
-                    _labelType = NumberType.U1;
+                    _labelType = NumberDataViewType.Byte;
                     _labelConverter = GetFuncByte() as Func<TLabel, float>;
                 }
                 else if ((tlabels as ushort[]) != null)
                 {
-                    _labelType = NumberType.U2;
+                    _labelType = NumberDataViewType.UInt16;
                     _labelConverter = GetFuncUShort() as Func<TLabel, float>;
                 }
                 else if ((tlabels as uint[]) != null)
                 {
-                    _labelType = NumberType.U4;
+                    _labelType = NumberDataViewType.UInt32;
                     _labelConverter = GetFuncUInt() as Func<TLabel, float>;
                 }
                 else
@@ -371,7 +371,7 @@ namespace Scikit.ML.MultiClass
                     _dstIndices = _classes.Values.Select(c => func(c)).ToArray();
                     // outputType
                     Contracts.Assert(_classes.Count > 0);
-                    _outputType = _outputType = new VectorType(NumberType.Float, _dstIndices.Max() + 1);
+                    _outputType = _outputType = new VectorType(NumberDataViewType.Single, _dstIndices.Max() + 1);
 #if IMPLIValueMapperDist
                     _distType = _outputType;
 #endif
@@ -381,7 +381,7 @@ namespace Scikit.ML.MultiClass
                     _dstIndices = null;
                     // outputType
                     Contracts.Assert(_classes.Count > 0);
-                    _outputType = _outputType = new VectorType(NumberType.Float, _classes.Length);
+                    _outputType = _outputType = new VectorType(NumberDataViewType.Single, _classes.Length);
 #if IMPLIValueMapperDist
                     _distType = _outputType;
 #endif

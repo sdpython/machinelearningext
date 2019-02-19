@@ -136,7 +136,7 @@ namespace Scikit.ML.PipelineTransforms
 
         #region IDataTransform API
 
-        public Schema Schema { get { return _transform.Schema; } }
+        public DataViewSchema Schema { get { return _transform.Schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
         public long? GetRowCount()
@@ -154,14 +154,14 @@ namespace Scikit.ML.PipelineTransforms
             return true;
         }
 
-        public RowCursor GetRowCursor(IEnumerable<Schema.Column> columnsNeeded, Random rand = null)
+        public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             // Fun part we'll see later.
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public RowCursor[] GetRowCursorSet(IEnumerable<Schema.Column> columnsNeeded, int n, Random rand = null)
+        public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -192,7 +192,7 @@ namespace Scikit.ML.PipelineTransforms
                         view = new PassThroughTransform(_host, new PassThroughTransform.Arguments(),
                                             LambdaColumnMapper.Create(_host, "R42R4", view,
                                             _args.columns[i].Source, _args.columns[i].Name,
-                                            NumberType.R4, NumberType.R4,
+                                            NumberDataViewType.Single, NumberDataViewType.Single,
                                             (in float src, ref float dst) => { dst = src; }));
                         break;
                     case DataKind.U4:
@@ -200,7 +200,7 @@ namespace Scikit.ML.PipelineTransforms
                         view = new PassThroughTransform(_host, new PassThroughTransform.Arguments(),
                                             LambdaColumnMapper.Create(_host, "U42R4", view,
                                             _args.columns[i].Source, _args.columns[i].Name,
-                                            NumberType.U4, NumberType.R4,
+                                            NumberDataViewType.UInt32, NumberDataViewType.Single,
                                             (in uint src, ref float dst) => { dst = src == 0 ? float.NaN : src - 1; }));
                         break;
                     default:
