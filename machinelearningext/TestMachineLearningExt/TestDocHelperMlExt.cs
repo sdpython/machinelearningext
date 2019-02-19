@@ -91,7 +91,7 @@ namespace TestMachineLearningExt
             Assert.IsTrue(names.Length > 0);
             var df = dt.First().GetArgsAsDataFrame();
             Assert.AreEqual(df.Shape.Item2, 4);
-            Assert.IsTrue(names.Where(c => c.Contains("Tweedie")).Any());
+            Assert.IsTrue(names.Where(c => c.Contains("Ngram")).Any());
         }
 
         [TestMethod]
