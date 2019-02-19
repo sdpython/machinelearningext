@@ -66,7 +66,7 @@ namespace Scikit.ML.ScikitAPI
             res.Add(typeof(LinearModelStatistics).Assembly);
             res.Add(typeof(OneHotEncodingEstimator).Assembly);
             res.Add(typeof(FastTreeRankingTrainer).Assembly);
-            res.Add(typeof(EnsembleModelParameters).Assembly);
+            res.Add(typeof(SignatureTreeEnsembleTrainer).Assembly);
             res.Add(typeof(KMeansPlusPlusTrainer).Assembly);
             res.Add(typeof(LightGbmBinaryTrainer).Assembly);
             res.Add(typeof(OlsLinearRegressionTrainer).Assembly);
