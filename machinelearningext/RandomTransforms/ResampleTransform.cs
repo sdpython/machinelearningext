@@ -196,25 +196,25 @@ namespace Scikit.ML.RandomTransforms
             var type = _input.Schema[classColumn].Type;
             switch (type.RawKind())
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     bool clbool;
                     if (!bool.TryParse(_args.classValue, out clbool))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return new ResampleCursor<bool>(this, cursor, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, clbool);
-                case DataKind.U4:
+                case DataKind.UInt32:
                     uint cluint;
                     if (!uint.TryParse(_args.classValue, out cluint))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return new ResampleCursor<uint>(this, cursor, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, cluint);
-                case DataKind.R4:
+                case DataKind.Single:
                     float clfloat;
                     if (!float.TryParse(_args.classValue, out clfloat))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return new ResampleCursor<float>(this, cursor, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, clfloat);
-                case DataKind.TX:
+                case DataKind.String:
                     var cltext = new ReadOnlyMemory<char>(_args.classValue.ToCharArray());
                     return new ResampleCursor<ReadOnlyMemory<char>>(this, cursor, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, cltext);
@@ -244,25 +244,25 @@ namespace Scikit.ML.RandomTransforms
             var type = _input.Schema[classColumn].Type;
             switch (type.RawKind())
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     bool clbool;
                     if (!bool.TryParse(_args.classValue, out clbool))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return cursors.Select(c => new ResampleCursor<bool>(this, c, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, clbool)).ToArray();
-                case DataKind.U4:
+                case DataKind.UInt32:
                     uint cluint;
                     if (!uint.TryParse(_args.classValue, out cluint))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return cursors.Select(c => new ResampleCursor<uint>(this, c, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, cluint)).ToArray();
-                case DataKind.R4:
+                case DataKind.Single:
                     float clfloat;
                     if (!float.TryParse(_args.classValue, out clfloat))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return cursors.Select(c => new ResampleCursor<float>(this, c, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, clfloat)).ToArray();
-                case DataKind.TX:
+                case DataKind.String:
                     var cltext = new ReadOnlyMemory<char>(_args.classValue.ToCharArray());
                     return cursors.Select(c => new ResampleCursor<ReadOnlyMemory<char>>(this, c, newColumns,
                         _args.lambda, _args.seed, rand, _cacheReplica, classColumn, cltext)).ToArray();
@@ -321,25 +321,25 @@ namespace Scikit.ML.RandomTransforms
                         var type = _input.Schema[indexClass].Type;
                         switch (type.RawKind())
                         {
-                            case DataKind.BL:
+                            case DataKind.Boolean:
                                 bool clbool;
                                 if (!bool.TryParse(_args.classValue, out clbool))
                                     throw ch.Except("Unable to parse '{0}'.", _args.classValue);
                                 LoadCache<bool>(rand, cur, indexClass, clbool, ch);
                                 break;
-                            case DataKind.U4:
+                            case DataKind.UInt32:
                                 uint cluint;
                                 if (!uint.TryParse(_args.classValue, out cluint))
                                     throw ch.Except("Unable to parse '{0}'.", _args.classValue);
                                 LoadCache<uint>(rand, cur, indexClass, cluint, ch);
                                 break;
-                            case DataKind.R4:
+                            case DataKind.Single:
                                 float clfloat;
                                 if (!float.TryParse(_args.classValue, out clfloat))
                                     throw ch.Except("Unable to parse '{0}'.", _args.classValue);
                                 LoadCache<float>(rand, cur, indexClass, clfloat, ch);
                                 break;
-                            case DataKind.TX:
+                            case DataKind.String:
                                 var cltext = new ReadOnlyMemory<char>(_args.classValue.ToCharArray());
                                 LoadCache<ReadOnlyMemory<char>>(rand, cur, indexClass, cltext, ch);
                                 break;

@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model.Onnx;
+using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineGraphTransforms;
 

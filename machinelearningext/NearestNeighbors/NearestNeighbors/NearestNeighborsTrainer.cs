@@ -116,19 +116,19 @@ namespace Scikit.ML.NearestNeighbors
 
             switch (initialLabKind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     predictor = TrainPredictorLabel<bool>(ch, data);
                     break;
-                case DataKind.R4:
+                case DataKind.Single:
                     predictor = TrainPredictorLabel<float>(ch, data);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     predictor = TrainPredictorLabel<byte>(ch, data);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     predictor = TrainPredictorLabel<ushort>(ch, data);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     predictor = TrainPredictorLabel<uint>(ch, data);
                     break;
                 default:
@@ -152,8 +152,8 @@ namespace Scikit.ML.NearestNeighbors
             if (idIndex != -1)
             {
                 var colType = data.Schema.Schema[idIndex].Type;
-                if (colType.IsVector() || colType.RawKind() != DataKind.I8)
-                    throw ch.Except("Column '{0}' must be of type '{1}' not '{2}'", _args.colId, DataKind.I8, colType);
+                if (colType.IsVector() || colType.RawKind() != DataKind.Int64)
+                    throw ch.Except("Column '{0}' must be of type '{1}' not '{2}'", _args.colId, DataKind.Int64, colType);
             }
 
             Dictionary<long, Tuple<TLabel, float>> merged;

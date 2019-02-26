@@ -310,40 +310,40 @@ namespace Scikit.ML.OnnxHelper
 
             switch (rawKind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     dataType = TensorProto.Types.DataType.Float;
                     break;
-                case DataKind.TX:
+                case DataKind.String:
                     dataType = TensorProto.Types.DataType.String;
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     dataType = TensorProto.Types.DataType.Int8;
                     break;
-                case DataKind.U1:
+                case DataKind.Byte:
                     dataType = TensorProto.Types.DataType.Uint8;
                     break;
-                case DataKind.I2:
+                case DataKind.Int16:
                     dataType = TensorProto.Types.DataType.Int16;
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     dataType = TensorProto.Types.DataType.Uint16;
                     break;
-                case DataKind.I4:
+                case DataKind.Int32:
                     dataType = TensorProto.Types.DataType.Int32;
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     dataType = TensorProto.Types.DataType.Int64;
                     break;
-                case DataKind.I8:
+                case DataKind.Int64:
                     dataType = TensorProto.Types.DataType.Int64;
                     break;
-                case DataKind.U8:
+                case DataKind.UInt64:
                     dataType = TensorProto.Types.DataType.Uint64;
                     break;
-                case DataKind.R4:
+                case DataKind.Single:
                     dataType = TensorProto.Types.DataType.Float;
                     break;
-                case DataKind.R8:
+                case DataKind.Double:
                     dataType = TensorProto.Types.DataType.Double;
                     break;
                 default:

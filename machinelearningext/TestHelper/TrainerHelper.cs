@@ -136,7 +136,7 @@ namespace Scikit.ML.TestHelper
                     if (!ty2.IsKey())
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));
 
-                    if (ty1.RawKind() == DataKind.R4)
+                    if (ty1.RawKind() == DataKind.Single)
                     {
                         var lgetter = cursor.GetGetter<float>(ilabel);
                         var pgetter = cursor.GetGetter<uint>(ipred);
@@ -165,7 +165,7 @@ namespace Scikit.ML.TestHelper
                                 ++dist2[(int)pre];
                         }
                     }
-                    else if (ty1.RawKind() == DataKind.U4 && ty1.IsKey())
+                    else if (ty1.RawKind() == DataKind.UInt32 && ty1.IsKey())
                     {
                         var lgetter = cursor.GetGetter<uint>(ilabel);
                         var pgetter = cursor.GetGetter<uint>(ipred);
@@ -202,7 +202,7 @@ namespace Scikit.ML.TestHelper
                     if (ty2.RawKind() != DataKind.Bool)
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));
 
-                    if (ty1.RawKind() == DataKind.R4)
+                    if (ty1.RawKind() == DataKind.Single)
                     {
                         var lgetter = cursor.GetGetter<float>(ilabel);
                         var pgetter = cursor.GetGetter<bool>(ipred);
@@ -231,7 +231,7 @@ namespace Scikit.ML.TestHelper
                                 ++dist2[pre ? 1 : 0];
                         }
                     }
-                    else if (ty1.RawKind() == DataKind.U4)
+                    else if (ty1.RawKind() == DataKind.UInt32)
                     {
                         var lgetter = cursor.GetGetter<uint>(ilabel);
                         var pgetter = cursor.GetGetter<bool>(ipred);
@@ -262,7 +262,7 @@ namespace Scikit.ML.TestHelper
                                 ++dist2[pre ? 1 : 0];
                         }
                     }
-                    else if (ty1.RawKind() == DataKind.BL)
+                    else if (ty1.RawKind() == DataKind.Boolean)
                     {
                         var lgetter = cursor.GetGetter<bool>(ilabel);
                         var pgetter = cursor.GetGetter<bool>(ipred);
@@ -298,9 +298,9 @@ namespace Scikit.ML.TestHelper
                 {
                     #region regression
 
-                    if (ty1.RawKind() != DataKind.R4)
+                    if (ty1.RawKind() != DataKind.Single)
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));
-                    if (ty2.RawKind() != DataKind.R4)
+                    if (ty2.RawKind() != DataKind.Single)
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));
 
                     var lgetter = cursor.GetGetter<float>(ilabel);

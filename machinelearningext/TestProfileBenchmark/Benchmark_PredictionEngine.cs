@@ -29,8 +29,8 @@ namespace TestProfileBenchmark
                 HasHeader = true,
                 Columns = new[]
                 {
-                    new TextLoader.Column("Label", DataKind.BL, 0),
-                    new TextLoader.Column("SentimentText", DataKind.Text, 1)
+                    new TextLoader.Column("Label", DataKind.Boolean, 0),
+                    new TextLoader.Column("SentimentText", DataKind.String, 1)
                 }
             };
 
@@ -85,8 +85,8 @@ namespace TestProfileBenchmark
                 HasHeader = true,
                 Columns = new[]
                            {
-                    new TextLoader.Column("Label", DataKind.BL, 0),
-                    new TextLoader.Column("SentimentText", DataKind.Text, 1)
+                    new TextLoader.Column("Label", DataKind.Boolean, 0),
+                    new TextLoader.Column("SentimentText", DataKind.String, 1)
                 }
             };
             var ml = new MLContext(seed: 1, conc: 1);
@@ -109,8 +109,8 @@ namespace TestProfileBenchmark
                 Separators = new[] { '\t' },
                 HasHeader = true,
                 Columns = new[] {
-                    new TextLoader.Column("Label", DataKind.BL, 0),
-                    new TextLoader.Column("SentimentText", DataKind.Text, 1)
+                    new TextLoader.Column("Label", DataKind.Boolean, 0),
+                    new TextLoader.Column("SentimentText", DataKind.String, 1)
                 }
             };
 

@@ -239,33 +239,33 @@ namespace Scikit.ML.PipelineTransforms
                 // Instantiate the associated instance.
                 switch (dk)
                 {
-                    case DataKind.U1:
+                    case DataKind.Byte:
                         return CreateTransform<Byte>();
-                    case DataKind.U2:
+                    case DataKind.UInt16:
                         return CreateTransform<UInt16>();
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return CreateTransform<UInt32>();
-                    case DataKind.U8:
+                    case DataKind.UInt64:
                         return CreateTransform<UInt64>();
-                    case DataKind.I1:
+                    case DataKind.SByte:
                         return CreateTransform<char>();
-                    case DataKind.I2:
+                    case DataKind.Int16:
                         return CreateTransform<short>();
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         return CreateTransform<int>();
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         return CreateTransform<long>();
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return CreateTransform<float>();
-                    case DataKind.R8:
+                    case DataKind.Double:
                         return CreateTransform<double>();
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         return CreateTransform<bool>();
-                    case DataKind.Text:
+                    case DataKind.String:
                         return CreateTransform<DvText>();
-                    case DataKind.DT:
+                    case DataKind.DateTime:
                         return CreateTransform<DateTime>();
-                    case DataKind.TS:
+                    case DataKind.TimeSpan:
                         return CreateTransform<TimeSpan>();
                     default:
                         throw Host.Except("Unexpected raw type for a sortColumn. It cannot be an array.");

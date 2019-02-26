@@ -215,13 +215,13 @@ namespace Scikit.ML.DataManipulation
             var kind = SchemaHelper.GetColumnType<DT>();
             switch (kind.RawKind())
             {
-                case DataKind.BL: return AddColumn(name, values as bool[]);
-                case DataKind.I4: return AddColumn(name, values as int[]);
-                case DataKind.I8: return AddColumn(name, values as long[]);
-                case DataKind.U4: return AddColumn(name, values as uint[]);
-                case DataKind.R4: return AddColumn(name, values as float[]);
-                case DataKind.R8: return AddColumn(name, values as double[]);
-                case DataKind.TX:
+                case DataKind.Boolean: return AddColumn(name, values as bool[]);
+                case DataKind.Int32: return AddColumn(name, values as int[]);
+                case DataKind.Int64: return AddColumn(name, values as long[]);
+                case DataKind.UInt32: return AddColumn(name, values as uint[]);
+                case DataKind.Single: return AddColumn(name, values as float[]);
+                case DataKind.Double: return AddColumn(name, values as double[]);
+                case DataKind.String:
                     {
                         if (values as string[] != null)
                             return AddColumn(name, values as string[]);

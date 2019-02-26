@@ -169,14 +169,14 @@ namespace Scikit.ML.MultiClass
             // We check the label is not boolean.
             int indexLab = SchemaHelper.GetColumnIndex(trans.Schema, dstName);
             var typeLab = trans.Schema[indexLab].Type;
-            if (typeLab.RawKind() == DataKind.BL)
+            if (typeLab.RawKind() == DataKind.Boolean)
                 throw Host.Except("Column '{0}' has an unexpected type {1}.", dstName, typeLab.RawKind());
 
             var args3 = new DescribeTransform.Arguments { columns = new string[] { labName, dstName }, oneRowPerColumn = true };
             var desc = new DescribeTransform(Host, args3, trans);
 
             IDataView viewI;
-            if (_args.singleColumn && data.Schema.Label.Value.Type.RawKind() == DataKind.R4)
+            if (_args.singleColumn && data.Schema.Label.Value.Type.RawKind() == DataKind.Single)
                 viewI = desc;
             else if (_args.singleColumn)
             {
@@ -235,7 +235,7 @@ namespace Scikit.ML.MultiClass
             {
                 column = new[] { MultiClassConvertTransform.Column.Parse(string.Format("{0}k:{0}", dstName)) },
                 keyCount = new KeyCount(4),
-                resultType = DataKind.U4
+                resultType = DataKind.UInt32
             };
             IDataView after_concatenation_key_label = new MultiClassConvertTransform(Host, convArgs, after_concatenation_);
 
@@ -244,7 +244,7 @@ namespace Scikit.ML.MultiClass
             {
                 column = new[] { MultiClassConvertTransform.Column.Parse(string.Format("{0}k:{0}", groupColumnTemp)) },
                 keyCount = new KeyCount(),
-                resultType = _args.groupIsU4 ? DataKind.U4 : DataKind.U8
+                resultType = _args.groupIsU4 ? DataKind.UInt32 : DataKind.UInt64
             };
             after_concatenation_key_label = new MultiClassConvertTransform(Host, convArgs, after_concatenation_key_label);
 
@@ -307,19 +307,19 @@ namespace Scikit.ML.MultiClass
             TVectorPredictor predictor;
             switch (initialLabKind)
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     var p4 = MultiToRankerPredictor.Create(Host, trans.GetClasses<float>(), predictors, _reclassPredictor, _args.singleColumn, false);
                     predictor = p4 as TVectorPredictor;
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     var pu1 = MultiToRankerPredictor.Create(Host, trans.GetClasses<byte>(), predictors, _reclassPredictor, _args.singleColumn, true);
                     predictor = pu1 as TVectorPredictor;
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     var pu2 = MultiToRankerPredictor.Create(Host, trans.GetClasses<ushort>(), predictors, _reclassPredictor, _args.singleColumn, true);
                     predictor = pu2 as TVectorPredictor;
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     var pu4 = MultiToRankerPredictor.Create(Host, trans.GetClasses<uint>(), predictors, _reclassPredictor, _args.singleColumn, true);
                     predictor = pu4 as TVectorPredictor;
                     break;

@@ -231,15 +231,15 @@ namespace Scikit.ML.MultiClass
 
             switch (typeLabel.RawKind())
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     return new MultiToBinaryState<float, float>(_host, _input, _args);
-                case DataKind.BL:
+                case DataKind.Boolean:
                     return new MultiToBinaryState<bool, bool>(_host, _input, _args);
-                case DataKind.I1:
+                case DataKind.SByte:
                     return new MultiToBinaryState<byte, byte>(_host, _input, _args);
-                case DataKind.U2:
+                case DataKind.UInt16:
                     return new MultiToBinaryState<ushort, ushort>(_host, _input, _args);
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return new MultiToBinaryState<uint, uint>(_host, _input, _args);
                 default:
                     throw Contracts.ExceptNotSupp("Type '{0}' is not handle for a multi-class label. Try unsigned int.", typeLabel.RawKind());
@@ -253,15 +253,15 @@ namespace Scikit.ML.MultiClass
 
             switch (typeLabel.RawKind())
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     return new MultiToBinaryState<float, float>(ctx, _host, _input, _args);
-                case DataKind.BL:
+                case DataKind.Boolean:
                     return new MultiToBinaryState<bool, bool>(ctx, _host, _input, _args);
-                case DataKind.I1:
+                case DataKind.SByte:
                     return new MultiToBinaryState<byte, byte>(ctx, _host, _input, _args);
-                case DataKind.U2:
+                case DataKind.UInt16:
                     return new MultiToBinaryState<ushort, ushort>(ctx, _host, _input, _args);
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return new MultiToBinaryState<uint, uint>(ctx, _host, _input, _args);
                 default:
                     throw Contracts.ExceptNotSupp("Type '{0}' is not handle for a multi-class label. Try unsigned int.", typeLabel.RawKind());

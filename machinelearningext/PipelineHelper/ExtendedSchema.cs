@@ -476,19 +476,19 @@ namespace Scikit.ML.PipelineHelper
         {
             Contracts.CheckValue(inputSchema, nameof(inputSchema));
 
-            var builder = new SchemaBuilder();
+            var builder = new DataViewSchema.Builder();
             for (int i = 0; i < inputSchema.ColumnCount; i++)
             {
-                var meta = new MetadataBuilder();
+                var meta = new DataViewSchema.Metadata.Builder();
                 foreach (var kvp in inputSchema.GetMetadataTypes(i))
                 {
                     var getter = Utils.MarshalInvoke(GetMetadataGetterDelegate<int>, kvp.Value.RawType, inputSchema, i, kvp.Key);
                     meta.Add(kvp.Key, kvp.Value, getter);
                 }
-                builder.AddColumn(inputSchema.GetColumnName(i), inputSchema.GetColumnType(i), meta.GetMetadata());
+                builder.AddColumn(inputSchema.GetColumnName(i), inputSchema.GetColumnType(i), meta.ToMetadata());
             }
 
-            return builder.GetSchema();
+            return builder.ToSchema();
         }
 
         private static Delegate GetMetadataGetterDelegate<TValue>(ISchema schema, int col, string kind)

@@ -155,13 +155,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (kind.RawKind())
                     {
-                        case DataKind.BL: return left.TJoin<bool>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I4: return left.TJoin<int>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.U4: return left.TJoin<uint>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I8: return left.TJoin<long>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R4: return left.TJoin<float>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R8: return left.TJoin<double>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.TX: return left.TJoin<DvText>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Boolean: return left.TJoin<bool>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int32: return left.TJoin<int>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.UInt32: return left.TJoin<uint>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int64: return left.TJoin<long>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Single: return left.TJoin<float>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Double: return left.TJoin<double>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.String: return left.TJoin<DvText>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
                         default:
                             throw new NotImplementedException($"Join is not implemented for type '{kind}'.");
                     }
@@ -175,13 +175,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (kind.RawKind())
                     {
-                        case DataKind.BL: return RecJoin<bool>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I4: return RecJoin<int>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.U4: return RecJoin<uint>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I8: return RecJoin<long>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R4: return RecJoin<float>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R8: return RecJoin<double>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.TX: return RecJoin<DvText>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Boolean: return RecJoin<bool>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int32: return RecJoin<int>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.UInt32: return RecJoin<uint>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int64: return RecJoin<long>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Single: return RecJoin<float>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Double: return RecJoin<double>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.String: return RecJoin<DvText>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
                         default:
                             throw new NotImplementedException($"Join is not implemented for type '{kind}'.");
                     }
@@ -203,13 +203,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (kind.RawKind())
                     {
-                        case DataKind.BL: return left.TJoin<T1, bool>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I4: return left.TJoin<T1, int>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.U4: return left.TJoin<T1, uint>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I8: return left.TJoin<T1, long>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R4: return left.TJoin<T1, float>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R8: return left.TJoin<T1, double>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.TX: return left.TJoin<T1, DvText>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Boolean: return left.TJoin<T1, bool>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int32: return left.TJoin<T1, int>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.UInt32: return left.TJoin<T1, uint>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int64: return left.TJoin<T1, long>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Single: return left.TJoin<T1, float>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Double: return left.TJoin<T1, double>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.String: return left.TJoin<T1, DvText>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
                         default:
                             throw new NotImplementedException($"Join is not implemented for type '{kind}'.");
                     }
@@ -223,13 +223,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (kind.RawKind())
                     {
-                        case DataKind.BL: return RecJoin<T1, bool>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I4: return RecJoin<T1, int>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.U4: return RecJoin<T1, uint>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I8: return RecJoin<T1, long>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R4: return RecJoin<T1, float>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R8: return RecJoin<T1, double>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.TX: return RecJoin<T1, DvText>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Boolean: return RecJoin<T1, bool>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int32: return RecJoin<T1, int>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.UInt32: return RecJoin<T1, uint>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int64: return RecJoin<T1, long>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Single: return RecJoin<T1, float>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Double: return RecJoin<T1, double>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.String: return RecJoin<T1, DvText>(left, right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
                         default:
                             throw new NotImplementedException($"Join is not implemented for type '{kind}'.");
                     }
@@ -252,13 +252,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (kind.RawKind())
                     {
-                        case DataKind.BL: return left.TJoin<T1, T2, bool>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I4: return left.TJoin<T1, T2, int>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.U4: return left.TJoin<T1, T2, uint>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.I8: return left.TJoin<T1, T2, long>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R4: return left.TJoin<T1, T2, float>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.R8: return left.TJoin<T1, T2, double>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
-                        case DataKind.TX: return left.TJoin<T1, T2, DvText>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Boolean: return left.TJoin<T1, T2, bool>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int32: return left.TJoin<T1, T2, int>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.UInt32: return left.TJoin<T1, T2, uint>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Int64: return left.TJoin<T1, T2, long>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Single: return left.TJoin<T1, T2, float>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.Double: return left.TJoin<T1, T2, double>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
+                        case DataKind.String: return left.TJoin<T1, T2, DvText>(right, icolsLeft, icolsRight, leftSuffix, rightSuffix, joinType, sort);
                         default:
                             throw new NotImplementedException($"Join is not implemented for type '{kind}'.");
                     }

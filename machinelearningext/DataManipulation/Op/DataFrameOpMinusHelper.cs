@@ -35,7 +35,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         {
                             int[] a;
                             DataColumn<int> res;
@@ -44,7 +44,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, -a[i]);
                             return new NumericColumn(res);
                         }
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         {
                             long[] a;
                             DataColumn<long> res;
@@ -53,7 +53,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, -a[i]);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R4:
+                    case DataKind.Single:
                         {
                             float[] a;
                             DataColumn<float> res;
@@ -62,7 +62,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, -a[i]);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R8:
+                    case DataKind.Double:
                         {
                             double[] a;
                             DataColumn<double> res;

@@ -188,14 +188,14 @@ namespace Scikit.ML.PipelineTransforms
 
                 switch (typeCol.RawKind())
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         view = new PassThroughTransform(_host, new PassThroughTransform.Arguments(),
                                             LambdaColumnMapper.Create(_host, "R42R4", view,
                                             _args.columns[i].Source, _args.columns[i].Name,
                                             NumberDataViewType.Single, NumberDataViewType.Single,
                                             (in float src, ref float dst) => { dst = src; }));
                         break;
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         // MultiClass future issue
                         view = new PassThroughTransform(_host, new PassThroughTransform.Arguments(),
                                             LambdaColumnMapper.Create(_host, "U42R4", view,

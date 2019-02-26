@@ -103,13 +103,13 @@ namespace Scikit.ML.PipelineHelper
             {
                 switch (colType.ItemType().RawKind())
                 {
-                    case DataKind.BL: return GetGetterChoice<VBufferEqSort<bool>, VBuffer<bool>>(cur, col);
-                    case DataKind.I4: return GetGetterChoice<VBufferEqSort<int>, VBuffer<int>>(cur, col);
-                    case DataKind.U4: return GetGetterChoice<VBufferEqSort<uint>, VBuffer<uint>>(cur, col);
-                    case DataKind.I8: return GetGetterChoice<VBufferEqSort<long>, VBuffer<long>>(cur, col);
-                    case DataKind.R4: return GetGetterChoice<VBufferEqSort<float>, VBuffer<float>>(cur, col);
-                    case DataKind.R8: return GetGetterChoice<VBufferEqSort<double>, VBuffer<double>>(cur, col);
-                    case DataKind.TX: return GetGetterChoice<VBufferEqSort<DvText>, VBuffer<DvText>, VBuffer<ReadOnlyMemory<char>>>(cur, col);
+                    case DataKind.Boolean: return GetGetterChoice<VBufferEqSort<bool>, VBuffer<bool>>(cur, col);
+                    case DataKind.Int32: return GetGetterChoice<VBufferEqSort<int>, VBuffer<int>>(cur, col);
+                    case DataKind.UInt32: return GetGetterChoice<VBufferEqSort<uint>, VBuffer<uint>>(cur, col);
+                    case DataKind.Int64: return GetGetterChoice<VBufferEqSort<long>, VBuffer<long>>(cur, col);
+                    case DataKind.Single: return GetGetterChoice<VBufferEqSort<float>, VBuffer<float>>(cur, col);
+                    case DataKind.Double: return GetGetterChoice<VBufferEqSort<double>, VBuffer<double>>(cur, col);
+                    case DataKind.String: return GetGetterChoice<VBufferEqSort<DvText>, VBuffer<DvText>, VBuffer<ReadOnlyMemory<char>>>(cur, col);
                     default:
                         throw new NotImplementedException(string.Format("Not implemented for kind {0}", colType));
                 }
@@ -118,13 +118,13 @@ namespace Scikit.ML.PipelineHelper
             {
                 switch (colType.RawKind())
                 {
-                    case DataKind.BL: return cur.GetGetter<bool>(col);
-                    case DataKind.I4: return cur.GetGetter<int>(col);
-                    case DataKind.U4: return cur.GetGetter<uint>(col);
-                    case DataKind.I8: return cur.GetGetter<Int64>(col);
-                    case DataKind.R4: return cur.GetGetter<float>(col);
-                    case DataKind.R8: return cur.GetGetter<double>(col);
-                    case DataKind.TX: return GetGetterChoice<DvText, ReadOnlyMemory<char>>(cur, col);
+                    case DataKind.Boolean: return cur.GetGetter<bool>(col);
+                    case DataKind.Int32: return cur.GetGetter<int>(col);
+                    case DataKind.UInt32: return cur.GetGetter<uint>(col);
+                    case DataKind.Int64: return cur.GetGetter<Int64>(col);
+                    case DataKind.Single: return cur.GetGetter<float>(col);
+                    case DataKind.Double: return cur.GetGetter<double>(col);
+                    case DataKind.String: return GetGetterChoice<DvText, ReadOnlyMemory<char>>(cur, col);
                     default:
                         throw new NotImplementedException(string.Format("Not implemented for kind {0}", colType));
                 }

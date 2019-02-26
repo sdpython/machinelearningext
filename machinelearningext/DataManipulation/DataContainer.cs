@@ -105,7 +105,7 @@ namespace Scikit.ML.DataManipulation
         /// </summary>
         public IEnumerable<int> EnumerateRowsIndex(NumericColumn filter)
         {
-            if (filter.Kind.IsVector() || filter.Kind.RawKind() != DataKind.Bool)
+            if (filter.Kind.IsVector() || filter.Kind.RawKind() != DataKind.Boolean)
                 throw Contracts.ExceptNotSupp("Only boolean column are allowed for operator [].");
             var th = filter.Column as DataColumn<bool>;
             if (th == null)
@@ -207,13 +207,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (coor.Item1.ItemType().RawKind())
                 {
-                    case DataKind.BL: found = _colsABL[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.I4: found = _colsAI4[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.U4: found = _colsAU4[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.I8: found = _colsAI8[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.R4: found = _colsAR4[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.R8: found = _colsAR8[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.TX: found = _colsATX[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Boolean: found = _colsABL[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Int32: found = _colsAI4[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.UInt32: found = _colsAU4[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Int64: found = _colsAI8[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Single: found = _colsAR4[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Double: found = _colsAR8[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.String: found = _colsATX[coor.Item2] as DataColumn<DType>; break;
                     default:
                         throw new DataTypeError(string.Format("Type '{0}' is not handled.", coor.Item1));
                 }
@@ -222,13 +222,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (coor.Item1.RawKind())
                 {
-                    case DataKind.BL: found = _colsBL[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.I4: found = _colsI4[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.U4: found = _colsU4[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.I8: found = _colsI8[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.R4: found = _colsR4[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.R8: found = _colsR8[coor.Item2] as DataColumn<DType>; break;
-                    case DataKind.TX: found = _colsTX[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Boolean: found = _colsBL[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Int32: found = _colsI4[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.UInt32: found = _colsU4[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Int64: found = _colsI8[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Single: found = _colsR4[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.Double: found = _colsR8[coor.Item2] as DataColumn<DType>; break;
+                    case DataKind.String: found = _colsTX[coor.Item2] as DataColumn<DType>; break;
                     default:
                         throw new DataTypeError(string.Format("Type {0} is not handled.", coor.Item1));
                 }
@@ -262,13 +262,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (coor.Item1.ItemType().RawKind())
                 {
-                    case DataKind.BL: DataColumn<VBufferEqSort<bool>> objbl; GetTypedColumn(col, out objbl, rows); return objbl;
-                    case DataKind.I4: DataColumn<VBufferEqSort<int>> obji4; GetTypedColumn(col, out obji4, rows); return obji4;
-                    case DataKind.U4: DataColumn<VBufferEqSort<uint>> obju4; GetTypedColumn(col, out obju4, rows); return obju4;
-                    case DataKind.I8: DataColumn<VBufferEqSort<long>> obji8; GetTypedColumn(col, out obji8, rows); return obji8;
-                    case DataKind.R4: DataColumn<VBufferEqSort<float>> objf; GetTypedColumn(col, out objf, rows); return objf;
-                    case DataKind.R8: DataColumn<VBufferEqSort<double>> objd; GetTypedColumn(col, out objd, rows); return objd;
-                    case DataKind.TX: DataColumn<VBufferEqSort<DvText>> objs; GetTypedColumn(col, out objs, rows); return objs;
+                    case DataKind.Boolean: DataColumn<VBufferEqSort<bool>> objbl; GetTypedColumn(col, out objbl, rows); return objbl;
+                    case DataKind.Int32: DataColumn<VBufferEqSort<int>> obji4; GetTypedColumn(col, out obji4, rows); return obji4;
+                    case DataKind.UInt32: DataColumn<VBufferEqSort<uint>> obju4; GetTypedColumn(col, out obju4, rows); return obju4;
+                    case DataKind.Int64: DataColumn<VBufferEqSort<long>> obji8; GetTypedColumn(col, out obji8, rows); return obji8;
+                    case DataKind.Single: DataColumn<VBufferEqSort<float>> objf; GetTypedColumn(col, out objf, rows); return objf;
+                    case DataKind.Double: DataColumn<VBufferEqSort<double>> objd; GetTypedColumn(col, out objd, rows); return objd;
+                    case DataKind.String: DataColumn<VBufferEqSort<DvText>> objs; GetTypedColumn(col, out objs, rows); return objs;
                     default:
                         throw new DataTypeError(string.Format("Type '{0}' is not handled.", coor.Item1));
                 }
@@ -277,13 +277,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (coor.Item1.RawKind())
                 {
-                    case DataKind.BL: DataColumn<bool> objbl; GetTypedColumn(col, out objbl, rows); return objbl;
-                    case DataKind.I4: DataColumn<int> obji4; GetTypedColumn(col, out obji4, rows); return obji4;
-                    case DataKind.U4: DataColumn<uint> obju4; GetTypedColumn(col, out obju4, rows); return obju4;
-                    case DataKind.I8: DataColumn<long> obji8; GetTypedColumn(col, out obji8, rows); return obji8;
-                    case DataKind.R4: DataColumn<float> objf; GetTypedColumn(col, out objf, rows); return objf;
-                    case DataKind.R8: DataColumn<double> objd; GetTypedColumn(col, out objd, rows); return objd;
-                    case DataKind.TX: DataColumn<DvText> objs; GetTypedColumn(col, out objs, rows); return objs;
+                    case DataKind.Boolean: DataColumn<bool> objbl; GetTypedColumn(col, out objbl, rows); return objbl;
+                    case DataKind.Int32: DataColumn<int> obji4; GetTypedColumn(col, out obji4, rows); return obji4;
+                    case DataKind.UInt32: DataColumn<uint> obju4; GetTypedColumn(col, out obju4, rows); return obju4;
+                    case DataKind.Int64: DataColumn<long> obji8; GetTypedColumn(col, out obji8, rows); return obji8;
+                    case DataKind.Single: DataColumn<float> objf; GetTypedColumn(col, out objf, rows); return objf;
+                    case DataKind.Double: DataColumn<double> objd; GetTypedColumn(col, out objd, rows); return objd;
+                    case DataKind.String: DataColumn<DvText> objs; GetTypedColumn(col, out objs, rows); return objs;
                     default:
                         throw new DataTypeError(string.Format("Type '{0}' is not handled.", coor.Item1));
                 }
@@ -442,7 +442,7 @@ namespace Scikit.ML.DataManipulation
                 throw new NotImplementedException();
             switch (kind.RawKind())
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     try
                     {
                         return new DataColumn<bool>(values.Select(c => (bool)c).ToArray());
@@ -451,7 +451,7 @@ namespace Scikit.ML.DataManipulation
                     {
                         return new DataColumn<bool>(values.Select(c => (bool)(bool)c).ToArray());
                     }
-                case DataKind.I4:
+                case DataKind.Int32:
                     try
                     {
                         return new DataColumn<int>(values.Select(c => (int)c).ToArray());
@@ -460,9 +460,9 @@ namespace Scikit.ML.DataManipulation
                     {
                         return new DataColumn<int>(values.Select(c => (int)(int)c).ToArray());
                     }
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return new DataColumn<uint>(values.Select(c => (uint)c).ToArray());
-                case DataKind.I8:
+                case DataKind.Int64:
                     try
                     {
                         return new DataColumn<long>(values.Select(c => (long)c).ToArray());
@@ -471,11 +471,11 @@ namespace Scikit.ML.DataManipulation
                     {
                         return new DataColumn<long>(values.Select(c => (long)(Int64)c).ToArray());
                     }
-                case DataKind.R4:
+                case DataKind.Single:
                     return new DataColumn<float>(values.Select(c => (float)c).ToArray());
-                case DataKind.R8:
+                case DataKind.Double:
                     return new DataColumn<double>(values.Select(c => (double)c).ToArray());
-                case DataKind.TX:
+                case DataKind.String:
                     try
                     {
                         return new DataColumn<DvText>(values.Select(c => (DvText)c).ToArray());
@@ -545,43 +545,43 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (kind.ItemType().RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         if (_colsABL == null)
                             _colsABL = new List<IDataColumn>();
                         pos = _colsABL.Count;
                         _colsABL.Add(values ?? new DataColumn<VBufferEqSort<bool>>(nb));
                         break;
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         if (_colsAI4 == null)
                             _colsAI4 = new List<IDataColumn>();
                         pos = _colsAI4.Count;
                         _colsAI4.Add(values ?? new DataColumn<VBufferEqSort<int>>(nb));
                         break;
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         if (_colsAU4 == null)
                             _colsAU4 = new List<IDataColumn>();
                         pos = _colsAU4.Count;
                         _colsAU4.Add(values ?? new DataColumn<VBufferEqSort<uint>>(nb));
                         break;
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         if (_colsAI8 == null)
                             _colsAI8 = new List<IDataColumn>();
                         pos = _colsAI8.Count;
                         _colsAI8.Add(values ?? new DataColumn<VBufferEqSort<long>>(nb));
                         break;
-                    case DataKind.R4:
+                    case DataKind.Single:
                         if (_colsAR4 == null)
                             _colsAR4 = new List<IDataColumn>();
                         pos = _colsAR4.Count;
                         _colsAR4.Add(values ?? new DataColumn<VBufferEqSort<float>>(nb));
                         break;
-                    case DataKind.R8:
+                    case DataKind.Double:
                         if (_colsAR8 == null)
                             _colsAR8 = new List<IDataColumn>();
                         pos = _colsAR8.Count;
                         _colsAR8.Add(values ?? new DataColumn<VBufferEqSort<double>>(nb));
                         break;
-                    case DataKind.TX:
+                    case DataKind.String:
                         if (_colsATX == null)
                             _colsATX = new List<IDataColumn>();
                         pos = _colsATX.Count;
@@ -595,43 +595,43 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         if (_colsBL == null)
                             _colsBL = new List<IDataColumn>();
                         pos = _colsBL.Count;
                         _colsBL.Add(values ?? new DataColumn<bool>(nb));
                         break;
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         if (_colsI4 == null)
                             _colsI4 = new List<IDataColumn>();
                         pos = _colsI4.Count;
                         _colsI4.Add(values ?? new DataColumn<int>(nb));
                         break;
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         if (_colsU4 == null)
                             _colsU4 = new List<IDataColumn>();
                         pos = _colsU4.Count;
                         _colsU4.Add(values ?? new DataColumn<uint>(nb));
                         break;
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         if (_colsI8 == null)
                             _colsI8 = new List<IDataColumn>();
                         pos = _colsI8.Count;
                         _colsI8.Add(values ?? new DataColumn<long>(nb));
                         break;
-                    case DataKind.R4:
+                    case DataKind.Single:
                         if (_colsR4 == null)
                             _colsR4 = new List<IDataColumn>();
                         pos = _colsR4.Count;
                         _colsR4.Add(values ?? new DataColumn<float>(nb));
                         break;
-                    case DataKind.R8:
+                    case DataKind.Double:
                         if (_colsR8 == null)
                             _colsR8 = new List<IDataColumn>();
                         pos = _colsR8.Count;
                         _colsR8.Add(values ?? new DataColumn<double>(nb));
                         break;
-                    case DataKind.TX:
+                    case DataKind.String:
                         if (_colsTX == null)
                             _colsTX = new List<IDataColumn>();
                         pos = _colsTX.Count;
@@ -692,13 +692,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (_kinds[col].RawKind())
                 {
-                    case DataKind.BL: _colsBL[coor.Item2].Set(row, (bool)bool.Parse(value)); break;
-                    case DataKind.I4: _colsI4[coor.Item2].Set(row, (int)int.Parse(value)); break;
-                    case DataKind.U4: _colsU4[coor.Item2].Set(row, uint.Parse(value)); break;
-                    case DataKind.I8: _colsI8[coor.Item2].Set(row, (long)long.Parse(value)); break;
-                    case DataKind.R4: _colsR4[coor.Item2].Set(row, float.Parse(value)); break;
-                    case DataKind.R8: _colsR8[coor.Item2].Set(row, double.Parse(value)); break;
-                    case DataKind.TX: _colsTX[coor.Item2].Set(row, new DvText(value)); break;
+                    case DataKind.Boolean: _colsBL[coor.Item2].Set(row, (bool)bool.Parse(value)); break;
+                    case DataKind.Int32: _colsI4[coor.Item2].Set(row, (int)int.Parse(value)); break;
+                    case DataKind.UInt32: _colsU4[coor.Item2].Set(row, uint.Parse(value)); break;
+                    case DataKind.Int64: _colsI8[coor.Item2].Set(row, (long)long.Parse(value)); break;
+                    case DataKind.Single: _colsR4[coor.Item2].Set(row, float.Parse(value)); break;
+                    case DataKind.Double: _colsR8[coor.Item2].Set(row, double.Parse(value)); break;
+                    case DataKind.String: _colsTX[coor.Item2].Set(row, new DvText(value)); break;
                     default:
                         throw new DataTypeError(string.Format("Type {0} is not handled.", coor.Item1));
                 }
@@ -948,25 +948,25 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (coor.Item1.ItemType().RawKind())
                     {
-                        case DataKind.BL:
+                        case DataKind.Boolean:
                             getterABL[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, false);
                             break;
-                        case DataKind.I4:
+                        case DataKind.Int32:
                             getterAI4[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, 0);
                             break;
-                        case DataKind.U4:
+                        case DataKind.UInt32:
                             getterAU4[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, (uint)0);
                             break;
-                        case DataKind.I8:
+                        case DataKind.Int64:
                             getterAI8[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, (long)0);
                             break;
-                        case DataKind.R4:
+                        case DataKind.Single:
                             getterAR4[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, float.NaN);
                             break;
-                        case DataKind.R8:
+                        case DataKind.Double:
                             getterAR8[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, double.NaN);
                             break;
-                        case DataKind.TX:
+                        case DataKind.String:
                             getterATX[coor.Item2] = GetGetterCursorVector(cursor, memory[i].Item1, memory[i].Item2, DvText.NA);
                             break;
                         default:
@@ -977,25 +977,25 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (coor.Item1.RawKind())
                     {
-                        case DataKind.BL:
+                        case DataKind.Boolean:
                             getterBL[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, false);
                             break;
-                        case DataKind.I4:
+                        case DataKind.Int32:
                             getterI4[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, 0);
                             break;
-                        case DataKind.U4:
+                        case DataKind.UInt32:
                             getterU4[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, (uint)0);
                             break;
-                        case DataKind.I8:
+                        case DataKind.Int64:
                             getterI8[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, (long)0);
                             break;
-                        case DataKind.R4:
+                        case DataKind.Single:
                             getterR4[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, float.NaN);
                             break;
-                        case DataKind.R8:
+                        case DataKind.Double:
                             getterR8[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, double.NaN);
                             break;
-                        case DataKind.TX:
+                        case DataKind.String:
                             getterTX[coor.Item2] = GetGetterCursor(cursor, memory[i].Item1, memory[i].Item2, DvText.NA);
                             break;
                         default:
@@ -1038,37 +1038,37 @@ namespace Scikit.ML.DataManipulation
                     {
                         switch (coor.Item1.ItemType().RawKind())
                         {
-                            case DataKind.BL:
+                            case DataKind.Boolean:
                                 getterABL[coor.Item2](ref avalueBL);
                                 aqvalueBL = new VBufferEqSort<bool>(avalueBL);
                                 _colsABL[coor.Item2].Set(row, aqvalueBL);
                                 break;
-                            case DataKind.I4:
+                            case DataKind.Int32:
                                 getterAI4[coor.Item2](ref avalueI4);
                                 aqvalueI4 = new VBufferEqSort<int>(avalueI4);
                                 _colsAI4[coor.Item2].Set(row, aqvalueI4);
                                 break;
-                            case DataKind.U4:
+                            case DataKind.UInt32:
                                 getterAU4[coor.Item2](ref avalueU4);
                                 aqvalueU4 = new VBufferEqSort<uint>(avalueU4);
                                 _colsAU4[coor.Item2].Set(row, aqvalueU4);
                                 break;
-                            case DataKind.I8:
+                            case DataKind.Int64:
                                 getterAI8[coor.Item2](ref avalueI8);
                                 aqvalueI8 = new VBufferEqSort<long>(avalueI8);
                                 _colsAI8[coor.Item2].Set(row, aqvalueI8);
                                 break;
-                            case DataKind.R4:
+                            case DataKind.Single:
                                 getterAR4[coor.Item2](ref avalueR4);
                                 aqvalueR4 = new VBufferEqSort<float>(avalueR4);
                                 _colsAR4[coor.Item2].Set(row, aqvalueR4);
                                 break;
-                            case DataKind.R8:
+                            case DataKind.Double:
                                 getterAR8[coor.Item2](ref avalueR8);
                                 aqvalueR8 = new VBufferEqSort<double>(avalueR8);
                                 _colsAR8[coor.Item2].Set(row, aqvalueR8);
                                 break;
-                            case DataKind.TX:
+                            case DataKind.String:
                                 getterATX[coor.Item2](ref avalueTX);
                                 aqvalueTX = new VBufferEqSort<DvText>(avalueTX);
                                 _colsATX[coor.Item2].Set(row, aqvalueTX);
@@ -1081,31 +1081,31 @@ namespace Scikit.ML.DataManipulation
                     {
                         switch (coor.Item1.RawKind())
                         {
-                            case DataKind.BL:
+                            case DataKind.Boolean:
                                 getterBL[coor.Item2](ref valueBL);
                                 _colsBL[coor.Item2].Set(row, valueBL);
                                 break;
-                            case DataKind.I4:
+                            case DataKind.Int32:
                                 getterI4[coor.Item2](ref valueI4);
                                 _colsI4[coor.Item2].Set(row, valueI4);
                                 break;
-                            case DataKind.U4:
+                            case DataKind.UInt32:
                                 getterU4[coor.Item2](ref valueU4);
                                 _colsU4[coor.Item2].Set(row, valueU4);
                                 break;
-                            case DataKind.I8:
+                            case DataKind.Int64:
                                 getterI8[coor.Item2](ref valueI8);
                                 _colsI8[coor.Item2].Set(row, valueI8);
                                 break;
-                            case DataKind.R4:
+                            case DataKind.Single:
                                 getterR4[coor.Item2](ref valueR4);
                                 _colsR4[coor.Item2].Set(row, valueR4);
                                 break;
-                            case DataKind.R8:
+                            case DataKind.Double:
                                 getterR8[coor.Item2](ref valueR8);
                                 _colsR8[coor.Item2].Set(row, valueR8);
                                 break;
-                            case DataKind.TX:
+                            case DataKind.String:
                                 getterTX[coor.Item2](ref valueTX);
                                 _colsTX[coor.Item2].Set(row, valueTX);
                                 break;
@@ -1261,13 +1261,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (colType.ItemType().RawKind())
                 {
-                    case DataKind.BL: return GetColumnSetterVector<bool>(cur, getter, col);
-                    case DataKind.I4: return GetColumnSetterVector<int>(cur, getter, col);
-                    case DataKind.U4: return GetColumnSetterVector<uint>(cur, getter, col);
-                    case DataKind.I8: return GetColumnSetterVector<Int64>(cur, getter, col);
-                    case DataKind.R4: return GetColumnSetterVector<float>(cur, getter, col);
-                    case DataKind.R8: return GetColumnSetterVector<double>(cur, getter, col);
-                    case DataKind.TX: return GetColumnSetterVectorText(cur, getter, col);
+                    case DataKind.Boolean: return GetColumnSetterVector<bool>(cur, getter, col);
+                    case DataKind.Int32: return GetColumnSetterVector<int>(cur, getter, col);
+                    case DataKind.UInt32: return GetColumnSetterVector<uint>(cur, getter, col);
+                    case DataKind.Int64: return GetColumnSetterVector<Int64>(cur, getter, col);
+                    case DataKind.Single: return GetColumnSetterVector<float>(cur, getter, col);
+                    case DataKind.Double: return GetColumnSetterVector<double>(cur, getter, col);
+                    case DataKind.String: return GetColumnSetterVectorText(cur, getter, col);
                     default:
                         throw new NotImplementedException(string.Format("Not implemented for kind {0}", colType));
                 }
@@ -1276,13 +1276,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (colType.RawKind())
                 {
-                    case DataKind.BL: return GetColumnSetter<bool>(cur, getter, col);
-                    case DataKind.I4: return GetColumnSetter<int>(cur, getter, col);
-                    case DataKind.U4: return GetColumnSetter<uint>(cur, getter, col);
-                    case DataKind.I8: return GetColumnSetter<Int64>(cur, getter, col);
-                    case DataKind.R4: return GetColumnSetter<float>(cur, getter, col);
-                    case DataKind.R8: return GetColumnSetter<double>(cur, getter, col);
-                    case DataKind.TX: return GetColumnSetterText(cur, getter, col);
+                    case DataKind.Boolean: return GetColumnSetter<bool>(cur, getter, col);
+                    case DataKind.Int32: return GetColumnSetter<int>(cur, getter, col);
+                    case DataKind.UInt32: return GetColumnSetter<uint>(cur, getter, col);
+                    case DataKind.Int64: return GetColumnSetter<Int64>(cur, getter, col);
+                    case DataKind.Single: return GetColumnSetter<float>(cur, getter, col);
+                    case DataKind.Double: return GetColumnSetter<double>(cur, getter, col);
+                    case DataKind.String: return GetColumnSetterText(cur, getter, col);
                     default:
                         throw new NotImplementedException(string.Format("Not implemented for kind {0}", colType));
                 }
@@ -1531,13 +1531,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (coor.Item1.ItemType().RawKind())
                     {
-                        case DataKind.BL: return _cont._colsABL[coor.Item2].GetGetterVector<bool>(this) as ValueGetter<TValue>;
-                        case DataKind.I4: return _cont._colsAI4[coor.Item2].GetGetterVector<int>(this) as ValueGetter<TValue>;
-                        case DataKind.U4: return _cont._colsAU4[coor.Item2].GetGetterVector<uint>(this) as ValueGetter<TValue>;
-                        case DataKind.I8: return _cont._colsAI8[coor.Item2].GetGetterVector<long>(this) as ValueGetter<TValue>;
-                        case DataKind.R4: return _cont._colsAR4[coor.Item2].GetGetterVector<float>(this) as ValueGetter<TValue>;
-                        case DataKind.R8: return _cont._colsAR8[coor.Item2].GetGetterVector<double>(this) as ValueGetter<TValue>;
-                        case DataKind.TX: return _cont._colsATX[coor.Item2].GetGetterVector<ReadOnlyMemory<char>>(this) as ValueGetter<TValue>;
+                        case DataKind.Boolean: return _cont._colsABL[coor.Item2].GetGetterVector<bool>(this) as ValueGetter<TValue>;
+                        case DataKind.Int32: return _cont._colsAI4[coor.Item2].GetGetterVector<int>(this) as ValueGetter<TValue>;
+                        case DataKind.UInt32: return _cont._colsAU4[coor.Item2].GetGetterVector<uint>(this) as ValueGetter<TValue>;
+                        case DataKind.Int64: return _cont._colsAI8[coor.Item2].GetGetterVector<long>(this) as ValueGetter<TValue>;
+                        case DataKind.Single: return _cont._colsAR4[coor.Item2].GetGetterVector<float>(this) as ValueGetter<TValue>;
+                        case DataKind.Double: return _cont._colsAR8[coor.Item2].GetGetterVector<double>(this) as ValueGetter<TValue>;
+                        case DataKind.String: return _cont._colsATX[coor.Item2].GetGetterVector<ReadOnlyMemory<char>>(this) as ValueGetter<TValue>;
                         default:
                             throw new NotImplementedException();
                     }
@@ -1546,13 +1546,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (coor.Item1.RawKind())
                     {
-                        case DataKind.BL: return _cont._colsBL[coor.Item2].GetGetter<TValue>(this);
-                        case DataKind.I4: return _cont._colsI4[coor.Item2].GetGetter<TValue>(this);
-                        case DataKind.U4: return _cont._colsU4[coor.Item2].GetGetter<TValue>(this);
-                        case DataKind.I8: return _cont._colsI8[coor.Item2].GetGetter<TValue>(this);
-                        case DataKind.R4: return _cont._colsR4[coor.Item2].GetGetter<TValue>(this);
-                        case DataKind.R8: return _cont._colsR8[coor.Item2].GetGetter<TValue>(this);
-                        case DataKind.TX: return _cont._colsTX[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.Boolean: return _cont._colsBL[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.Int32: return _cont._colsI4[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.UInt32: return _cont._colsU4[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.Int64: return _cont._colsI8[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.Single: return _cont._colsR4[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.Double: return _cont._colsR8[coor.Item2].GetGetter<TValue>(this);
+                        case DataKind.String: return _cont._colsTX[coor.Item2].GetGetter<TValue>(this);
                         default:
                             throw new NotImplementedException();
                     }
@@ -1769,7 +1769,7 @@ namespace Scikit.ML.DataManipulation
                     {
                         if (exc)
                             throw new Exception($"Mismatch in BL column {i}");
-                        return (double)DataKind.BL;
+                        return (double)DataKind.Boolean;
                     }
             }
             if (_colsI4 != null)
@@ -1779,7 +1779,7 @@ namespace Scikit.ML.DataManipulation
                     {
                         if (exc)
                             throw new Exception($"Mismatch in I4 column {i}");
-                        return (double)DataKind.I4;
+                        return (double)DataKind.Int32;
                     }
             }
             if (_colsU4 != null)
@@ -1789,7 +1789,7 @@ namespace Scikit.ML.DataManipulation
                     {
                         if (exc)
                             throw new Exception($"Mismatch in U4 column {i}");
-                        return (double)DataKind.U4;
+                        return (double)DataKind.UInt32;
                     }
             }
             if (_colsI8 != null)
@@ -1799,7 +1799,7 @@ namespace Scikit.ML.DataManipulation
                     {
                         if (exc)
                             throw new Exception($"Mismatch in I8 column {i}");
-                        return (double)DataKind.I8;
+                        return (double)DataKind.Int64;
                     }
             }
             if (_colsR4 != null)
@@ -1839,7 +1839,7 @@ namespace Scikit.ML.DataManipulation
                     {
                         if (exc)
                             throw new Exception($"Mismatch in TX column {i}");
-                        return (double)DataKind.TX;
+                        return (double)DataKind.String;
                     }
             }
             return 0;

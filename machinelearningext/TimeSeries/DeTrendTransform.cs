@@ -215,11 +215,11 @@ namespace Scikit.ML.TimeSeries
                 if (typeLabel.AsVector().DimCount() != 1 || typeLabel.AsVector().GetDim(0) != 1)
                     throw Host.ExceptNotImpl("Not implemented yet for multiple dimensions.");
             }
-            if (typeLabel.RawKind() != DataKind.R4)
+            if (typeLabel.RawKind() != DataKind.Single)
                 throw Host.ExceptNotImpl("InputColumn must be R4.");
             indexTime = SchemaHelper.GetColumnIndex(Source.Schema, _args.timeColumn);
             typeTime = Source.Schema[indexTime].Type;
-            if (typeTime.RawKind() != DataKind.R4)
+            if (typeTime.RawKind() != DataKind.Single)
                 throw Host.ExceptNotImpl("Time columne must be R4.");
         }
 

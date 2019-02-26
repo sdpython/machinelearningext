@@ -247,10 +247,10 @@ namespace Scikit.ML.FeaturesTransforms
             // Let's do float and int.
             switch (typeCol.RawKind())
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     transform = new PolynomialState<float>(_host, transform ?? Source, _args, (a, b) => a * b);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     transform = new PolynomialState<UInt32>(_host, transform ?? Source, _args, (a, b) => a * b);
                     break;
                 default:

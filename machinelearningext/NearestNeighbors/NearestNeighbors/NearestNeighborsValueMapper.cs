@@ -96,7 +96,7 @@ namespace Scikit.ML.NearestNeighbors
                     maxi = pair.Value.Item1;
             }
 
-            var conv = new TypedConverters<TLabel>(DataKind.I4);
+            var conv = new TypedConverters<TLabel>(DataKind.Int32);
 
             int imini = 0, imaxi = 0;
             var convMapper = conv.GetMapper<int>();
@@ -231,7 +231,7 @@ namespace Scikit.ML.NearestNeighbors
             Dictionary<TLabel, float> hist = null;
             if (weight == NearestNeighborsWeights.uniform)
             {
-                var conv = new TypedConverters<TLabel>(DataKind.U4);
+                var conv = new TypedConverters<TLabel>(DataKind.UInt32);
                 var mapperU4 = conv.GetMapper<uint>();
                 var nbClass = ComputeNbClass(PredictionKind.MultiClassClassification);
                 ValueMapper<VBuffer<float>, VBuffer<float>> mapper = (in VBuffer<float> input, ref VBuffer<float> output) =>

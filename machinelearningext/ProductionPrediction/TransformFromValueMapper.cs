@@ -107,7 +107,7 @@ namespace Scikit.ML.ProductionPrediction
             {
                 switch (InputType.AsVector().ItemType().RawKind())
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return CreateMemoryTransformIn<VBuffer<float>>();
                     default:
                         throw _host.ExceptNotImpl("Input Type '{0}' is not handled yet.", InputType.AsVector().ItemType().RawKind());
@@ -117,7 +117,7 @@ namespace Scikit.ML.ProductionPrediction
             {
                 switch (InputType.RawKind())
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return CreateMemoryTransformIn<float>();
                     default:
                         throw _host.ExceptNotImpl("Input Type '{0}' is not handled yet.", InputType.RawKind());
@@ -131,9 +131,9 @@ namespace Scikit.ML.ProductionPrediction
             {
                 switch (OutputType.AsVector().ItemType().RawKind())
                 {
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return CreateMemoryTransformInOut<TSrc, VBuffer<uint>>();
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return CreateMemoryTransformInOut<TSrc, VBuffer<float>>();
                     default:
                         throw _host.ExceptNotImpl("Output Type '{0}' is not handled yet.", OutputType.AsVector().ItemType().RawKind());
@@ -143,9 +143,9 @@ namespace Scikit.ML.ProductionPrediction
             {
                 switch (OutputType.RawKind())
                 {
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return CreateMemoryTransformInOut<TSrc, uint>();
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return CreateMemoryTransformInOut<TSrc, float>();
                     default:
                         throw _host.ExceptNotImpl("Output Type '{0}' is not handled yet.", OutputType.RawKind());

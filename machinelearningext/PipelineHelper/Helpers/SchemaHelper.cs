@@ -23,36 +23,117 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (kind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     return BooleanDataViewType.Instance;
-                case DataKind.R4:
+                case DataKind.Single:
                     return NumberDataViewType.Single;
-                case DataKind.R8:
+                case DataKind.Double:
                     return NumberDataViewType.Double;
-                case DataKind.I1:
+                case DataKind.SByte:
                     return NumberDataViewType.SByte;
-                case DataKind.I2:
+                case DataKind.Int16:
                     return NumberDataViewType.Int16;
-                case DataKind.I4:
+                case DataKind.Int32:
                     return NumberDataViewType.Int32;
-                case DataKind.I8:
+                case DataKind.Int64:
                     return NumberDataViewType.Int64;
-                case DataKind.U1:
+                case DataKind.Byte:
                     return NumberDataViewType.Byte;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     return NumberDataViewType.UInt16;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return NumberDataViewType.UInt32;
-                case DataKind.U8:
+                case DataKind.UInt64:
                     return NumberDataViewType.UInt64;
-                case DataKind.Text:
+                case DataKind.String:
                     return TextDataViewType.Instance;
-                case DataKind.U16:
-                    return NumberDataViewType.DataViewRowId;
                 case DataKind.DateTime:
                     return DateTimeDataViewType.Instance;
-                case DataKind.DateTimeZone:
+                case DataKind.DateTimeOffset:
                     return DateTimeOffsetDataViewType.Instance;
+                default:
+                    throw ch != null ? ch.Except("Unknown kind {0}", kind) : Contracts.Except("Unknown kind {0}", kind);
+            }
+        }
+
+        public static DataViewType DataKind2ColumnType(InternalDataKind kind, IChannel ch = null)
+        {
+            switch (kind)
+            {
+                case InternalDataKind.BL:
+                    return BooleanDataViewType.Instance;
+                case InternalDataKind.R4:
+                    return NumberDataViewType.Single;
+                case InternalDataKind.R8:
+                    return NumberDataViewType.Double;
+                case InternalDataKind.I1:
+                    return NumberDataViewType.SByte;
+                case InternalDataKind.I2:
+                    return NumberDataViewType.Int16;
+                case InternalDataKind.I4:
+                    return NumberDataViewType.Int32;
+                case InternalDataKind.I8:
+                    return NumberDataViewType.Int64;
+                case InternalDataKind.U1:
+                    return NumberDataViewType.Byte;
+                case InternalDataKind.U2:
+                    return NumberDataViewType.UInt16;
+                case InternalDataKind.U4:
+                    return NumberDataViewType.UInt32;
+                case InternalDataKind.U8:
+                    return NumberDataViewType.UInt64;
+                case InternalDataKind.TX:
+                    return TextDataViewType.Instance;
+                case InternalDataKind.DateTime:
+                    return DateTimeDataViewType.Instance;
+                case InternalDataKind.DateTimeZone:
+                    return DateTimeOffsetDataViewType.Instance;
+                default:
+                    throw ch != null ? ch.Except("Unknown kind {0}", kind) : Contracts.Except("Unknown kind {0}", kind);
+            }
+        }
+
+        public static DataKind InternalDataKind2DataKind(InternalDataKind kind, IChannel ch = null)
+        {
+            switch (kind)
+            {
+                case InternalDataKind.BL: return DataKind.Boolean;
+                case InternalDataKind.R4: return DataKind.Single;
+                case InternalDataKind.R8: return DataKind.Double;
+                case InternalDataKind.I1: return DataKind.SByte;
+                case InternalDataKind.I2: return DataKind.Int16;
+                case InternalDataKind.I4: return DataKind.Int32;
+                case InternalDataKind.I8: return DataKind.Int64;
+                case InternalDataKind.U1: return DataKind.Byte;
+                case InternalDataKind.U2: return DataKind.UInt16;
+                case InternalDataKind.U4: return DataKind.UInt32;
+                case InternalDataKind.U8: return DataKind.UInt64;
+                case InternalDataKind.TX: return DataKind.String;
+                case InternalDataKind.DateTime: return DataKind.DateTime;
+                case InternalDataKind.DateTimeZone: return DataKind.DateTimeOffset;
+                default:
+                    throw ch != null ? ch.Except("Unknown kind {0}", kind) : Contracts.Except("Unknown kind {0}", kind);
+            }
+        }
+
+        public static InternalDataKind DataKind2InternalDataKind(DataKind kind, IChannel ch = null)
+        {
+            switch (kind)
+            {
+                case DataKind.Boolean: return InternalDataKind.BL;
+                case DataKind.Single: return InternalDataKind.R4;
+                case DataKind.Double: return InternalDataKind.R8;
+                case DataKind.SByte: return InternalDataKind.I1;
+                case DataKind.Int16: return InternalDataKind.I2;
+                case DataKind.Int32: return InternalDataKind.I4;
+                case DataKind.Int64: return InternalDataKind.I8;
+                case DataKind.Byte: return InternalDataKind.U1;
+                case DataKind.UInt16: return InternalDataKind.U2;
+                case DataKind.UInt32: return InternalDataKind.U4;
+                case DataKind.UInt64: return InternalDataKind.U8;
+                case DataKind.String: return InternalDataKind.TX;
+                case DataKind.DateTime: return InternalDataKind.DateTime;
+                case DataKind.DateTimeOffset: return InternalDataKind.DateTimeZone;
                 default:
                     throw ch != null ? ch.Except("Unknown kind {0}", kind) : Contracts.Except("Unknown kind {0}", kind);
             }
@@ -64,8 +145,6 @@ namespace Scikit.ML.PipelineHelper
 
         public static DataViewType Convert(TextLoader.Column col, IChannel ch = null)
         {
-            if (!col.Type.HasValue)
-                throw ch != null ? ch.Except("Kind is null") : Contracts.Except("kind is null");
             if (col.Source != null && col.Source.Length > 0)
             {
                 if (col.Source.Length != 1)
@@ -76,18 +155,17 @@ namespace Scikit.ML.PipelineHelper
                         throw ch != null ? ch.Except("A vector column needs a dimension")
                                          : Contracts.Except("A vector column needs a dimension");
                     int delta = col.Source[0].Max.Value - col.Source[0].Min + 1;
-                    var colType = DataKind2ColumnType(col.Type.Value, ch);
+                    var colType = DataKind2ColumnType(col.Type, ch);
                     return new VectorType(colType.AsPrimitive(), delta);
                 }
             }
             if (col.KeyCount != null)
             {
                 var r = col.KeyCount;
-                return new KeyType(col.Type.HasValue ? col.Type.Value.ToType() : null, 
-                                   r.Count.HasValue ? r.Count.Value : 0);
+                return new KeyType(DataKind2ColumnType(col.Type).RawType, r.Count.HasValue ? r.Count.Value : 0);
             }
             else
-                return DataKind2ColumnType(col.Type.Value, ch);
+                return DataKind2ColumnType(col.Type, ch);
         }
 
         /// <summary>
@@ -309,9 +387,9 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (kind)
             {
-                case DataKind.TX:
+                case DataKind.String:
                     return TextDataViewType.Instance;
-                case DataKind.Bool:
+                case DataKind.Boolean:
                     return BooleanDataViewType.Instance;
                 case DataKind.DateTime:
                     return DateTimeDataViewType.Instance;
@@ -374,10 +452,10 @@ namespace Scikit.ML.PipelineHelper
                 if (extra == null)
                     return true;
 
-                DataKind kind;
+                InternalDataKind kind;
                 if (!TypeParsingUtils.TryParseDataKind(extra, out kind, out KeyCount))
                     return false;
-                ResultType = kind == default(DataKind) ? default(DataKind?) : kind;
+                ResultType = InternalDataKind2DataKind(kind);
                 return true;
             }
 
@@ -404,7 +482,7 @@ namespace Scikit.ML.PipelineHelper
                 sb.Append(Name);
                 sb.Append(':');
                 if (ResultType != null)
-                    sb.Append(ResultType.Value.GetString());
+                    sb.Append(ResultType.Value);
                 if (KeyCount != null)
                 {
                     sb.Append('[');
@@ -474,28 +552,28 @@ namespace Scikit.ML.PipelineHelper
             if (type == typeof(double))
                 return NumberDataViewType.Double;
             if (type == typeof(ReadOnlyMemory<char>) || type == typeof(string) || type == typeof(DvText))
-                return ColumnTypeHelper.PrimitiveFromKind(DataKind.TX);
+                return ColumnTypeHelper.PrimitiveFromKind(DataKind.String);
 
             if (type == typeof(VBuffer<bool>) || type == typeof(VBufferEqSort<bool>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.BL));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Boolean));
             if (type == typeof(VBuffer<byte>) || type == typeof(VBufferEqSort<byte>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.I1));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.SByte));
             if (type == typeof(VBuffer<ushort>) || type == typeof(VBufferEqSort<ushort>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.U2));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.UInt16));
             if (type == typeof(VBuffer<uint>) || type == typeof(VBufferEqSort<uint>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.U4));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.UInt32));
             if (type == typeof(VBuffer<int>) || type == typeof(VBufferEqSort<int>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.I4));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Int32));
             if (type == typeof(VBuffer<Int64>) || type == typeof(VBufferEqSort<Int64>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.I8));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Int64));
             if (type == typeof(VBuffer<float>) || type == typeof(VBufferEqSort<float>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.R4));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Single));
             if (type == typeof(VBuffer<double>) || type == typeof(VBufferEqSort<double>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.R8));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Double));
             if (type == typeof(VBuffer<ReadOnlyMemory<char>>) || type == typeof(VBuffer<string>) || type == typeof(VBuffer<DvText>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.TX));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.String));
             if (type == typeof(VBufferEqSort<string>) || type == typeof(VBufferEqSort<DvText>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.TX));
+                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.String));
 
             throw Contracts.ExceptNotSupp("Unsupported output type {0}.", type);
         }
@@ -525,61 +603,61 @@ namespace Scikit.ML.PipelineHelper
         public static Tuple<DataKind, ArrayKind> GetKindArray(Type type)
         {
             if (type == typeof(bool))
-                return new Tuple<DataKind, ArrayKind>(DataKind.BL, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Boolean, ArrayKind.None);
             if (type == typeof(byte))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I1, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.SByte, ArrayKind.None);
             if (type == typeof(ushort))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U2, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.UInt16, ArrayKind.None);
             if (type == typeof(uint))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U4, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.UInt32, ArrayKind.None);
             if (type == typeof(int))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I4, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Int32, ArrayKind.None);
             if (type == typeof(Int64))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I8, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Int64, ArrayKind.None);
             if (type == typeof(float))
-                return new Tuple<DataKind, ArrayKind>(DataKind.R4, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Single, ArrayKind.None);
             if (type == typeof(double))
-                return new Tuple<DataKind, ArrayKind>(DataKind.R8, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Double, ArrayKind.None);
             if (type == typeof(ReadOnlyMemory<char>) || type == typeof(string) || type == typeof(DvText))
-                return new Tuple<DataKind, ArrayKind>(DataKind.TX, ArrayKind.None);
+                return new Tuple<DataKind, ArrayKind>(DataKind.String, ArrayKind.None);
 
             if (type == typeof(VBuffer<bool>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.BL, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Boolean, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<byte>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I1, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.SByte, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<ushort>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U2, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.UInt16, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<uint>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U4, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.UInt32, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<int>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I4, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Int32, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<Int64>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I8, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Int64, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<float>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.R4, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Single, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<double>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.R8, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Double, ArrayKind.VBuffer);
             if (type == typeof(VBuffer<ReadOnlyMemory<char>>) || type == typeof(VBuffer<string>) || type == typeof(VBuffer<DvText>))
-                return new Tuple<DataKind, ArrayKind>(DataKind.TX, ArrayKind.VBuffer);
+                return new Tuple<DataKind, ArrayKind>(DataKind.String, ArrayKind.VBuffer);
 
             if (type == typeof(bool[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.BL, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Boolean, ArrayKind.Array);
             if (type == typeof(byte[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I1, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.SByte, ArrayKind.Array);
             if (type == typeof(ushort[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U2, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.UInt16, ArrayKind.Array);
             if (type == typeof(uint[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.U4, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.UInt32, ArrayKind.Array);
             if (type == typeof(int[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I4, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Int32, ArrayKind.Array);
             if (type == typeof(Int64[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.I8, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Int64, ArrayKind.Array);
             if (type == typeof(float[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.R4, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Single, ArrayKind.Array);
             if (type == typeof(double[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.R8, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.Double, ArrayKind.Array);
             if (type == typeof(ReadOnlyMemory<char>[]) || type == typeof(string[]) || type == typeof(DvText[]))
-                return new Tuple<DataKind, ArrayKind>(DataKind.TX, ArrayKind.Array);
+                return new Tuple<DataKind, ArrayKind>(DataKind.String, ArrayKind.Array);
 
             throw Contracts.ExceptNotSupp("Unsupported output type {0}.", type);
         }

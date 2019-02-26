@@ -80,16 +80,16 @@ namespace Scikit.ML.MultiClass
             var kind = (DataKind)bkind;
             switch (kind)
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     _impl = new ImplRawRanker<float>(ctx, env);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     _impl = new ImplRawRanker<byte>(ctx, env);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     _impl = new ImplRawRanker<ushort>(ctx, env);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     _impl = new ImplRawRanker<uint>(ctx, env);
                     break;
                 default:

@@ -77,13 +77,34 @@ namespace Scikit.ML.PipelineHelper
 
         public static DataKind RawKind(this DataViewType type)
         {
-            DataKind kind;
+            InternalDataKind kind;
             if (IsVector(type))
-                if (DataKindExtensions.TryGetDataKind(ItemType(type).RawType, out kind))
-                    return kind;
-            if (DataKindExtensions.TryGetDataKind(type.RawType, out kind))
-                return kind;
+                if (InternalDataKindExtensions.TryGetDataKind(ItemType(type).RawType, out kind))
+                    return Internal2DataKind(kind);
+            if (InternalDataKindExtensions.TryGetDataKind(type.RawType, out kind))
+                return Internal2DataKind(kind);
             throw Contracts.ExceptNotSupp($"Unable to guess kind for type {type}.");
+        }
+
+        public static DataKind Internal2DataKind(InternalDataKind kind)
+        {
+            switch (kind)
+            {
+                case InternalDataKind.BL: return DataKind.Boolean;
+                case InternalDataKind.I1: return DataKind.SByte;
+                case InternalDataKind.U1: return DataKind.Byte;
+                case InternalDataKind.I2: return DataKind.Int16;
+                case InternalDataKind.U2: return DataKind.UInt16;
+                case InternalDataKind.I4: return DataKind.Int32;
+                case InternalDataKind.U4: return DataKind.UInt32;
+                case InternalDataKind.I8: return DataKind.Int64;
+                case InternalDataKind.U8: return DataKind.UInt64;
+                case InternalDataKind.R4: return DataKind.Single;
+                case InternalDataKind.R8: return DataKind.Double;
+                case InternalDataKind.TX: return DataKind.String;
+                default:
+                    throw Contracts.ExceptNotImpl($"Datakind not implemented for kind {kind}.");
+            }
         }
 
         public static int VectorSize(this DataViewType column)
@@ -95,17 +116,16 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (kind)
             {
-                case DataKind.I1: return NumberDataViewType.SByte;
-                case DataKind.U1: return NumberDataViewType.Byte;
-                case DataKind.I2: return NumberDataViewType.Int16;
-                case DataKind.U2: return NumberDataViewType.UInt16;
-                case DataKind.I4: return NumberDataViewType.Int32;
-                case DataKind.U4: return NumberDataViewType.UInt32;
-                case DataKind.I8: return NumberDataViewType.Int64;
-                case DataKind.U8: return NumberDataViewType.UInt64;
-                case DataKind.R4: return NumberDataViewType.Single;
-                case DataKind.R8: return NumberDataViewType.Double;
-                case DataKind.UG: return NumberDataViewType.DataViewRowId;
+                case DataKind.SByte: return NumberDataViewType.SByte;
+                case DataKind.Byte: return NumberDataViewType.Byte;
+                case DataKind.Int16: return NumberDataViewType.Int16;
+                case DataKind.UInt16: return NumberDataViewType.UInt16;
+                case DataKind.Int32: return NumberDataViewType.Int32;
+                case DataKind.UInt32: return NumberDataViewType.UInt32;
+                case DataKind.Int64: return NumberDataViewType.Int64;
+                case DataKind.UInt64: return NumberDataViewType.UInt64;
+                case DataKind.Single: return NumberDataViewType.Single;
+                case DataKind.Double: return NumberDataViewType.Double;
                 default:
                     throw Contracts.ExceptNotImpl($"Number from kind not implemented for kind {kind}.");
             }
@@ -113,15 +133,15 @@ namespace Scikit.ML.PipelineHelper
 
         public static PrimitiveDataViewType PrimitiveFromKind(DataKind kind)
         {
-            if (kind == DataKind.TX)
+            if (kind == DataKind.String)
                 return TextDataViewType.Instance;
-            if (kind == DataKind.BL)
+            if (kind == DataKind.Boolean)
                 return BooleanDataViewType.Instance;
-            if (kind == DataKind.TS)
+            if (kind == DataKind.TimeSpan)
                 return TimeSpanDataViewType.Instance;
-            if (kind == DataKind.DT)
+            if (kind == DataKind.DateTime)
                 return DateTimeDataViewType.Instance;
-            if (kind == DataKind.DZ)
+            if (kind == DataKind.DateTimeOffset)
                 return DateTimeOffsetDataViewType.Instance;
             return NumberFromKind(kind);
         }       
@@ -138,10 +158,10 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (kind)
             {
-                case DataKind.I1:
-                case DataKind.U2:
-                case DataKind.U4:
-                case DataKind.U8:
+                case DataKind.SByte:
+                case DataKind.UInt16:
+                case DataKind.UInt32:
+                case DataKind.UInt64:
                     return true;
                 default:
                     return false;

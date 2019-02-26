@@ -24,8 +24,8 @@ using SignatureDataSaver = Microsoft.ML.Data.SignatureDataSaver;
 using ModelLoadContext = Microsoft.ML.Model.ModelLoadContext;
 using ModelSaveContext = Microsoft.ML.Model.ModelSaveContext;
 using VersionInfo = Microsoft.ML.Model.VersionInfo;
-using ICanSaveOnnx = Microsoft.ML.Model.Onnx.ICanSaveOnnx;
-using OnnxContext = Microsoft.ML.Model.Onnx.OnnxContext;
+using ICanSaveOnnx = Microsoft.ML.Model.OnnxConverter.ICanSaveOnnx;
+using OnnxContext = Microsoft.ML.Model.OnnxConverter.OnnxContext;
 using SchemaHelper = Scikit.ML.PipelineHelper.SchemaHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;

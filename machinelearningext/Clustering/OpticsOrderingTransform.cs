@@ -211,7 +211,7 @@ namespace Scikit.ML.Clustering
                 throw Host.Except("Features must be a vector.");
             switch (type.AsVector().ItemType().RawKind())
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     return new OpticsOrderingState(Host, this, Source, _args);
                 default:
                     throw Host.Except("Features must be a vector a floats.");
@@ -281,9 +281,7 @@ namespace Scikit.ML.Clustering
                             {
                                 getter(ref tmp);
                                 getterId(ref id);
-                                if (id > long.MaxValue)
-                                    ch.Except("An id is outside the range for long {0}", id);
-                                points.Add(new PointIdFloat((long)id, tmp.DenseValues().Select(c => (float)c)));
+                                points.Add(new PointIdFloat((long)id.Low, tmp.DenseValues().Select(c => (float)c)));
                             }
                         }
 

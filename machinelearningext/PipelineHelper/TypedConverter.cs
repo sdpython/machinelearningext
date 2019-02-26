@@ -69,23 +69,23 @@ namespace Scikit.ML.PipelineHelper
 
             switch (destKind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     mapperBL = SchemaHelper.GetConverter<TLabel, bool>(out identity);
                     mapperFromBL = SchemaHelper.GetConverter<bool, TLabel>(out identity);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     mapperU1 = SchemaHelper.GetConverter<TLabel, byte>(out identity);
                     mapperFromU1 = SchemaHelper.GetConverter<byte, TLabel>(out identity);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     mapperU2 = SchemaHelper.GetConverter<TLabel, ushort>(out identity);
                     mapperFromU2 = SchemaHelper.GetConverter<ushort, TLabel>(out identity);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     mapperU4 = SchemaHelper.GetConverter<TLabel, uint>(out identity);
                     mapperFromU4 = SchemaHelper.GetConverter<uint, TLabel>(out identity);
                     break;
-                case DataKind.I4:
+                case DataKind.Int32:
                     var temp = SchemaHelper.GetConverter<TLabel, float>(out identity);
                     mapperI4 = (in TLabel src, ref int dst) =>
                     {
@@ -100,7 +100,7 @@ namespace Scikit.ML.PipelineHelper
                         temp2(in v, ref dst);
                     };
                     break;
-                case DataKind.R4:
+                case DataKind.Single:
                     mapperR4 = SchemaHelper.GetConverter<TLabel, float>(out identity);
                     mapperFromR4 = SchemaHelper.GetConverter<float, TLabel>(out identity);
                     break;
@@ -116,17 +116,17 @@ namespace Scikit.ML.PipelineHelper
                 throw Contracts.ExceptNotImpl($"Not implemented for type {typeof(TDest)}.");
             switch (colType.RawKind())
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     return mapperBL as ValueMapper<TLabel, TDest>;
-                case DataKind.I1:
+                case DataKind.SByte:
                     return mapperU1 as ValueMapper<TLabel, TDest>;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     return mapperU2 as ValueMapper<TLabel, TDest>;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return mapperU4 as ValueMapper<TLabel, TDest>;
-                case DataKind.I4:
+                case DataKind.Int32:
                     return mapperI4 as ValueMapper<TLabel, TDest>;
-                case DataKind.R4:
+                case DataKind.Single:
                     return mapperR4 as ValueMapper<TLabel, TDest>;
                 default:
                     throw Contracts.ExceptNotSupp("Unsupported kind {0}", colType.RawKind());
@@ -140,15 +140,15 @@ namespace Scikit.ML.PipelineHelper
                 throw Contracts.ExceptNotImpl($"Not implemented for type {typeof(TDest)}.");
             switch (colType.RawKind())
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     return mapperBL as ValueMapper<TDest, TLabel>;
-                case DataKind.I1:
+                case DataKind.SByte:
                     return mapperU1 as ValueMapper<TDest, TLabel>;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     return mapperU2 as ValueMapper<TDest, TLabel>;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return mapperU4 as ValueMapper<TDest, TLabel>;
-                case DataKind.R4:
+                case DataKind.Single:
                     return mapperR4 as ValueMapper<TDest, TLabel>;
                 default:
                     throw Contracts.ExceptNotSupp("Unsupported kind {0}", colType.RawKind());
@@ -159,23 +159,23 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (_kind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     mapperBL(in value, ref _bl);
                     ctx.Writer.Write(_bl);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     mapperU1(in value, ref _u1);
                     ctx.Writer.Write(_u1);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     mapperU2(in value, ref _u2);
                     ctx.Writer.Write(_u2);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     mapperU4(in value, ref _u4);
                     ctx.Writer.Write(_u4);
                     break;
-                case DataKind.R4:
+                case DataKind.Single:
                     mapperR4(in value, ref _r4);
                     ctx.Writer.Write(_r4);
                     break;
@@ -188,23 +188,23 @@ namespace Scikit.ML.PipelineHelper
         {
             switch (_kind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     var b = ctx.Reader.ReadBoolByte();
                     mapperFromBL(in _bl, ref res);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     _u1 = ctx.Reader.ReadByte();
                     mapperFromU1(in _u1, ref res);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     _u2 = ctx.Reader.ReadUInt16();
                     mapperFromU2(in _u2, ref res);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     _u4 = ctx.Reader.ReadUInt32();
                     mapperFromU4(in _u4, ref res);
                     break;
-                case DataKind.R4:
+                case DataKind.Single:
                     _r4 = ctx.Reader.ReadFloat();
                     mapperFromR4(in _r4, ref res);
                     break;

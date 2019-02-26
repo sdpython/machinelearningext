@@ -203,31 +203,31 @@ namespace Scikit.ML.ProductionPrediction
                 {
                     switch (coor.ItemType().RawKind())
                     {
-                        case DataKind.BL:
+                        case DataKind.Boolean:
                             return typeof(TValue) == typeof(VBufferEqSort<bool>)
                                          ? GetGetterPrivateI<VBufferEqSort<bool>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVector<bool>(col) as ValueGetter<TValue>;
-                        case DataKind.I4:
+                        case DataKind.Int32:
                             return typeof(TValue) == typeof(VBufferEqSort<int>)
                                          ? GetGetterPrivateI<VBufferEqSort<int>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVector<int>(col) as ValueGetter<TValue>;
-                        case DataKind.U4:
+                        case DataKind.UInt32:
                             return typeof(TValue) == typeof(VBufferEqSort<uint>)
                                          ? GetGetterPrivateI<VBufferEqSort<uint>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVector<uint>(col) as ValueGetter<TValue>;
-                        case DataKind.I8:
+                        case DataKind.Int64:
                             return typeof(TValue) == typeof(VBufferEqSort<Int64>)
                                          ? GetGetterPrivateI<VBufferEqSort<Int64>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVector<Int64>(col) as ValueGetter<TValue>;
-                        case DataKind.R4:
+                        case DataKind.Single:
                             return typeof(TValue) == typeof(VBufferEqSort<float>)
                                          ? GetGetterPrivateI<VBufferEqSort<float>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVector<float>(col) as ValueGetter<TValue>;
-                        case DataKind.R8:
+                        case DataKind.Double:
                             return typeof(TValue) == typeof(VBufferEqSort<double>)
                                          ? GetGetterPrivateI<VBufferEqSort<double>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVector<double>(col) as ValueGetter<TValue>;
-                        case DataKind.TX:
+                        case DataKind.String:
                             return typeof(TValue) == typeof(VBufferEqSort<DvText>)
                                          ? GetGetterPrivateI<VBufferEqSort<DvText>>(col) as ValueGetter<TValue>
                                          : GetGetterPrivateIVectorText(col) as ValueGetter<TValue>;
@@ -239,13 +239,13 @@ namespace Scikit.ML.ProductionPrediction
                 {
                     switch (coor.RawKind())
                     {
-                        case DataKind.BL: return GetGetterPrivateI<bool>(col) as ValueGetter<TValue>;
-                        case DataKind.I4: return GetGetterPrivateI<int>(col) as ValueGetter<TValue>;
-                        case DataKind.U4: return GetGetterPrivateI<uint>(col) as ValueGetter<TValue>;
-                        case DataKind.I8: return GetGetterPrivateI<Int64>(col) as ValueGetter<TValue>;
-                        case DataKind.R4: return GetGetterPrivateI<float>(col) as ValueGetter<TValue>;
-                        case DataKind.R8: return GetGetterPrivateI<double>(col) as ValueGetter<TValue>;
-                        case DataKind.TX:
+                        case DataKind.Boolean: return GetGetterPrivateI<bool>(col) as ValueGetter<TValue>;
+                        case DataKind.Int32: return GetGetterPrivateI<int>(col) as ValueGetter<TValue>;
+                        case DataKind.UInt32: return GetGetterPrivateI<uint>(col) as ValueGetter<TValue>;
+                        case DataKind.Int64: return GetGetterPrivateI<Int64>(col) as ValueGetter<TValue>;
+                        case DataKind.Single: return GetGetterPrivateI<float>(col) as ValueGetter<TValue>;
+                        case DataKind.Double: return GetGetterPrivateI<double>(col) as ValueGetter<TValue>;
+                        case DataKind.String:
                             {
                                 if (typeof(TValue) == typeof(DvText))
                                     return GetGetterPrivateI<DvText>(col) as ValueGetter<TValue>;

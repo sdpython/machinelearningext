@@ -65,13 +65,13 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (Kind.RawKind())
                     {
-                        case DataKind.Bool: res.Set(false); break;
-                        case DataKind.I4: res.Set(0); break;
-                        case DataKind.U4: res.Set(0); break;
-                        case DataKind.I8: res.Set(0); break;
-                        case DataKind.R4: res.Set(float.NaN); break;
-                        case DataKind.R8: res.Set(double.NaN); break;
-                        case DataKind.TX: res.Set(DvText.NA); break;
+                        case DataKind.Boolean: res.Set(false); break;
+                        case DataKind.Int32: res.Set(0); break;
+                        case DataKind.UInt32: res.Set(0); break;
+                        case DataKind.Int64: res.Set(0); break;
+                        case DataKind.Single: res.Set(float.NaN); break;
+                        case DataKind.Double: res.Set(double.NaN); break;
+                        case DataKind.String: res.Set(DvText.NA); break;
                         default:
                             throw new NotImplementedException($"No missing value convention for type '{Kind}'.");
                     }
@@ -317,13 +317,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (kind.ItemType().RawKind())
                 {
-                    case DataKind.BL: return BuildDataFrame(name, Flatten<bool>(rows));
-                    case DataKind.I4: return BuildDataFrame(name, Flatten<int>(rows));
-                    case DataKind.I8: return BuildDataFrame(name, Flatten<long>(rows));
-                    case DataKind.U4: return BuildDataFrame(name, Flatten<uint>(rows));
-                    case DataKind.R4: return BuildDataFrame(name, Flatten<float>(rows));
-                    case DataKind.R8: return BuildDataFrame(name, Flatten<double>(rows));
-                    case DataKind.TX: return BuildDataFrame(name, Flatten<DvText>(rows));
+                    case DataKind.Boolean: return BuildDataFrame(name, Flatten<bool>(rows));
+                    case DataKind.Int32: return BuildDataFrame(name, Flatten<int>(rows));
+                    case DataKind.Int64: return BuildDataFrame(name, Flatten<long>(rows));
+                    case DataKind.UInt32: return BuildDataFrame(name, Flatten<uint>(rows));
+                    case DataKind.Single: return BuildDataFrame(name, Flatten<float>(rows));
+                    case DataKind.Double: return BuildDataFrame(name, Flatten<double>(rows));
+                    case DataKind.String: return BuildDataFrame(name, Flatten<DvText>(rows));
                     default:
                         throw new NotImplementedException($"Unable to flatten column of type {kind}.");
                 }
@@ -387,37 +387,37 @@ namespace Scikit.ML.DataManipulation
                 {
                     switch (Kind.ItemType().RawKind())
                     {
-                        case DataKind.BL:
+                        case DataKind.Boolean:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<bool>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<bool>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
                             break;
-                        case DataKind.I4:
+                        case DataKind.Int32:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<int>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<int>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
                             break;
-                        case DataKind.U4:
+                        case DataKind.UInt32:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<uint>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<uint>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
                             break;
-                        case DataKind.I8:
+                        case DataKind.Int64:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<Int64>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<Int64>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
                             break;
-                        case DataKind.R4:
+                        case DataKind.Single:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<float>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<float>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
                             break;
-                        case DataKind.R8:
+                        case DataKind.Double:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<double>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<double>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
                             break;
-                        case DataKind.TX:
+                        case DataKind.String:
                             oks += NumericHelper.AssertAlmostEqual((_data as VBufferEqSort<DvText>[])[i].DenseValues().ToArray(),
                                                                    (colt._data as VBufferEqSort<DvText>[])[i].DenseValues().ToArray(),
                                                                    precision, exc);
@@ -432,19 +432,19 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (Kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         return NumericHelper.AssertAlmostEqual(_data as bool[], colt._data as bool[], precision, exc, Length, colt.Length);
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         return NumericHelper.AssertAlmostEqual(_data as int[], colt._data as int[], precision, exc, Length, colt.Length);
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return NumericHelper.AssertAlmostEqual(_data as uint[], colt._data as uint[], precision, exc, Length, colt.Length);
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         return NumericHelper.AssertAlmostEqual(_data as long[], colt._data as long[], precision, exc, Length, colt.Length);
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return NumericHelper.AssertAlmostEqual(_data as float[], colt._data as float[], precision, exc, Length, colt.Length);
-                    case DataKind.R8:
+                    case DataKind.Double:
                         return NumericHelper.AssertAlmostEqual(_data as double[], colt._data as double[], precision, exc, Length, colt.Length);
-                    case DataKind.TX:
+                    case DataKind.String:
                         return NumericHelper.AssertAlmostEqual(_data as DvText[], colt._data as DvText[], precision, exc, Length, colt.Length);
                     default:
                         throw new DataTypeError($"Unable to handle kind '{Kind}'");
@@ -467,10 +467,10 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         switch (colType.RawKind())
                         {
-                            case DataKind.R4:
+                            case DataKind.Single:
                                 return new DataColumn<float>(NumericHelper.Convert(_data as int[], float.NaN));
                             default:
                                 throw new NotImplementedException($"No conversion from '{Kind}' to '{colType.RawKind()}'.");
@@ -611,13 +611,13 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (colType.ItemType().RawKind())
                 {
-                    case DataKind.BL: return CheckNotEmpty<DType2, bool>(GetGetterVectorEqSort<bool>(cursor));
-                    case DataKind.I4: return CheckNotEmpty<DType2, int>(GetGetterVectorEqSort<int>(cursor));
-                    case DataKind.U4: return CheckNotEmpty<DType2, uint>(GetGetterVectorEqSort<uint>(cursor));
-                    case DataKind.I8: return CheckNotEmpty<DType2, long>(GetGetterVectorEqSort<long>(cursor));
-                    case DataKind.R4: return CheckNotEmpty<DType2, float>(GetGetterVectorEqSort<float>(cursor));
-                    case DataKind.R8: return CheckNotEmpty<DType2, double>(GetGetterVectorEqSort<double>(cursor));
-                    case DataKind.TX: return GetGetterVectorEqSortText<DType2>(cursor);
+                    case DataKind.Boolean: return CheckNotEmpty<DType2, bool>(GetGetterVectorEqSort<bool>(cursor));
+                    case DataKind.Int32: return CheckNotEmpty<DType2, int>(GetGetterVectorEqSort<int>(cursor));
+                    case DataKind.UInt32: return CheckNotEmpty<DType2, uint>(GetGetterVectorEqSort<uint>(cursor));
+                    case DataKind.Int64: return CheckNotEmpty<DType2, long>(GetGetterVectorEqSort<long>(cursor));
+                    case DataKind.Single: return CheckNotEmpty<DType2, float>(GetGetterVectorEqSort<float>(cursor));
+                    case DataKind.Double: return CheckNotEmpty<DType2, double>(GetGetterVectorEqSort<double>(cursor));
+                    case DataKind.String: return GetGetterVectorEqSortText<DType2>(cursor);
                     default:
                         throw new DataValueError($"Unable to handle kind {colType.RawKind()}.");
                 }

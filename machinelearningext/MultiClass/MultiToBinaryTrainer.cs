@@ -153,7 +153,7 @@ namespace Scikit.ML.MultiClass
             var desc = new DescribeTransform(Host, args3, trans);
 
             IDataView viewI;
-            if (_args.singleColumn && data.Schema.Label.Value.Type.RawKind() == DataKind.R4)
+            if (_args.singleColumn && data.Schema.Label.Value.Type.RawKind() == DataKind.Single)
                 viewI = desc;
             else if (_args.singleColumn)
             {
@@ -243,19 +243,19 @@ namespace Scikit.ML.MultiClass
             TVectorPredictor predictor;
             switch (initialLabKind)
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     var p4 = MultiToBinaryPredictor.Create(Host, trans.GetClasses<float>(), predictors, reclassPredictor, args.singleColumn, false);
                     predictor = p4 as TVectorPredictor;
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     var pu1 = MultiToBinaryPredictor.Create(Host, trans.GetClasses<byte>(), predictors, reclassPredictor, args.singleColumn, true);
                     predictor = pu1 as TVectorPredictor;
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     var pu2 = MultiToBinaryPredictor.Create(Host, trans.GetClasses<ushort>(), predictors, reclassPredictor, args.singleColumn, true);
                     predictor = pu2 as TVectorPredictor;
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     var pu4 = MultiToBinaryPredictor.Create(Host, trans.GetClasses<uint>(), predictors, reclassPredictor, args.singleColumn, true);
                     predictor = pu4 as TVectorPredictor;
                     break;

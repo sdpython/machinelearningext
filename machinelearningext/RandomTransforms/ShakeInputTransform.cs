@@ -273,19 +273,19 @@ namespace Scikit.ML.RandomTransforms
 
             switch (typeCol.RawKind())
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     transform = new ShakeInputState<float>(_host, transform ?? Source, _toShake, _args);
                     break;
-                case DataKind.BL:
+                case DataKind.Boolean:
                     transform = new ShakeInputState<bool>(_host, transform ?? Source, _toShake, _args);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     transform = new ShakeInputState<Byte>(_host, transform ?? Source, _toShake, _args);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     transform = new ShakeInputState<UInt16>(_host, transform ?? Source, _toShake, _args);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     transform = new ShakeInputState<UInt32>(_host, transform ?? Source, _toShake, _args);
                     break;
                 default:
@@ -431,7 +431,7 @@ namespace Scikit.ML.RandomTransforms
 
                 switch (kind)
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         var cursor = _input.GetRowCursor(oldCols, rand);
                         return new ShakeInputCursor<TInput, float>(this, cursor, newCols, _args, _inputCol, _toShake, _shakingValues,
                                         (float x, float y) => { return x + y; });
@@ -453,7 +453,7 @@ namespace Scikit.ML.RandomTransforms
 
                 switch (kind)
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         var cursors = _input.GetRowCursorSet(oldCols, n, rand);
                         return cursors.Select(c => new ShakeInputCursor<TInput, float>(this, c, newCols, _args, _inputCol, _toShake, _shakingValues,
                                             (float x, float y) => { return x + y; })).ToArray();

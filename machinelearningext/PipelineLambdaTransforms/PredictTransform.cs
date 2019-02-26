@@ -6,6 +6,7 @@ using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model;
+using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
 
@@ -179,7 +180,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
                     "featureColumn", args.featureColumn, DefaultColumnNames.Features);
             int index = SchemaHelper.GetColumnIndex(input.Schema, feat);
             var type = input.Schema[index].Type;
-            if (!type.IsVector() || type.AsVector().ItemType().RawKind() != DataKind.R4)
+            if (!type.IsVector() || type.AsVector().ItemType().RawKind() != DataKind.Single)
                 throw env.Except("Features must a vector of floats");
 
             if (args.useProb)

@@ -78,13 +78,13 @@ namespace Scikit.ML.MultiClass
             var dataKind = LabelType.RawKind();
             switch (dataKind)
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     return _impl.GetClasses<float>() as TLabel[];
-                case DataKind.I1:
+                case DataKind.SByte:
                     return _impl.GetClasses<byte>() as TLabel[];
-                case DataKind.U2:
+                case DataKind.UInt16:
                     return _impl.GetClasses<ushort>() as TLabel[];
-                case DataKind.U4:
+                case DataKind.UInt32:
                     return _impl.GetClasses<uint>() as TLabel[];
                 default:
                     throw Host.ExceptNotSupp("Not supported label type.");

@@ -41,19 +41,19 @@ namespace Scikit.ML.NearestNeighbors
             var kind = (DataKind)kind_;
             switch (kind)
             {
-                case DataKind.BL:
+                case DataKind.Boolean:
                     _nearestPredictor = new NearestNeighborsValueMapper<bool>(host, ctx);
                     break;
-                case DataKind.I1:
+                case DataKind.SByte:
                     _nearestPredictor = new NearestNeighborsValueMapper<byte>(host, ctx);
                     break;
-                case DataKind.U2:
+                case DataKind.UInt16:
                     _nearestPredictor = new NearestNeighborsValueMapper<ushort>(host, ctx);
                     break;
-                case DataKind.U4:
+                case DataKind.UInt32:
                     _nearestPredictor = new NearestNeighborsValueMapper<uint>(host, ctx);
                     break;
-                case DataKind.R4:
+                case DataKind.Single:
                     _nearestPredictor = new NearestNeighborsValueMapper<float>(host, ctx);
                     break;
                 default:

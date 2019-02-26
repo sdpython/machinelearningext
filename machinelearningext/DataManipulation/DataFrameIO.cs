@@ -19,7 +19,7 @@ namespace Scikit.ML.DataManipulation
 
         static DataViewType GuessKind(int col, List<string[]> read)
         {
-            DataKind res = DataKind.TX;
+            DataKind res = DataKind.String;
             int nbline = 0;
             foreach (var line in read)
             {
@@ -30,14 +30,14 @@ namespace Scikit.ML.DataManipulation
                 try
                 {
                     bool.Parse(val);
-                    res = DetermineDataKind(nbline == 0, DataKind.BL, res);
+                    res = DetermineDataKind(nbline == 0, DataKind.Boolean, res);
                     continue;
                 }
                 catch (Exception /*e*/)
                 {
                     if (string.IsNullOrEmpty(val))
                     {
-                        res = DetermineDataKind(nbline == 0, DataKind.BL, res);
+                        res = DetermineDataKind(nbline == 0, DataKind.Boolean, res);
                         continue;
                     }
                 }
@@ -45,14 +45,14 @@ namespace Scikit.ML.DataManipulation
                 try
                 {
                     int.Parse(val);
-                    res = DetermineDataKind(nbline == 0, DataKind.I4, res);
+                    res = DetermineDataKind(nbline == 0, DataKind.Int32, res);
                     continue;
                 }
                 catch (Exception /*e*/)
                 {
                     if (string.IsNullOrEmpty(val))
                     {
-                        res = DetermineDataKind(nbline == 0, DataKind.I4, res);
+                        res = DetermineDataKind(nbline == 0, DataKind.Int32, res);
                         continue;
                     }
                 }
@@ -60,14 +60,14 @@ namespace Scikit.ML.DataManipulation
                 try
                 {
                     uint.Parse(val);
-                    res = DetermineDataKind(nbline == 0, DataKind.U4, res);
+                    res = DetermineDataKind(nbline == 0, DataKind.UInt32, res);
                     continue;
                 }
                 catch (Exception /*e*/)
                 {
                     if (string.IsNullOrEmpty(val))
                     {
-                        res = DetermineDataKind(nbline == 0, DataKind.U4, res);
+                        res = DetermineDataKind(nbline == 0, DataKind.UInt32, res);
                         continue;
                     }
                 }
@@ -75,14 +75,14 @@ namespace Scikit.ML.DataManipulation
                 try
                 {
                     Int64.Parse(val);
-                    res = DetermineDataKind(nbline == 0, DataKind.I8, res);
+                    res = DetermineDataKind(nbline == 0, DataKind.Int64, res);
                     continue;
                 }
                 catch (Exception /*e*/)
                 {
                     if (string.IsNullOrEmpty(val))
                     {
-                        res = DetermineDataKind(nbline == 0, DataKind.I8, res);
+                        res = DetermineDataKind(nbline == 0, DataKind.Int64, res);
                         continue;
                     }
                 }
@@ -90,14 +90,14 @@ namespace Scikit.ML.DataManipulation
                 try
                 {
                     float.Parse(val);
-                    res = DetermineDataKind(nbline == 0, DataKind.R4, res);
+                    res = DetermineDataKind(nbline == 0, DataKind.Single, res);
                     continue;
                 }
                 catch (Exception /*e*/)
                 {
                     if (string.IsNullOrEmpty(val))
                     {
-                        res = DetermineDataKind(nbline == 0, DataKind.R4, res);
+                        res = DetermineDataKind(nbline == 0, DataKind.Single, res);
                         continue;
                     }
                 }
@@ -105,31 +105,31 @@ namespace Scikit.ML.DataManipulation
                 try
                 {
                     double.Parse(val);
-                    res = DetermineDataKind(nbline == 0, DataKind.R8, res);
+                    res = DetermineDataKind(nbline == 0, DataKind.Double, res);
                     continue;
                 }
                 catch (Exception /*e*/)
                 {
                     if (string.IsNullOrEmpty(val))
                     {
-                        res = DetermineDataKind(nbline == 0, DataKind.R8, res);
+                        res = DetermineDataKind(nbline == 0, DataKind.Double, res);
                         continue;
                     }
                 }
 
-                res = DetermineDataKind(nbline == 0, DataKind.TX, res);
+                res = DetermineDataKind(nbline == 0, DataKind.String, res);
                 ++nbline;
             }
             switch (res)
             {
-                case DataKind.BL: return BooleanDataViewType.Instance;
-                case DataKind.I4: return NumberDataViewType.Int32;
-                case DataKind.I8: return NumberDataViewType.Int64;
-                case DataKind.U4: return NumberDataViewType.UInt32;
-                case DataKind.U8: return NumberDataViewType.UInt64;
-                case DataKind.R4: return NumberDataViewType.Single;
-                case DataKind.R8: return NumberDataViewType.Double;
-                case DataKind.TX: return TextDataViewType.Instance;
+                case DataKind.Boolean: return BooleanDataViewType.Instance;
+                case DataKind.Int32: return NumberDataViewType.Int32;
+                case DataKind.Int64: return NumberDataViewType.Int64;
+                case DataKind.UInt32: return NumberDataViewType.UInt32;
+                case DataKind.UInt64: return NumberDataViewType.UInt64;
+                case DataKind.Single: return NumberDataViewType.Single;
+                case DataKind.Double: return NumberDataViewType.Double;
+                case DataKind.String: return TextDataViewType.Instance;
                 default:
                     throw Contracts.Except($"Unable to guess DataViewType from '{res}'.");
             }
@@ -151,21 +151,21 @@ namespace Scikit.ML.DataManipulation
         /// </summary>
         static DataKind MaxKind(DataKind a, DataKind b)
         {
-            if (a == DataKind.TX || b == DataKind.TX)
-                return DataKind.TX;
-            if (a == DataKind.R8 || b == DataKind.R8)
-                return DataKind.R8;
-            if (a == DataKind.R4 || b == DataKind.R4)
-                return DataKind.R4;
-            if (a == DataKind.I8 || b == DataKind.I8)
-                return DataKind.I8;
-            if (a == DataKind.U4 || b == DataKind.U4)
-                return DataKind.U4;
-            if (a == DataKind.I4 || b == DataKind.I4)
-                return DataKind.I4;
-            if (a == DataKind.BL || b == DataKind.BL)
-                return DataKind.BL;
-            return DataKind.TX;
+            if (a == DataKind.String || b == DataKind.String)
+                return DataKind.String;
+            if (a == DataKind.Double || b == DataKind.Double)
+                return DataKind.Double;
+            if (a == DataKind.Single || b == DataKind.Single)
+                return DataKind.Single;
+            if (a == DataKind.Int64 || b == DataKind.Int64)
+                return DataKind.Int64;
+            if (a == DataKind.UInt32 || b == DataKind.UInt32)
+                return DataKind.UInt32;
+            if (a == DataKind.Int32 || b == DataKind.Int32)
+                return DataKind.Int32;
+            if (a == DataKind.Boolean || b == DataKind.Boolean)
+                return DataKind.Boolean;
+            return DataKind.String;
         }
 
         #endregion

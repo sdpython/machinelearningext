@@ -35,7 +35,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         {
                             bool[] a;
                             DataColumn<bool> res;

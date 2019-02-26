@@ -267,13 +267,13 @@ namespace Scikit.ML.PipelineTransforms
                     {
                         switch (colType.ItemType().RawKind())
                         {
-                            case DataKind.BL: return GetGetterVector(col, false) as ValueGetter<TValue>;
-                            case DataKind.I4: return GetGetterVector(col, 0) as ValueGetter<TValue>;
-                            case DataKind.U4: return GetGetterVector(col, (uint)0) as ValueGetter<TValue>;
-                            case DataKind.I8: return GetGetterVector(col, (Int64)0) as ValueGetter<TValue>;
-                            case DataKind.R4: return GetGetterVector(col, 0f) as ValueGetter<TValue>;
-                            case DataKind.R8: return GetGetterVector(col, 0.0) as ValueGetter<TValue>;
-                            case DataKind.TX: return GetGetterVector(col, new ReadOnlyMemory<char>()) as ValueGetter<TValue>;
+                            case DataKind.Boolean: return GetGetterVector(col, false) as ValueGetter<TValue>;
+                            case DataKind.Int32: return GetGetterVector(col, 0) as ValueGetter<TValue>;
+                            case DataKind.UInt32: return GetGetterVector(col, (uint)0) as ValueGetter<TValue>;
+                            case DataKind.Int64: return GetGetterVector(col, (Int64)0) as ValueGetter<TValue>;
+                            case DataKind.Single: return GetGetterVector(col, 0f) as ValueGetter<TValue>;
+                            case DataKind.Double: return GetGetterVector(col, 0.0) as ValueGetter<TValue>;
+                            case DataKind.String: return GetGetterVector(col, new ReadOnlyMemory<char>()) as ValueGetter<TValue>;
                             default:
                                 throw Contracts.ExceptNotImpl($"Unsupported type '{colType.ItemType().RawKind()}'.");
                         }
@@ -282,13 +282,13 @@ namespace Scikit.ML.PipelineTransforms
                     {
                         switch (colType.RawKind())
                         {
-                            case DataKind.BL: return GetGetter(col, false) as ValueGetter<TValue>;
-                            case DataKind.I4: return GetGetter(col, 0) as ValueGetter<TValue>;
-                            case DataKind.U4: return GetGetter(col, (uint)0) as ValueGetter<TValue>;
-                            case DataKind.I8: return GetGetter(col, (Int64)0) as ValueGetter<TValue>;
-                            case DataKind.R4: return GetGetter(col, 0f) as ValueGetter<TValue>;
-                            case DataKind.R8: return GetGetter(col, 0.0) as ValueGetter<TValue>;
-                            case DataKind.TX: return GetGetter(col, new ReadOnlyMemory<char>()) as ValueGetter<TValue>;
+                            case DataKind.Boolean: return GetGetter(col, false) as ValueGetter<TValue>;
+                            case DataKind.Int32: return GetGetter(col, 0) as ValueGetter<TValue>;
+                            case DataKind.UInt32: return GetGetter(col, (uint)0) as ValueGetter<TValue>;
+                            case DataKind.Int64: return GetGetter(col, (Int64)0) as ValueGetter<TValue>;
+                            case DataKind.Single: return GetGetter(col, 0f) as ValueGetter<TValue>;
+                            case DataKind.Double: return GetGetter(col, 0.0) as ValueGetter<TValue>;
+                            case DataKind.String: return GetGetter(col, new ReadOnlyMemory<char>()) as ValueGetter<TValue>;
                             default:
                                 throw Contracts.ExceptNotImpl($"Unsupported type '{colType.ItemType().RawKind()}'.");
                         }

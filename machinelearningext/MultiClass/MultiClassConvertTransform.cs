@@ -110,7 +110,7 @@ namespace Scikit.ML.MultiClass
                 }
                 else if (col.KeyCount != null)
                 {
-                    kind = Infos[i].TypeSrc.IsKey() ? Infos[i].TypeSrc.RawKind() : DataKind.U4;
+                    kind = Infos[i].TypeSrc.IsKey() ? Infos[i].TypeSrc.RawKind() : DataKind.UInt32;
                     range = col.KeyCount;
                 }
                 else if (args.resultType != null)
@@ -120,12 +120,12 @@ namespace Scikit.ML.MultiClass
                 }
                 else if (args.keyCount != null)
                 {
-                    kind = Infos[i].TypeSrc.IsKey() ? Infos[i].TypeSrc.RawKind() : DataKind.U4;
+                    kind = Infos[i].TypeSrc.IsKey() ? Infos[i].TypeSrc.RawKind() : DataKind.UInt32;
                     range = args.keyCount;
                 }
                 else
                 {
-                    kind = DataKind.Num;
+                    kind = DataKind.Single; // or UInt32 ???
                     range = null;
                 }
                 Host.CheckUserArg(Enum.IsDefined(typeof(DataKind), kind), "resultType");
@@ -289,9 +289,9 @@ namespace Scikit.ML.MultiClass
             var typeSrc = info.TypeSrc;
             if (range != null)
             {
-                itemType = TypeParsingUtils.ConstructKeyType(kind, range);
+                itemType = TypeParsingUtils.ConstructKeyType(SchemaHelper.DataKind2Internal(kind), range);
                 if (!typeSrc.ItemType().IsKey() && !typeSrc.ItemType().IsText() && typeSrc.ItemType().RawKind() != kind &&
-                    !(typeSrc.ItemType().RawKind() == DataKind.I8 && (kind == DataKind.U8 || kind == DataKind.U4)))
+                    !(typeSrc.ItemType().RawKind() == DataKind.Int64 && (kind == DataKind.UInt64 || kind == DataKind.UInt32)))
                     return false;
             }
             else if (!typeSrc.ItemType().IsKey())
@@ -309,10 +309,10 @@ namespace Scikit.ML.MultiClass
                 // Technically, it's an error for the counts not to match, but we'll let the Conversions
                 // code return false below. There's a possibility we'll change the standard conversions to
                 // map out of bounds values to zero, in which case, this is the right thing to do.
-                ulong max = kind.ToMaxInt();
+                ulong max = (ulong)kind;
                 if ((ulong)count > max)
                     count = max;
-                itemType = new KeyType(kind.ToType(), count);
+                itemType = new KeyType(SchemaHelper.DataKind2ColumnType(kind).RawType, count);
             }
 
             // Ensure that the conversion is legal. We don't actually cache the delegate here. It will get
@@ -325,7 +325,7 @@ namespace Scikit.ML.MultiClass
                 {
                     switch (typeSrc.ItemType().RawKind())
                     {
-                        case DataKind.U4:
+                        case DataKind.UInt32:
                             // Key starts at 1.
                             // MultiClass future issue
                             uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
@@ -339,7 +339,7 @@ namespace Scikit.ML.MultiClass
                             throw Contracts.Except("Not suppoted type {0}", typeSrc.ItemType().RawKind());
                     }
                 }
-                else if (typeSrc.ItemType().RawKind() == DataKind.I8 && kind == DataKind.U8)
+                else if (typeSrc.ItemType().RawKind() == DataKind.Int64 && kind == DataKind.UInt64)
                 {
                     ulong plus = (itemType.IsKey() ? (ulong)1 : (ulong)0) - (typeSrc.IsKey() ? (ulong)1 : (ulong)0);
                     identity = false;
@@ -351,7 +351,7 @@ namespace Scikit.ML.MultiClass
                     if (del == null)
                         throw Contracts.ExceptNotSupp("Issue with casting");
                 }
-                else if (typeSrc.ItemType().RawKind() == DataKind.I8 && kind == DataKind.U4)
+                else if (typeSrc.ItemType().RawKind() == DataKind.Int64 && kind == DataKind.UInt32)
                 {
                     // MultiClass future issue
                     uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
@@ -411,7 +411,7 @@ namespace Scikit.ML.MultiClass
 
             bool identity;
 
-            if (typeSrc.RawKind() == DataKind.U4 && typeDst.RawKind() == DataKind.U4)
+            if (typeSrc.RawKind() == DataKind.UInt32 && typeDst.RawKind() == DataKind.UInt32)
             {
                 var getter = row.GetGetter<uint>(col);
                 // MultiClass future issue
@@ -426,7 +426,7 @@ namespace Scikit.ML.MultiClass
                     };
                 return mapu as ValueGetter<TDst>;
             }
-            else if (typeSrc.RawKind() == DataKind.I8 && typeDst.RawKind() == DataKind.U8)
+            else if (typeSrc.RawKind() == DataKind.Int64 && typeDst.RawKind() == DataKind.UInt64)
             {
                 ulong plus = (typeDst.IsKey() ? (ulong)1 : (ulong)0) - (typeSrc.IsKey() ? (ulong)1 : (ulong)0);
                 var getter = row.GetGetter<long>(col);
@@ -441,7 +441,7 @@ namespace Scikit.ML.MultiClass
                     };
                 return mapu as ValueGetter<TDst>;
             }
-            else if (typeSrc.RawKind() == DataKind.I8 && typeDst.RawKind() == DataKind.U4)
+            else if (typeSrc.RawKind() == DataKind.Int64 && typeDst.RawKind() == DataKind.UInt32)
             {
                 // MultiClass future issue
                 uint plus = (typeDst.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);

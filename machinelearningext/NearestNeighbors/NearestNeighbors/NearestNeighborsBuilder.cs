@@ -25,8 +25,8 @@ namespace Scikit.ML.NearestNeighbors
             if (idIndex != -1)
             {
                 var colType = data.Schema[idIndex].Type;
-                if (idIndex != -1 && (colType.IsVector() || colType.RawKind() != DataKind.I8))
-                    throw ch.Except("Column '{0}' must be of type '{1}' not '{2}'", args.colId, DataKind.I8, colType);
+                if (idIndex != -1 && (colType.IsVector() || colType.RawKind() != DataKind.Int64))
+                    throw ch.Except("Column '{0}' must be of type '{1}' not '{2}'", args.colId, DataKind.Int64, colType);
             }
 
             int nt = args.numThreads ?? 1;

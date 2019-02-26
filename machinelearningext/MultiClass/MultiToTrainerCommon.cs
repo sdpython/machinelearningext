@@ -118,22 +118,22 @@ namespace Scikit.ML.MultiClass
             var ty = tr.Schema[index].Type;
             switch (ty.RawKind())
             {
-                case DataKind.R4:
+                case DataKind.Single:
                     // float is 0 based
                     var tf = MinMaxLabel<float>(tr, index);
                     nb = (int)tf.Item2 + 1;
                     return new Tuple<int, int>((int)tf.Item1, (int)tf.Item2);
-                case DataKind.I1:
+                case DataKind.SByte:
                     // key is 1 based
                     var tb = MinMaxLabel<byte>(tr, index);
                     nb = tb.Item2;
                     return new Tuple<int, int>(1, (int)tb.Item2);
-                case DataKind.U2:
+                case DataKind.UInt16:
                     // key is 1 based
                     var ts = MinMaxLabel<ushort>(tr, index);
                     nb = ts.Item2;
                     return new Tuple<int, int>(1, (int)ts.Item2);
-                case DataKind.U4:
+                case DataKind.UInt32:
                     // key is 1 based
                     var tu = MinMaxLabel<uint>(tr, index);
                     nb = (int)tu.Item2;
@@ -160,7 +160,7 @@ namespace Scikit.ML.MultiClass
         {
             int index = SchemaHelper.GetColumnIndex(viewI.Schema, labName);
             var ty = viewI.Schema[index].Type;
-            Contracts.Assert(ty.IsKey() || ty.IsVector() || ty.RawKind() == DataKind.R4);
+            Contracts.Assert(ty.IsKey() || ty.IsVector() || ty.RawKind() == DataKind.Single);
             using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(i => i.Index == index).ToArray()))
             {
                 var getter = cursor.GetGetter<VBuffer<float>>(index);
@@ -208,7 +208,7 @@ namespace Scikit.ML.MultiClass
                 }
 
                 var ty = viewI.Schema[index].Type;
-                if (ty.IsVector() && ty.AsVector().ItemType().RawKind() == DataKind.R4)
+                if (ty.IsVector() && ty.AsVector().ItemType().RawKind() == DataKind.Single)
                 {
                     var getter = cursor.GetGetter<VBuffer<float>>(index);
                     var value = new VBuffer<float>();
@@ -220,7 +220,7 @@ namespace Scikit.ML.MultiClass
                         ++nbRows;
                     }
                 }
-                else if (!ty.IsVector() && ty.RawKind() == DataKind.R4)
+                else if (!ty.IsVector() && ty.RawKind() == DataKind.Single)
                 {
                     var getter = cursor.GetGetter<float>(index);
                     var sch = SchemaHelper.ToString(cursor.Schema);
@@ -231,7 +231,7 @@ namespace Scikit.ML.MultiClass
                         ++nbRows;
                     }
                 }
-                else if (ty.IsKey() && ty.RawKind() == DataKind.U4)
+                else if (ty.IsKey() && ty.RawKind() == DataKind.UInt32)
                 {
                     var getter = cursor.GetGetter<uint>(index);
                     uint value = 0;

@@ -35,7 +35,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         {
                             bool[] a;
                             DataColumn<bool> res;
@@ -77,14 +77,14 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         if (c2.Kind.IsVector())
                             throw new NotImplementedException();
                         else
                         {
                             switch (c2.Kind.RawKind())
                             {
-                                case DataKind.BL:
+                                case DataKind.Boolean:
                                     {
                                         bool[] a;
                                         bool[] b;

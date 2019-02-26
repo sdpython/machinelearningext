@@ -19,19 +19,19 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         throw new NotImplementedException("NA is not available for bool");
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         throw new NotImplementedException("NA is not available for int");
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return 0;
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         throw new NotImplementedException("NA is not available for long");
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return float.NaN;
-                    case DataKind.R8:
+                    case DataKind.Double:
                         return double.NaN;
-                    case DataKind.TX:
+                    case DataKind.String:
                         return subcase is string ? (object)(string)null : DvText.NA;
                     default:
                         throw new NotImplementedException($"Unknown missing value for type '{kind}'.");
@@ -47,19 +47,19 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         return false;
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         return 0;
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return 0;
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         return 0;
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return float.NaN;
-                    case DataKind.R8:
+                    case DataKind.Double:
                         return double.NaN;
-                    case DataKind.TX:
+                    case DataKind.String:
                         return subcase is string ? (object)(string)null : DvText.NA;
                     default:
                         throw new NotImplementedException($"Unknown missing value for type '{kind}'.");
@@ -75,19 +75,19 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (kind.RawKind())
                 {
-                    case DataKind.BL:
+                    case DataKind.Boolean:
                         throw new NotSupportedException("No missing value for boolean. Convert to int.");
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         return int.MinValue;
-                    case DataKind.U4:
+                    case DataKind.UInt32:
                         return uint.MaxValue;
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         return long.MinValue;
-                    case DataKind.R4:
+                    case DataKind.Single:
                         return float.NaN;
-                    case DataKind.R8:
+                    case DataKind.Double:
                         return double.NaN;
-                    case DataKind.TX:
+                    case DataKind.String:
                         return subcase is string ? (object)(string)null : DvText.NA;
                     default:
                         throw new NotImplementedException($"Unknown missing value for type '{kind}'.");

@@ -35,7 +35,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         {
                             int[] a;
                             DataColumn<int> res;
@@ -44,7 +44,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         {
                             Int64[] a;
                             DataColumn<Int64> res;
@@ -53,7 +53,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R4:
+                    case DataKind.Single:
                         {
                             float[] a;
                             DataColumn<float> res;
@@ -62,7 +62,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / (float)value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R8:
+                    case DataKind.Double:
                         {
                             double[] a;
                             DataColumn<double> res;
@@ -85,7 +85,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         {
                             int[] a;
                             DataColumn<int> res;
@@ -94,7 +94,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         {
                             Int64[] a;
                             DataColumn<Int64> res;
@@ -103,7 +103,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R4:
+                    case DataKind.Single:
                         {
                             float[] a;
                             DataColumn<float> res;
@@ -112,7 +112,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / (float)value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R8:
+                    case DataKind.Double:
                         {
                             double[] a;
                             DataColumn<double> res;
@@ -135,7 +135,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         {
                             int[] a;
                             DataColumn<float> res;
@@ -144,7 +144,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, (int)a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.I8:
+                    case DataKind.Int64:
                         {
                             Int64[] a;
                             DataColumn<float> res;
@@ -153,7 +153,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, (Int64)a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R4:
+                    case DataKind.Single:
                         {
                             float[] a;
                             DataColumn<float> res;
@@ -162,7 +162,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R8:
+                    case DataKind.Double:
                         {
                             double[] a;
                             DataColumn<double> res;
@@ -185,7 +185,7 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         {
                             int[] a;
                             DataColumn<double> res;
@@ -194,7 +194,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, (int)a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R4:
+                    case DataKind.Single:
                         {
                             float[] a;
                             DataColumn<double> res;
@@ -203,7 +203,7 @@ namespace Scikit.ML.DataManipulation
                                 res.Set(i, a[i] / value);
                             return new NumericColumn(res);
                         }
-                    case DataKind.R8:
+                    case DataKind.Double:
                         {
                             double[] a;
                             DataColumn<double> res;
@@ -245,14 +245,14 @@ namespace Scikit.ML.DataManipulation
             {
                 switch (c1.Kind.RawKind())
                 {
-                    case DataKind.I4:
+                    case DataKind.Int32:
                         if (c2.Kind.IsVector())
                             throw new NotImplementedException();
                         else
                         {
                             switch (c2.Kind.RawKind())
                             {
-                                case DataKind.I4:
+                                case DataKind.Int32:
                                     {
                                         int[] a;
                                         int[] b;
@@ -262,7 +262,7 @@ namespace Scikit.ML.DataManipulation
                                             res.Set(i, a[i] / b[i]);
                                         return new NumericColumn(res);
                                     }
-                                case DataKind.R4:
+                                case DataKind.Single:
                                     {
                                         int[] a;
                                         float[] b;
@@ -276,14 +276,14 @@ namespace Scikit.ML.DataManipulation
                                     throw new DataTypeError(string.Format("{0} not implemented for {1}, {2}.", OperationName, c1.Kind, c2.Kind));
                             }
                         }
-                    case DataKind.R4:
+                    case DataKind.Single:
                         if (c2.Kind.IsVector())
                             throw new NotImplementedException();
                         else
                         {
                             switch (c2.Kind.RawKind())
                             {
-                                case DataKind.I4:
+                                case DataKind.Int32:
                                     {
                                         float[] a;
                                         int[] b;
@@ -293,7 +293,7 @@ namespace Scikit.ML.DataManipulation
                                             res.Set(i, a[i] / (int)b[i]);
                                         return new NumericColumn(res);
                                     }
-                                case DataKind.R4:
+                                case DataKind.Single:
                                     {
                                         float[] a;
                                         float[] b;

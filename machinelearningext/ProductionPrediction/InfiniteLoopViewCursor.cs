@@ -197,7 +197,7 @@ namespace Scikit.ML.ProductionPrediction
                     {
                         switch (type.AsVector().ItemType().RawKind())
                         {
-                            case DataKind.R4:
+                            case DataKind.Single:
                                 return GetGetterPrivateVector<float>(col) as ValueGetter<TRepValue>;
                             default:
                                 throw Contracts.ExceptNotSupp("Unable to get a getter for type {0}", type.ToString());

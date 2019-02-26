@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.UniversalModelFormat.Onnx;
-using Microsoft.ML.Model.Onnx;
+using Microsoft.ML.Model.OnnxConverter;
 
 
 namespace Scikit.ML.OnnxHelper

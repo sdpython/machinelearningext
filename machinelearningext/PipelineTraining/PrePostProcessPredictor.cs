@@ -94,7 +94,7 @@ namespace Scikit.ML.PipelineTraining
             {
                 switch (type.AsVector().ItemType().RawKind())
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorType(NumberDataViewType.Single) }));
                         data = new TemporaryViewCursorColumn<VBuffer<float>>(default(VBuffer<float>), 0, schema);
                         break;
@@ -106,7 +106,7 @@ namespace Scikit.ML.PipelineTraining
             {
                 switch (type.RawKind())
                 {
-                    case DataKind.R4:
+                    case DataKind.Single:
                         schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { NumberDataViewType.Single }));
                         data = new TemporaryViewCursorColumn<float>(default(float), 0, schema);
                         break;
@@ -202,7 +202,7 @@ namespace Scikit.ML.PipelineTraining
                 {
                     switch (outType.AsVector().ItemType().RawKind())
                     {
-                        case DataKind.R4:
+                        case DataKind.Single:
                             return GetMapperWithTransform<TSrc, VBuffer<float>, TDst>(_preProcess);
                         default:
                             throw _host.ExceptNotSupp("Type '{0}' is not handled yet.", outType);
@@ -212,7 +212,7 @@ namespace Scikit.ML.PipelineTraining
                 {
                     switch (valuemapper.OutputType.RawKind())
                     {
-                        case DataKind.R4:
+                        case DataKind.Single:
                             return GetMapperWithTransform<TSrc, float, TDst>(_preProcess);
                         default:
                             throw _host.ExceptNotSupp("Type '{0}' is not handled yet.", outType);
