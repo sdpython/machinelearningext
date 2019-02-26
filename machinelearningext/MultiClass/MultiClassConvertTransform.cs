@@ -289,7 +289,7 @@ namespace Scikit.ML.MultiClass
             var typeSrc = info.TypeSrc;
             if (range != null)
             {
-                itemType = TypeParsingUtils.ConstructKeyType(SchemaHelper.DataKind2Internal(kind), range);
+                itemType = TypeParsingUtils.ConstructKeyType(SchemaHelper.DataKind2InternalDataKind(kind), range);
                 if (!typeSrc.ItemType().IsKey() && !typeSrc.ItemType().IsText() && typeSrc.ItemType().RawKind() != kind &&
                     !(typeSrc.ItemType().RawKind() == DataKind.Int64 && (kind == DataKind.UInt64 || kind == DataKind.UInt32)))
                     return false;

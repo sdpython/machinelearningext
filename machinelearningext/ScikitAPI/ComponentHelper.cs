@@ -3,13 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
-using Microsoft.ML.Trainers.Ensemble;
 using Microsoft.ML.LightGBM;
-using Microsoft.ML.Model.Onnx;
+using Microsoft.ML.Model.OnnxConverter;
 using Microsoft.ML.Transforms.TimeSeries;
 using Microsoft.ML.Trainers.HalLearners;
 using Microsoft.ML.Trainers.KMeans;
@@ -66,7 +64,6 @@ namespace Scikit.ML.ScikitAPI
             res.Add(typeof(LinearModelStatistics).Assembly);
             res.Add(typeof(OneHotEncodingEstimator).Assembly);
             res.Add(typeof(FastTreeRankingTrainer).Assembly);
-            res.Add(typeof(SignatureTreeEnsembleTrainer).Assembly);
             res.Add(typeof(KMeansPlusPlusTrainer).Assembly);
             res.Add(typeof(LightGbmBinaryTrainer).Assembly);
             res.Add(typeof(OlsLinearRegressionTrainer).Assembly);

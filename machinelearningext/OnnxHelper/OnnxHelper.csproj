@@ -27,11 +27,11 @@
     <Reference Include="Microsoft.ML.Maml">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Maml.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.Onnx">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Onnx.dll</HintPath>
+    <Reference Include="Microsoft.ML.OnnxConverter">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxConverter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.OnnxTransform">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxTransform.dll</HintPath>
+    <Reference Include="Microsoft.ML.OnnxTransformer">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxTransformer.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -9,9 +9,8 @@ using System.Text;
 using Google.Protobuf;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
-using Microsoft.ML.UniversalModelFormat.Onnx;
 using Microsoft.ML.Data;
-using UniversalModelFormat = Microsoft.ML.UniversalModelFormat;
+using Microsoft.ML.UniversalModelFormat.Onnx;
 using Scikit.ML.PipelineHelper;
 
 
@@ -22,22 +21,23 @@ namespace Scikit.ML.OnnxHelper
     /// </summary>
     internal static class OnnxUtils
     {
-        private static TypeProto MakeType(TypeProto typeProto, TensorProto.Types.DataType dataType,
+        private static OnnxCSharpToProtoWrapper.TypeProto MakeType(OnnxCSharpToProtoWrapper.TypeProto typeProto,
+                                                                   OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType,
             List<long> dims, List<bool> dimsParam)
         {
             Contracts.CheckValue(typeProto, nameof(typeProto));
 
             if (typeProto.TensorType == null)
-                typeProto.TensorType = new TypeProto.Types.Tensor();
+                typeProto.TensorType = new OnnxCSharpToProtoWrapper.TypeProto.Types.Tensor();
 
             typeProto.TensorType.ElemType = dataType;
             if (dims != null)
             {
                 for (int index = 0; index < dims.Count; index++)
                 {
-                    var d = new TensorShapeProto.Types.Dimension();
+                    var d = new OnnxCSharpToProtoWrapper.TensorShapeProto.Types.Dimension();
                     if (typeProto.TensorType.Shape == null)
-                        typeProto.TensorType.Shape = new TensorShapeProto();
+                        typeProto.TensorType.Shape = new OnnxCSharpToProtoWrapper.TensorShapeProto();
 
                     if (dimsParam != null && dimsParam.Count > index && dimsParam[index])
                         d.DimParam = "None";
@@ -51,7 +51,8 @@ namespace Scikit.ML.OnnxHelper
             return typeProto;
         }
 
-        private static ValueInfoProto MakeValue(ValueInfoProto value, string name, TensorProto.Types.DataType dataType,
+        private static OnnxCSharpToProtoWrapper.ValueInfoProto MakeValue(OnnxCSharpToProtoWrapper.ValueInfoProto value, string name,
+                                                                         OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType,
             List<long> dims, List<bool> dimsParam)
         {
             Contracts.CheckValue(value, nameof(value));
@@ -59,113 +60,113 @@ namespace Scikit.ML.OnnxHelper
 
             value.Name = name;
             if (value.Type == null)
-                value.Type = new TypeProto();
+                value.Type = new OnnxCSharpToProtoWrapper.TypeProto();
 
             MakeType(value.Type, dataType, dims, dimsParam);
             return value;
         }
 
-        private static AttributeProto MakeAttribute(string key)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key)
         {
             Contracts.CheckNonEmpty(key, nameof(key));
 
-            var attribute = new AttributeProto();
+            var attribute = new OnnxCSharpToProtoWrapper.AttributeProto();
             attribute.Name = key;
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, double value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, double value)
         {
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Float;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Float;
             attribute.F = (float)value;
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, IEnumerable<double> value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, IEnumerable<double> value)
         {
             Contracts.CheckValue(value, nameof(value));
 
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Floats;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Floats;
             attribute.Floats.Add(value.Select(x => (float)x));
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, IEnumerable<float> value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, IEnumerable<float> value)
         {
             Contracts.CheckValue(value, nameof(value));
 
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Floats;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Floats;
             attribute.Floats.Add(value.Select(x => x));
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, long value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, long value)
         {
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Int;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Int;
             attribute.I = value;
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, IEnumerable<long> value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, IEnumerable<long> value)
         {
             Contracts.CheckValue(value, nameof(value));
 
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Ints;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Ints;
             attribute.Ints.Add(value);
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, ByteString value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, ByteString value)
         {
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.String;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.String;
             attribute.S = value;
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, IEnumerable<ByteString> value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, IEnumerable<ByteString> value)
         {
             Contracts.CheckValue(value, nameof(value));
 
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Strings;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Strings;
             attribute.Strings.Add(value);
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, GraphProto value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, OnnxCSharpToProtoWrapper.GraphProto value)
         {
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Graph;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Graph;
             attribute.G = value;
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, IEnumerable<GraphProto> value)
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, IEnumerable<OnnxCSharpToProtoWrapper.GraphProto> value)
         {
             Contracts.CheckValue(value, nameof(value));
 
-            AttributeProto attribute = MakeAttribute(key);
-            attribute.Type = AttributeProto.Types.AttributeType.Graphs;
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Graphs;
             attribute.Graphs.Add(value);
             return attribute;
         }
 
-        private static AttributeProto MakeAttribute(string key, bool value) => MakeAttribute(key, value ? 1 : 0);
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, bool value) => MakeAttribute(key, value ? 1 : 0);
 
-        public static NodeProto MakeNode(string opType, IEnumerable<string> inputs, IEnumerable<string> outputs, string name, string domain = null)
+        public static OnnxCSharpToProtoWrapper.NodeProto MakeNode(string opType, IEnumerable<string> inputs, IEnumerable<string> outputs, string name, string domain = null)
         {
             Contracts.CheckNonEmpty(opType, nameof(opType));
             Contracts.CheckValue(inputs, nameof(inputs));
             Contracts.CheckValue(outputs, nameof(outputs));
             Contracts.CheckNonEmpty(name, nameof(name));
 
-            var node = new NodeProto();
+            var node = new OnnxCSharpToProtoWrapper.NodeProto();
             node.OpType = opType;
             node.Input.Add(inputs);
             node.Output.Add(outputs);
@@ -174,46 +175,46 @@ namespace Scikit.ML.OnnxHelper
             return node;
         }
 
-        public static void NodeAddAttributes(NodeProto node, string argName, double value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, double value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<double> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<double> value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<float> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<float> value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<bool> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<bool> value)
             => node.Attribute.Add(MakeAttribute(argName, value.Select(v => v ? (long)1 : 0)));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, long value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, long value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<long> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<long> value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, ReadOnlyMemory<char> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, ReadOnlyMemory<char> value)
             => node.Attribute.Add(MakeAttribute(argName, StringToByteString(value)));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, string[] value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, string[] value)
             => node.Attribute.Add(MakeAttribute(argName, StringToByteString(value)));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<ReadOnlyMemory<char>> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<ReadOnlyMemory<char>> value)
             => node.Attribute.Add(MakeAttribute(argName, StringToByteString(value)));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<string> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<string> value)
             => node.Attribute.Add(MakeAttribute(argName, StringToByteString(value)));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, string value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, string value)
             => node.Attribute.Add(MakeAttribute(argName, StringToByteString(value)));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, GraphProto value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, OnnxCSharpToProtoWrapper.GraphProto value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, IEnumerable<GraphProto> value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, IEnumerable<OnnxCSharpToProtoWrapper.GraphProto> value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
-        public static void NodeAddAttributes(NodeProto node, string argName, bool value)
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, bool value)
             => node.Attribute.Add(MakeAttribute(argName, value));
 
         private static ByteString StringToByteString(ReadOnlyMemory<char> str) => ByteString.CopyFrom(Encoding.UTF8.GetBytes(str.ToString()));
@@ -228,11 +229,11 @@ namespace Scikit.ML.OnnxHelper
         public sealed class ModelArgs
         {
             public readonly string Name;
-            public readonly TensorProto.Types.DataType DataType;
+            public readonly OnnxCSharpToProtoWrapper.TensorProto.Types.DataType DataType;
             public readonly List<long> Dims;
             public readonly List<bool> DimParams;
 
-            public ModelArgs(string name, TensorProto.Types.DataType dataType, List<long> dims, List<bool> dimParams)
+            public ModelArgs(string name, OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType, List<long> dims, List<bool> dimParams)
             {
                 Name = name;
                 DataType = dataType;
@@ -241,9 +242,9 @@ namespace Scikit.ML.OnnxHelper
             }
         }
 
-        public static ModelProto MakeModel(List<NodeProto> nodes, string producerName, string name,
+        public static OnnxCSharpToProtoWrapper.ModelProto MakeModel(List<OnnxCSharpToProtoWrapper.NodeProto> nodes, string producerName, string name,
             string domain, string producerVersion, long modelVersion, List<ModelArgs> inputs,
-            List<ModelArgs> outputs, List<ModelArgs> intermediateValues, List<TensorProto> initializers)
+            List<ModelArgs> outputs, List<ModelArgs> intermediateValues, List<OnnxCSharpToProtoWrapper.TensorProto> initializers)
         {
             Contracts.CheckValue(nodes, nameof(nodes));
             Contracts.CheckValue(inputs, nameof(inputs));
@@ -255,35 +256,35 @@ namespace Scikit.ML.OnnxHelper
             Contracts.CheckNonEmpty(domain, nameof(domain));
             Contracts.CheckNonEmpty(producerVersion, nameof(producerVersion));
 
-            var model = new ModelProto();
+            var model = new OnnxCSharpToProtoWrapper.ModelProto();
             model.Domain = domain;
             model.ProducerName = producerName;
             model.ProducerVersion = producerVersion;
-            model.IrVersion = (long)UniversalModelFormat.Onnx.Version.IrVersion;
+            model.IrVersion = (long)OnnxCSharpToProtoWrapper.Version.IrVersion;
             model.ModelVersion = modelVersion;
-            model.OpsetImport.Add(new OperatorSetIdProto() { Domain = "ai.onnx.ml", Version = 1 });
-            model.OpsetImport.Add(new OperatorSetIdProto() { Domain = "", Version = 7 });
-            model.Graph = new GraphProto();
+            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "ai.onnx.ml", Version = 1 });
+            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "", Version = 7 });
+            model.Graph = new OnnxCSharpToProtoWrapper.GraphProto();
             var graph = model.Graph;
             graph.Node.Add(nodes);
             graph.Name = name;
             foreach (var arg in inputs)
             {
-                var val = new ValueInfoProto();
+                var val = new OnnxCSharpToProtoWrapper.ValueInfoProto();
                 graph.Input.Add(val);
                 MakeValue(val, arg.Name, arg.DataType, arg.Dims, arg.DimParams);
             }
 
             foreach (var arg in outputs)
             {
-                var val = new ValueInfoProto();
+                var val = new OnnxCSharpToProtoWrapper.ValueInfoProto();
                 graph.Output.Add(val);
                 MakeValue(val, arg.Name, arg.DataType, arg.Dims, arg.DimParams);
             }
 
             foreach (var arg in intermediateValues)
             {
-                var val = new ValueInfoProto();
+                var val = new OnnxCSharpToProtoWrapper.ValueInfoProto();
                 graph.ValueInfo.Add(val);
                 MakeValue(val, arg.Name, arg.DataType, arg.Dims, arg.DimParams);
             }
@@ -299,7 +300,7 @@ namespace Scikit.ML.OnnxHelper
             Contracts.CheckValue(type, nameof(type));
             Contracts.CheckNonEmpty(colName, nameof(colName));
 
-            TensorProto.Types.DataType dataType = TensorProto.Types.DataType.Undefined;
+            OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Undefined;
             DataKind rawKind;
             if (type.IsVector())
                 rawKind = type.AsVector().ItemType().RawKind();
@@ -311,40 +312,40 @@ namespace Scikit.ML.OnnxHelper
             switch (rawKind)
             {
                 case DataKind.Boolean:
-                    dataType = TensorProto.Types.DataType.Float;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
                     break;
                 case DataKind.String:
-                    dataType = TensorProto.Types.DataType.String;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
                     break;
                 case DataKind.SByte:
-                    dataType = TensorProto.Types.DataType.Int8;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int8;
                     break;
                 case DataKind.Byte:
-                    dataType = TensorProto.Types.DataType.Uint8;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint8;
                     break;
                 case DataKind.Int16:
-                    dataType = TensorProto.Types.DataType.Int16;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int16;
                     break;
                 case DataKind.UInt16:
-                    dataType = TensorProto.Types.DataType.Uint16;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint16;
                     break;
                 case DataKind.Int32:
-                    dataType = TensorProto.Types.DataType.Int32;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int32;
                     break;
                 case DataKind.UInt32:
-                    dataType = TensorProto.Types.DataType.Int64;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
                     break;
                 case DataKind.Int64:
-                    dataType = TensorProto.Types.DataType.Int64;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
                     break;
                 case DataKind.UInt64:
-                    dataType = TensorProto.Types.DataType.Uint64;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint64;
                     break;
                 case DataKind.Single:
-                    dataType = TensorProto.Types.DataType.Float;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
                     break;
                 case DataKind.Double:
-                    dataType = TensorProto.Types.DataType.Double;
+                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Double;
                     break;
                 default:
                     string msg = "Unsupported type: DataKind " + rawKind.ToString();
@@ -384,21 +385,21 @@ namespace Scikit.ML.OnnxHelper
         }
 
         // Make long scalar in ONNX from native C# number
-        public static TensorProto MakeInt64(string name, long value)
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeInt64(string name, long value)
         {
-            var tensor = new TensorProto();
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = TensorProto.Types.DataType.Int64;
+            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
             tensor.Int64Data.Add(value);
             return tensor;
         }
 
         // Make long vector (i.e., 1-D tensor) with dims=null. Otherwise, dims is used as the shape of the produced tensor.
-        public static TensorProto MakeInt64s(string name, IEnumerable<long> values, IEnumerable<long> dims = null)
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeInt64s(string name, IEnumerable<long> values, IEnumerable<long> dims = null)
         {
-            var tensor = new TensorProto();
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = TensorProto.Types.DataType.Int64;
+            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
             tensor.Int64Data.AddRange(values);
             if (dims != null)
                 tensor.Dims.AddRange(dims);
@@ -408,21 +409,21 @@ namespace Scikit.ML.OnnxHelper
         }
 
         // Make float scalar in ONNX from native C# number
-        public static TensorProto MakeFloat(string name, float value)
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeFloat(string name, float value)
         {
-            var tensor = new TensorProto();
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = TensorProto.Types.DataType.Float;
+            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
             tensor.FloatData.Add(value);
             return tensor;
         }
 
         // Make float vector (i.e., 1-D tensor) with dims=null. Otherwise, dims is used as the shape of the produced tensor.
-        public static TensorProto MakeFloats(string name, IEnumerable<float> values, IEnumerable<long> dims = null)
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeFloats(string name, IEnumerable<float> values, IEnumerable<long> dims = null)
         {
-            var tensor = new TensorProto();
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = TensorProto.Types.DataType.Float;
+            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
             tensor.FloatData.AddRange(values);
             if (dims != null)
                 tensor.Dims.AddRange(dims);
@@ -432,21 +433,21 @@ namespace Scikit.ML.OnnxHelper
         }
 
         // Make string scalar in ONNX from native C# number
-        public static TensorProto MakeString(string name, string value)
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeString(string name, string value)
         {
-            var tensor = new TensorProto();
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = TensorProto.Types.DataType.String;
+            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
             tensor.StringData.Add(StringToByteString(value));
             return tensor;
         }
 
         // Make string vector (i.e., 1-D tensor) with dims=null. Otherwise, dims is used as the shape of the produced tensor.
-        public static TensorProto MakeStrings(string name, IEnumerable<string> values, IEnumerable<long> dims = null)
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeStrings(string name, IEnumerable<string> values, IEnumerable<long> dims = null)
         {
-            var tensor = new TensorProto();
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = TensorProto.Types.DataType.String;
+            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
             tensor.StringData.AddRange(StringToByteString(values));
             if (dims != null)
                 tensor.Dims.AddRange(dims);

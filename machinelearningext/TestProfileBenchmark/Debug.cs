@@ -6,7 +6,7 @@ using Microsoft.ML.Data;
 //using Microsoft.ML.Ensemble;
 using Microsoft.ML.Trainers;
 using Microsoft.ML.LightGBM;
-using Microsoft.ML.Model.Onnx;
+using Microsoft.ML.Model.OnnxConverter;
 //using Microsoft.ML.Sweeper;
 using Microsoft.ML.Transforms.TimeSeries;
 using Microsoft.ML.Tools;

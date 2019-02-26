@@ -8,7 +8,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model;
-using Microsoft.ML.Model.Onnx;
+using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.DataManipulation;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;

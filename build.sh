@@ -18,8 +18,8 @@ cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.ImageAnalytics/netstandard2.0
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.LightGBM/netstandard2.0/*.dll machinelearning/dist/Release
-cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Onnx/netstandard2.0/*.dll machinelearning/dist/Release
-cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxTransform/netstandard2.0/*.dll machinelearning/dist/Release
+cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Release
+cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.PCA/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.StandardLearners/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Sweeper/netstandard2.0/*.dll machinelearning/dist/Release
@@ -40,8 +40,8 @@ cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.ImageAnalytics/netstandard2.0/*
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.LightGBM/netstandard2.0/*.dll machinelearning/dist/Debug
-cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Onnx/netstandard2.0/*.dll machinelearning/dist/Debug
-cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxTransform/netstandard2.0/*.dll machinelearning/dist/Debug
+cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Debug
+cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.PCA/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.StandardLearners/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Sweeper/netstandard2.0/*.dll machinelearning/dist/Debug

@@ -209,7 +209,7 @@ namespace TestMachineLearningExt
                         Separators = new[] { '\t' },
                         HasHeader = true,
                         Columns = new[] {
-                            new TextLoader.Column("Label", DataKind.Bool, 0),
+                            new TextLoader.Column("Label", DataKind.Boolean, 0),
                             new TextLoader.Column("SentimentText", DataKind.String, 1)
                         }
                     };

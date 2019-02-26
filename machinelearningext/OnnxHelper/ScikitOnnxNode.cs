@@ -11,9 +11,9 @@ namespace Scikit.ML.OnnxHelper
 {
     internal sealed class ScikitOnnxNode : OnnxNode
     {
-        private readonly NodeProto _node;
+        private readonly OnnxCSharpToProtoWrapper.NodeProto _node;
 
-        public ScikitOnnxNode(NodeProto node)
+        public ScikitOnnxNode(OnnxCSharpToProtoWrapper.NodeProto node)
         {
             Contracts.AssertValue(node);
             _node = node;

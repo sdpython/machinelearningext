@@ -199,7 +199,7 @@ namespace Scikit.ML.TestHelper
                 {
                     #region binary classification
 
-                    if (ty2.RawKind() != DataKind.Bool)
+                    if (ty2.RawKind() != DataKind.Boolean)
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));
 
                     if (ty1.RawKind() == DataKind.Single)
