@@ -23,7 +23,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_DescribeTransformCode()
         {
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var inputs = InputOutput.CreateInputs();
                 var data = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
@@ -48,7 +48,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_DescribeTransformSaveDataAndZip()
         {
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var inputs = InputOutput.CreateInputs();
                 var data = DataViewConstructionUtils.CreateFromEnumerable(env, inputs);
@@ -90,7 +90,7 @@ namespace TestMachineLearningExt
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
             var tempFile = FileHelper.GetOutputFile("dump.idv", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 col=Uid:TX:5 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -117,7 +117,7 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var loader = env.CreateLoader("Text{col=LabelText:TX:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -144,7 +144,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestSortInDataFrameTransformSimple()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new InputOutput[] {
                     new InputOutput() { X = new float[] { 0, 1 }, Y = 1 },
@@ -203,7 +203,8 @@ namespace TestMachineLearningExt
 
         static void TestCacheTransformSimple(int nt, bool async)
         {
-            using (var host = EnvHelper.NewTestEnvironment(conc: nt == 1 ? 1 : 0))
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: nt == 1 ? 1 : 0);
             {
                 var inputs = new InputOutput[] {
                     new InputOutput() { X = new float[] { 0, 1 }, Y = 1 },
@@ -284,7 +285,7 @@ namespace TestMachineLearningExt
             var outputDataFilePath = FileHelper.GetOutputFile("outputDataFilePath.txt", methodName);
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -310,7 +311,7 @@ namespace TestMachineLearningExt
             var dataFilePath = FileHelper.GetTestFile("shuffled_iris.txt");
             var outputDataFilePath = FileHelper.GetOutputFile("outputDataFilePath.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=- sep=,}",
                     new MultiFileSource(dataFilePath));
@@ -346,7 +347,7 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var cacheFile = FileHelper.GetOutputFile("cacheFile.idv", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));

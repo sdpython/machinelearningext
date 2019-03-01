@@ -6,7 +6,7 @@ using Scikit.ML.PipelineHelper;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Training;
+using Microsoft.ML.Trainers;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.EntryPoints;
 

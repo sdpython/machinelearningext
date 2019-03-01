@@ -787,7 +787,7 @@ namespace Scikit.ML.DataManipulation
 
             public void GetMetadata<TValue>(string kind, int col, ref TValue value)
             {
-                if (kind == MetadataUtils.Kinds.SlotNames)
+                if (kind == AnnotationUtils.Kinds.SlotNames)
                 {
                     var res = GetSlotNames(col);
                     DvText[] dres = new DvText[res.Length];
@@ -862,7 +862,8 @@ namespace Scikit.ML.DataManipulation
         /// nrow must be specified for the first column.
         /// The method checks that all column have the same number of elements.
         /// </summary>
-        public void FillValues(IDataView view, int nrows = -1, bool keepVectors = false, int? numThreads = 1, IHostEnvironment env = null)
+        public void FillValues(IDataView view, int nrows = -1, bool keepVectors = false, int? numThreads = 1,
+                               IHostEnvironment env = null)
         {
             long? numRows = view.GetRowCount();
             if (!numRows.HasValue)
@@ -902,8 +903,8 @@ namespace Scikit.ML.DataManipulation
             IHostEnvironment host = env ?? new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 1);
             var ch = host.Register("Estimate n threads");
             nth = numThreads.HasValue ? numThreads.Value : DataViewUtils.GetThreadCount(ch, 0, true);
-            if (dispose)
-                (host as DelegateEnvironment).Dispose();
+            //if (dispose)
+            //    (host as DelegateEnvironment).Dispose();
 
             // Fills values.
             if (nth == 1)

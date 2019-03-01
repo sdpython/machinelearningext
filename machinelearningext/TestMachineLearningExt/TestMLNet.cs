@@ -21,7 +21,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestTreePathInnerAPI()
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
                 var iris = FileHelper.GetTestFile("iris.txt");
@@ -44,7 +45,8 @@ namespace TestMachineLearningExt
         public void TestLoadModelFromNimbusML()
         {
             var iris = FileHelper.GetTestFile("model_iris.zip");
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment();
             {
                 try
                 {
@@ -118,7 +120,8 @@ namespace TestMachineLearningExt
             cmd = cmd.Replace("__INPUT__", data);
             cmd = cmd.Replace("__OUTPUT__", output);
 
-            using (var env = new DelegateEnvironment(outWriter: stout, errWriter: sderr, verbose: 3))
+            /*using (*/
+            var env = new DelegateEnvironment(outWriter: stout, errWriter: sderr, verbose: 3);
             {
                 MamlHelper.MamlScript(cmd, false, env);
                 var sout = bout.ToString();

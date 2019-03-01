@@ -34,6 +34,9 @@
     <Reference Include="Microsoft.ML.Maml">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Maml.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.Transforms">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

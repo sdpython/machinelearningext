@@ -30,7 +30,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 1, 10, 100 } },
                 new ExampleA() { X = new float[] { 2, 3, 5 } }
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -45,7 +46,8 @@ namespace TestMachineLearningExt
                 new ExampleASparse() { X = new VBuffer<float> (5, 3, new float[] { 1, 10, 100 }, new int[] { 0, 2, 4 }) },
                 new ExampleASparse() { X = new VBuffer<float> (5, 3, new float[] { 2, 3, 5 }, new int[] { 1, 2, 3 }) }
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -131,7 +133,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_PolynomialTransformSerialize()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new ExampleA() { X = new float[] { 1, 10, 100 } },
@@ -156,7 +159,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_PolynomialTransformNumericValues()
         {
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var raw = DataFrameIO.ReadStr("A,B\n1.0,2.0\n2.0,3.0\n10.0,11.0");
                 raw.SetShuffle(false);
@@ -182,7 +186,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 1, 10, 100 } },
                 new ExampleA() { X = new float[] { 2, 3, 5 } }
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -197,7 +202,7 @@ namespace TestMachineLearningExt
                 new ExampleA0() { X = 1f },
                 new ExampleA0() { X = 2f }
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -212,7 +217,7 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 1, 10, 100 } },
                 new ExampleA() { X = new float[] { 2, 3, 5 } }
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -261,7 +266,7 @@ namespace TestMachineLearningExt
                 new ExampleASparse() { X = new VBuffer<float> (5, 3, new float[] { 1, 10, 100 }, new int[] { 0, 2, 4 }) },
                 new ExampleASparse() { X = new VBuffer<float> (5, 3, new float[] { 2, 3, 5 }, new int[] { 0, 1, 3 }) }
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -287,7 +292,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_ScalerTransformSerialize()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
 
                 var inputs = new[] {
@@ -317,7 +322,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_ScalerTransformNumericValuesMeanVar()
         {
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var raw = DataFrameIO.ReadStr("A,B\n1.0,2.0\n2.0,3.0\n10.0,11.0");
                 raw.SetShuffle(false);
@@ -336,7 +341,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_ScalerTransformNumericValuesMinMax()
         {
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var raw = DataFrameIO.ReadStr("A,B\n1.0,2.0\n2.0,3.0\n10.0,11.0");
                 raw.SetShuffle(false);

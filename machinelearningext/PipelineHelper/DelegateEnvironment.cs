@@ -60,7 +60,6 @@ namespace Scikit.ML.PipelineHelper
 
         public static void Delete(DelegateEnvironment env)
         {
-            env.Dispose();
         }
 
         private sealed class OutErrLogWriter
@@ -438,11 +437,6 @@ namespace Scikit.ML.PipelineHelper
         private void PrintMessage(IMessageSource src, ChannelMessage msg)
         {
             Root._outErrWriter.PrintMessage(src, msg);
-        }
-
-        protected override IFileHandle CreateTempFileCore(IHostEnvironment env, string suffix = null, string prefix = null)
-        {
-            return base.CreateTempFileCore(env, suffix, "MML_" + prefix);
         }
 
         protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose, int? conc)

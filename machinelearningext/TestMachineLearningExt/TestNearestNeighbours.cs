@@ -23,7 +23,7 @@ namespace TestMachineLearningExt
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
             var env = k == 1 ? EnvHelper.NewTestEnvironment(conc: 1) : EnvHelper.NewTestEnvironment(conc: conc);
-            using (env)
+            //using (env)
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -55,7 +55,7 @@ namespace TestMachineLearningExt
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
             var env = k == 1 ? EnvHelper.NewTestEnvironment(conc: 1) : EnvHelper.NewTestEnvironment();
-            using (env)
+            //using (env)
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 col=Uid:I8:5 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -87,7 +87,7 @@ namespace TestMachineLearningExt
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
             var env = k == 1 ? EnvHelper.NewTestEnvironment(conc: 1) : EnvHelper.NewTestEnvironment();
-            using (env)
+            //using (env)
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -116,7 +116,7 @@ namespace TestMachineLearningExt
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
             var env = k == 1 ? EnvHelper.NewTestEnvironment(conc: 1) : EnvHelper.NewTestEnvironment();
-            using (env)
+            //using (env)
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 col=Uid:I8:5 header=+}",
                     new MultiFileSource(dataFilePath));

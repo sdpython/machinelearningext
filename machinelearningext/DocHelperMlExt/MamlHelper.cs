@@ -63,8 +63,8 @@ namespace Scikit.ML.DocHelperMlExt
                 else
                     Console.Error.Write(s);
             });
-            using (var env = new DelegateEnvironment(verbose: verbose, outWriter: logout, errWriter: logerr))
-                return MamlScript(script, catch_output, env);
+            var env = new DelegateEnvironment(verbose: verbose, outWriter: logout, errWriter: logerr);
+            return MamlScript(script, catch_output, env);
         }
 
         /// <summary>
@@ -176,7 +176,8 @@ namespace Scikit.ML.DocHelperMlExt
                 new ExampleVector() { X = new float[] { 3, 4, 7 } },
             };
 
-            using (var host = new ConsoleEnvironment(conc: 1))
+            /*using (*/
+            var host = new ConsoleEnvironment(conc: 1);
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
@@ -229,7 +230,8 @@ namespace Scikit.ML.DocHelperMlExt
         {
             if (env)
             {
-                using (var e = new ConsoleEnvironment())
+                /*using (*/
+                var e = new ConsoleEnvironment();
                 {
                     ComponentHelper.AddStandardComponents(e);
                     var assemblies = AppDomain.CurrentDomain.GetAssemblies().Select(x => InfoAssembly(x)).OrderBy(c => c);
@@ -259,7 +261,8 @@ namespace Scikit.ML.DocHelperMlExt
         {
             if (env)
             {
-                using (var e = new ConsoleEnvironment())
+                /*using (*/
+                var e = new ConsoleEnvironment();
                 {
                     ComponentHelper.AddStandardComponents(e);
                     var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -284,7 +287,8 @@ namespace Scikit.ML.DocHelperMlExt
         /// </summary>
         public static string[] GetAllKinds()
         {
-            using (var env = new ConsoleEnvironment())
+            /*using (*/
+            var env = new ConsoleEnvironment();
             {
                 ComponentHelper.AddStandardComponents(env);
                 var sigs = env.ComponentCatalog.GetAllSignatureTypes();
@@ -478,7 +482,8 @@ namespace Scikit.ML.DocHelperMlExt
                 if (!string.IsNullOrEmpty(kind) && !kinds.Where(c => c == kind).Any())
                     throw new ArgumentException($"Unable to find kind '{kind}' in\n{string.Join("\n", kinds)}.");
 
-                using (var env = new ConsoleEnvironment())
+                /*using (*/
+                var env = new ConsoleEnvironment();
                 {
                     ComponentHelper.AddStandardComponents(env);
                     var sigs = env.ComponentCatalog.GetAllSignatureTypes();

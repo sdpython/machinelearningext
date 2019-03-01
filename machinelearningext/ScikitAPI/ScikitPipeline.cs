@@ -96,7 +96,7 @@ namespace Scikit.ML.ScikitAPI
         {
             if (_dispose)
             {
-                (_env as ConsoleEnvironment).Dispose();
+                // (_env as ConsoleEnvironment).Dispose();
                 _env = null;
             }
         }

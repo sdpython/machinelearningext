@@ -7,7 +7,6 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Model.OnnxConverter;
-using Microsoft.ML.UniversalModelFormat.Onnx;
 
 
 namespace Scikit.ML.OnnxHelper

@@ -381,7 +381,7 @@ namespace Scikit.ML.PipelineHelper
                 _schemaInput.GetMetadata(kind, col, ref value);
                 return;
             }
-            if (kind == MetadataUtils.Kinds.SlotNames)
+            if (kind == AnnotationUtils.Kinds.SlotNames)
             {
                 var res = GetSlotNames(col);
                 var dres = new ReadOnlyMemory<char>[res.Length];
@@ -440,7 +440,7 @@ namespace Scikit.ML.PipelineHelper
             int count = _schemaInput == null ? 0 : _schemaInput.ColumnCount;
             if (col < count)
                 return _schemaInput.GetMetadataTypeOrNull(kind, col);
-            if (kind == MetadataUtils.Kinds.SlotNames)
+            if (kind == AnnotationUtils.Kinds.SlotNames)
             {
                 var ty = GetColumnType(col);
                 if (ty.IsVector() && ty.AsVector().DimCount() == 1 && ty.AsVector().GetDim(0) > 0)
@@ -479,13 +479,13 @@ namespace Scikit.ML.PipelineHelper
             var builder = new DataViewSchema.Builder();
             for (int i = 0; i < inputSchema.ColumnCount; i++)
             {
-                var meta = new DataViewSchema.Metadata.Builder();
+                var meta = new DataViewSchema.Annotations.Builder();
                 foreach (var kvp in inputSchema.GetMetadataTypes(i))
                 {
                     var getter = Utils.MarshalInvoke(GetMetadataGetterDelegate<int>, kvp.Value.RawType, inputSchema, i, kvp.Key);
                     meta.Add(kvp.Key, kvp.Value, getter);
                 }
-                builder.AddColumn(inputSchema.GetColumnName(i), inputSchema.GetColumnType(i), meta.ToMetadata());
+                builder.AddColumn(inputSchema.GetColumnName(i), inputSchema.GetColumnType(i), meta.ToAnnotations());
             }
 
             return builder.ToSchema();

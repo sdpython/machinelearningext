@@ -221,7 +221,8 @@ namespace TestMachineLearningExt
             var outputDataFilePath = FileHelper.GetOutputFile("outputDataFilePath.txt", methodName);
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 //var loader = env.CreateLoader("text{col=DataViewRowId:I4:0 col=Features:R4:1-2 header=+}", new MultiFileSource(dataFilePath));
                 var loader = new TextLoader(env, new TextLoader.Options()
@@ -229,7 +230,7 @@ namespace TestMachineLearningExt
                     HasHeader = true,
                     Columns = new[] { TextLoader.Column.Parse("DataViewRowId:R4:0"),
                                      TextLoader.Column.Parse("Features:R4:1-2")}
-                }).Read(new MultiFileSource(dataFilePath));
+                }).Load(new MultiFileSource(dataFilePath));
                 var xf = env.CreateTransform("DBScan{col=Features}", loader);
 
                 string schema = SchemaHelper.ToString(xf.Schema);
@@ -441,7 +442,7 @@ namespace TestMachineLearningExt
             var outputDataFilePath = FileHelper.GetOutputFile("outputDataFilePath.txt", methodName);
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("text{col=DataViewRowId:I4:0 col=Features:R4:1-2 header=+}",
                                               new MultiFileSource(dataFilePath));
@@ -485,7 +486,7 @@ namespace TestMachineLearningExt
             var outputDataFilePath = FileHelper.GetOutputFile("outputDataFilePath.txt", methodName);
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("text{col=DataViewRowId:I4:0 col=Features:R4:1-2 header=+}",
                                               new MultiFileSource(dataFilePath));

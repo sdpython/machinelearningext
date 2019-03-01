@@ -19,9 +19,9 @@ using DataViewRowCursor = Microsoft.Data.DataView.DataViewRowCursor;
 using DataViewSchema = Microsoft.Data.DataView.DataViewSchema;
 using TransformBase = Microsoft.ML.Data.TransformBase;
 
-using ModelLoadContext = Microsoft.ML.Model.ModelLoadContext;
-using ModelSaveContext = Microsoft.ML.Model.ModelSaveContext;
-using VersionInfo = Microsoft.ML.Model.VersionInfo;
+using ModelLoadContext = Microsoft.ML.ModelLoadContext;
+using ModelSaveContext = Microsoft.ML.ModelSaveContext;
+using VersionInfo = Microsoft.ML.VersionInfo;
 
 using DvText = Scikit.ML.PipelineHelper.DvText;
 

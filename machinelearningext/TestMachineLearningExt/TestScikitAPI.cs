@@ -32,7 +32,7 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { -2, -3, -5 } }
             };
 
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, host: host))
@@ -77,7 +77,8 @@ namespace TestMachineLearningExt
             };
 
             string expected = null;
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, host: host))
@@ -95,7 +96,8 @@ namespace TestMachineLearningExt
                     pipe.Save(output, removeFirstTransform);
                 }
             }
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                 using (var pipe2 = new ScikitPipeline(output, host))
@@ -127,7 +129,7 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 3, 4, 7 } },
             };
 
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
@@ -176,7 +178,7 @@ namespace TestMachineLearningExt
             };
 
             string expected = null;
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
@@ -195,7 +197,8 @@ namespace TestMachineLearningExt
                     pipe.Save(output, removeFirstTransform);
                 }
             }
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
                 using (var pipe2 = new ScikitPipeline(output, host))
@@ -234,7 +237,8 @@ namespace TestMachineLearningExt
                 stderr.Add(s);
             });
 
-            using (var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 3))
+            /*using (*/
+            var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 3);
             using (var ch = host.Start("Train Pipeline"))
             {
                 ComponentHelper.AddStandardComponents(host);
@@ -271,7 +275,8 @@ namespace TestMachineLearningExt
             ILogWriter logout = new LogWriter(s => stdout.Add(s));
             ILogWriter logerr = new LogWriter(s => stderr.Add(s));
 
-            using (var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 0))
+            /*using (*/
+            var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 0);
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
@@ -302,7 +307,7 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 3, 4, 7 } },
             };
             DataFrame df1, df2, df3;
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
@@ -311,7 +316,7 @@ namespace TestMachineLearningExt
                 df3 = DataFrameIO.ReadView(data2, env: host, keepVectors: true);
             }
 
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/ host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
                 {

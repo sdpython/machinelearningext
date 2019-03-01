@@ -20,7 +20,7 @@ namespace TestMachineLearningExt
 
         private void TestResampleTransform(float ratio)
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var inputs = new InputOutput[] {
                     new InputOutput() { X = new float[] { 0, 1 }, Y = 1 },
@@ -64,7 +64,7 @@ namespace TestMachineLearningExt
             var dataFilePath = FileHelper.GetTestFile("iris.txt");
             var outputDataFilePath = FileHelper.GetOutputFile("outputDataFilePath.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 " +
                                               "col=Pwidth:R4:4 header=+ sep=tab}",
@@ -96,7 +96,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void Testl_ShakeInputTransform()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new SHExampleA() { X = new float[] { 0, 1 } },
@@ -137,7 +137,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void Testl_ShakeInputTransformAdd()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new SHExampleA() { X = new float[] { 0, 1 } },
@@ -179,7 +179,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void Testl_ShakeInputTransformVector()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new SHExampleA() { X = new float[] { 0, 1 } },
@@ -220,7 +220,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void Testl_ShakeInputTransformVectorAdd()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new SHExampleA() { X = new float[] { 0, 1 } },

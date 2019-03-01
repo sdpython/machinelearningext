@@ -119,8 +119,9 @@ namespace Scikit.ML.OnnxHelper
         {
             if (host == null)
             {
-                using (var env = new DelegateEnvironment())
-                    return ToOnnx(trans, ref inputs, ref outputs, name, producer, version, domain, onnxVersion, begin, env);
+                /*using (*/
+                var env = new DelegateEnvironment();/*)*/
+                return ToOnnx(trans, ref inputs, ref outputs, name, producer, version, domain, onnxVersion, begin, env);
             }
             if (name == null)
                 name = trans.GetType().Name;

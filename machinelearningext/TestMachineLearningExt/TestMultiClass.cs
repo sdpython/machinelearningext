@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Scikit.ML.DataManipulation;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.TestHelper;
 using Scikit.ML.MultiClass;
@@ -22,7 +23,7 @@ namespace TestMachineLearningExt
 
         public static void TestMultiToBinaryTransform(MultiToBinaryTransform.MultiplicationAlgorithm algo, int max)
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new InputOutputU[] {
                     new InputOutputU() { X = new float[] { 0.1f, 1.1f }, Y = 0 },
@@ -74,7 +75,7 @@ namespace TestMachineLearningExt
 
         public static void TestMultiToBinaryTransformVector(MultiToBinaryTransform.MultiplicationAlgorithm algo, int max)
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new InputOutputU[] {
                     new InputOutputU() { X = new float[] { 0.1f, 1.1f }, Y = 0 },
@@ -183,7 +184,8 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: threads == 1 ? 1 : 0))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: threads == 1 ? 1 : 0);
             {
                 string labelType = useUint ? "U4[0-2]" : "R4";
                 string loadSettings = string.Format("Text{{col=Label:{0}:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}}", labelType);
@@ -219,7 +221,8 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: threads == 1 ? 1 : 0))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: threads == 1 ? 1 : 0);
             {
                 string labelType = useUint ? "U4[0-2]" : "R4";
                 string loadSettings = string.Format("Text{{col=Label:{0}:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}}", labelType);
@@ -250,11 +253,14 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var loader = env.CreateLoader("Text", new MultiFileSource(trainFile));
                 var roles = env.CreateExamples(loader, "Features", "Label");
-                var iova = string.Format("iova{{p=lr sc={0}}}", singleColumn ? "+" : "-");
+                var df = DataFrameIO.ReadView(roles.Data);
+                Assert.IsTrue(df.Shape[0] > 0);
+                var iova = string.Format("iova{{p=lr sc={0} nt=1}}", singleColumn ? "+" : "-");
                 loader = env.CreateLoader("Text", new MultiFileSource(testFile));
                 var trainer = env.CreateTrainer(iova);
                 using (var ch = env.Start("train"))
@@ -276,7 +282,7 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text", new MultiFileSource(trainFile));
                 var roles = env.CreateExamples(loader, "Features", "Label");
@@ -474,7 +480,8 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: th == 1 ? 1 : 0))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: th == 1 ? 1 : 0);
             {
                 var loaderSettings = "Binary";
                 var loader = env.CreateLoader(loaderSettings, new MultiFileSource(trainFile));
@@ -548,7 +555,8 @@ namespace TestMachineLearningExt
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
             StringWriter sout, serr;
-            using (var env = EnvHelper.NewTestEnvironment(out sout, out serr, verbose: false))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(out sout, out serr, verbose: false);
             {
                 var loaderSettings = "Binary";
                 var loader = env.CreateLoader(loaderSettings, new MultiFileSource(trainFile));

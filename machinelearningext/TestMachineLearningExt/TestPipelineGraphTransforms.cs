@@ -24,7 +24,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestTagViewTransform()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new ExampleA() { X = new float[] { 0, 1 } },
@@ -51,7 +51,7 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new ExampleA() { X = new float[] { 0, 1, 4 } },
@@ -99,7 +99,7 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 2, 3, 5 } }
             };
 
-            using (var host = EnvHelper.NewTestEnvironment()) { 
+            /*using (*/var host = EnvHelper.NewTestEnvironment(); { 
                 IDataView loader = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
             var chained = host.CreateTransform("ChainTrans{ xf1=Scaler{col=X2:X} xf2=Scaler{col=X3:X2} }", loader);
             var schStr = SchemaHelper.ToString(chained.Schema);
@@ -150,7 +150,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestChainTransformSerialize()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new ExampleA() { X = new float[] { 1, 10, 100 } },
@@ -179,7 +179,7 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Features:R4:1-4 header=+}",
                                     new MultiFileSource(dataFilePath));
@@ -208,7 +208,7 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=-}",
                     new MultiFileSource(dataFilePath));
@@ -235,7 +235,7 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=-}",
                     new MultiFileSource(dataFilePath));

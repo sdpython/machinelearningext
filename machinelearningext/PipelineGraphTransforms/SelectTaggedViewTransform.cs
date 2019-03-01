@@ -63,7 +63,8 @@ namespace Scikit.ML.PipelineGraphTransforms
 
             [Argument(ArgumentType.Multiple, HelpText = "Loader settings if data is loaded from disk (default is binary).", 
                 ShortName = "loader", SignatureType = typeof(SignatureDataLoader))]
-            public IComponentFactory<IDataLoader> loaderSettings = new ScikitSubComponent<IDataLoader, SignatureDataLoader>("binary");
+            public IComponentFactory<ILegacyDataLoader> loaderSettings = 
+                new ScikitSubComponent<ILegacyDataLoader, SignatureDataLoader>("binary");
 
             public void Read(ModelLoadContext ctx, IHost host)
             {
@@ -75,7 +76,7 @@ namespace Scikit.ML.PipelineGraphTransforms
                 var sloader = ctx.Reader.ReadString();
                 if (string.IsNullOrEmpty(sloader))
                     sloader = "binary";
-                loaderSettings = new ScikitSubComponent<IDataLoader, SignatureDataLoader>(sloader);
+                loaderSettings = new ScikitSubComponent<ILegacyDataLoader, SignatureDataLoader>(sloader);
             }
 
             public void Write(ModelSaveContext ctx, IHost host)
@@ -181,7 +182,7 @@ namespace Scikit.ML.PipelineGraphTransforms
                     throw env.Except("Tag '{0}' was already given. It cannot be assigned to the new file.", args.selectTag);
                 var loaderArgs = new BinaryLoader.Arguments();
                 var file = new MultiFileSource(args.filename);
-                var loadSettings = ScikitSubComponent<IDataLoader, SignatureDataLoader>.AsSubComponent(args.loaderSettings);
+                var loadSettings = ScikitSubComponent<ILegacyDataLoader, SignatureDataLoader>.AsSubComponent(args.loaderSettings);
                 IDataView loader = loadSettings.CreateInstance(env, file);
 
                 var ag = new TagViewTransform.Arguments { tag = args.selectTag };

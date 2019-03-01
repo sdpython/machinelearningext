@@ -10,7 +10,7 @@ using Google.Protobuf;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.UniversalModelFormat.Onnx;
+using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.PipelineHelper;
 
 

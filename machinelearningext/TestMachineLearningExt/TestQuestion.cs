@@ -19,20 +19,20 @@ namespace TestMachineLearningExt
     {
         public class IrisObservation
         {
-            [Column("0")]
+            [LoadColumn(0)]
             [ColumnName("Label")]
             public string Label;
 
-            [Column("1")]
+            [LoadColumn(1)]
             public float Sepal_length;
 
-            [Column("2")]
+            [LoadColumn(2)]
             public float Sepal_width;
 
-            [Column("3")]
+            [LoadColumn(3)]
             public float Petal_length;
 
-            [Column("4")]
+            [LoadColumn(4)]
             public float Petal_width;
         }
 
@@ -57,7 +57,8 @@ namespace TestMachineLearningExt
             var methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var iris = FileHelper.GetTestFile("iris.txt");
-            using (var env = new ConsoleEnvironment(conc: 1))
+            /*using (*/
+            var env = new ConsoleEnvironment(conc: 1);
             {
                 ComponentHelper.AddStandardComponents(env);
 

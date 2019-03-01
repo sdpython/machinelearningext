@@ -21,7 +21,8 @@ namespace TestMachineLearningExt
 
         static void TestSplitTrainTestTransform(string option, int numThreads = 1)
         {
-            using (var host = EnvHelper.NewTestEnvironment(conc: numThreads == 1 ? 1 : 0))
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: numThreads == 1 ? 1 : 0);
             {
                 var inputsl = new List<InputOutput>();
                 for (int i = 0; i < 100; ++i)
@@ -142,7 +143,7 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var outData = FileHelper.GetOutputFile("outData.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -189,7 +190,7 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var outData = FileHelper.GetOutputFile("outData.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/var env = EnvHelper.NewTestEnvironment();
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -221,7 +222,8 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var outData = FileHelper.GetOutputFile("outData.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 4))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 4);
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));

@@ -53,10 +53,11 @@ namespace TestProfileBenchmark
 
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
 
-            using (var env = EnvHelper.NewTestEnvironment(seed: 1, conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(seed: 1, conc: 1);
             {
                 // Pipeline
-                var loader = new TextLoader(env, args).Read(new MultiFileSource(trainFilename));
+                var loader = new TextLoader(env, args).Load(new MultiFileSource(trainFilename));
 
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
@@ -64,8 +65,8 @@ namespace TestProfileBenchmark
                 var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Options
                 {
                     NumThreads = 1,
-                    LabelColumn = "Label",
-                    FeatureColumn = "Features"
+                    LabelColumnName = "Label",
+                    FeatureColumnName = "Features"
                 });
 
                 var cached = new Microsoft.ML.Data.CacheDataView(env, trans, prefetch: null);
@@ -93,7 +94,7 @@ namespace TestProfileBenchmark
             //var reader = ml.Data.ReadFromTextFile(args);
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
 
-            var data = ml.Data.ReadFromTextFile(trainFilename, args);
+            var data = ml.Data.LoadFromTextFile(trainFilename, args);
             var pipeline = ml.Transforms.Text.FeaturizeText("SentimentText", "Features")
                 .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
             var model = pipeline.Fit(data);
@@ -117,11 +118,12 @@ namespace TestProfileBenchmark
             var testFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-test.tsv");
             var times = new List<Tuple<int, TimeSpan, int>>();
 
-            using (var env = EnvHelper.NewTestEnvironment(seed: 1, conc: conc))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(seed: 1, conc: conc);
             {
 
                 // Take a couple examples out of the test data and run predictions on top.
-                var testLoader = new TextLoader(env, args).Read(new MultiFileSource(testFilename));
+                var testLoader = new TextLoader(env, args).Load(new MultiFileSource(testFilename));
                 IDataView cache;
                 if (cacheScikit)
                     cache = new ExtendedCacheTransform(env, new ExtendedCacheTransform.Arguments(), testLoader);

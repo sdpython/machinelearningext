@@ -148,7 +148,7 @@ namespace Scikit.ML.MultiClass
                 using (var bldr = md.BuildMetadata(iinfo, Source.Schema, info.Source, PassThrough))
                 {
                     if (info.TypeSrc.IsBool() && _exes[iinfo].TypeDst.ItemType().IsNumber())
-                        bldr.AddPrimitive(MetadataUtils.Kinds.IsNormalized, BooleanDataViewType.Instance, true);
+                        bldr.AddPrimitive(AnnotationUtils.Kinds.IsNormalized, BooleanDataViewType.Instance, true);
                 }
             }
             md.Seal();
@@ -163,13 +163,13 @@ namespace Scikit.ML.MultiClass
             var typeDst = _exes[iinfo].TypeDst;
             switch (kind)
             {
-                case MetadataUtils.Kinds.SlotNames:
+                case AnnotationUtils.Kinds.SlotNames:
                     Host.Assert(typeSrc.VectorSize() == typeDst.VectorSize());
                     return typeDst.IsKnownSizeVector();
-                case MetadataUtils.Kinds.KeyValues:
+                case AnnotationUtils.Kinds.KeyValues:
                     return typeSrc.ItemType().IsKey() && typeDst.ItemType().IsKey() && typeSrc.ItemType().GetKeyCount() > 0 &&
                         typeSrc.ItemType().GetKeyCount() == typeDst.ItemType().GetKeyCount();
-                case MetadataUtils.Kinds.IsNormalized:
+                case AnnotationUtils.Kinds.IsNormalized:
                     return typeSrc.ItemType().IsNumber() && typeDst.ItemType().IsNumber();
             }
             return false;

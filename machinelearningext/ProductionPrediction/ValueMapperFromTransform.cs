@@ -54,7 +54,7 @@ namespace Scikit.ML.ProductionPrediction
         {
             if (_disposeEnv)
             {
-                (_computeEnv as PassThroughEnvironment).Dispose();
+                //(_computeEnv as PassThroughEnvironment).Dispose();
                 _computeEnv = null;
             }
             if (_valueMapperDispose != null)

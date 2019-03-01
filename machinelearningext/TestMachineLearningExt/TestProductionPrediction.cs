@@ -30,7 +30,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestTransform2ValueMapperMultiThread()
         {
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment();
             {
                 var host = env.Register("unittest");
 
@@ -95,7 +96,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestTransform2ValueMapperMultiThreadOut()
         {
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment();
             {
                 var host = env.Register("unittest");
 
@@ -159,7 +161,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestTransform2ValueMapperSingleThread()
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var host = env.Register("unittest");
 
@@ -255,7 +258,7 @@ namespace TestMachineLearningExt
 
             public void Dispose()
             {
-                (_env as ConsoleEnvironment).Dispose();
+                //(_env as ConsoleEnvironment).Dispose();
                 _valueMapper.Dispose();
                 _env = null;
                 _valueMapper = null;
@@ -278,7 +281,7 @@ namespace TestMachineLearningExt
                 _env = EnvHelper.NewTestEnvironment();
 
                 var view = DataViewConstructionUtils.CreateFromEnumerable(_env, new FloatVectorInput[] { });
-                var pipe = DataViewConstructionUtils.LoadPipeWithPredictor(_env, File.OpenRead(modelName), 
+                var pipe = DataViewConstructionUtils.LoadPipeWithPredictor(_env, File.OpenRead(modelName),
                                                         new EmptyDataView(_env, view.Schema));
                 var transformer = new TransformWrapper(_env, pipe);
                 _predictor = _env.CreatePredictionEngine<FloatVectorInput, FloatOutput>(transformer);
@@ -292,7 +295,7 @@ namespace TestMachineLearningExt
 
             public void Dispose()
             {
-                (_env as ConsoleEnvironment).Dispose();
+                //(_env as ConsoleEnvironment).Dispose();
                 _env = null;
             }
         }
@@ -373,8 +376,9 @@ namespace TestMachineLearningExt
             var stdout = new StringBuilder();
             ILogWriter logout = new LogWriter((string s) => { stdout.Append(s); });
             ILogWriter logerr = new LogWriter((string s) => { stdout.Append(s); });
-            using (var env = new DelegateEnvironment(verbose: 2, outWriter: logout, errWriter: logerr))
-                MamlHelper.MamlScript(cmd, false, env);
+            /*using (*/
+            var env = new DelegateEnvironment(verbose: 2, outWriter: logout, errWriter: logerr);
+            MamlHelper.MamlScript(cmd, false, env);
             var stout = stdout.ToString();
             if (string.IsNullOrEmpty(stout))
                 throw new Exception(stout);
@@ -400,7 +404,8 @@ namespace TestMachineLearningExt
         public void TestValueMapperPredictionEngine()
         {
             var name = FileHelper.GetTestFile("bc-lr.zip");
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment();
             {
                 using (var engine = new ValueMapperPredictionEngineFloat(env, name))
                 {
@@ -428,8 +433,9 @@ namespace TestMachineLearningExt
             {
                 try
                 {
-                    using (var env = EnvHelper.NewTestEnvironment())
-                        engine = new ValueMapperPredictionEngineFloat(env, modelName, "Probability");
+                    /*using (*/
+                    var env = EnvHelper.NewTestEnvironment();
+                    engine = new ValueMapperPredictionEngineFloat(env, modelName, "Probability");
                 }
                 catch (Exception e)
                 {
@@ -467,7 +473,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestLambdaColumnPassThroughTransform()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new InputOutputU[] {
                     new InputOutputU() { X = new float[] { 0.1f, 1.1f }, Y = 0 },
@@ -516,7 +523,8 @@ namespace TestMachineLearningExt
         {
             foreach (var each in new[] { false, true })
             {
-                using (var host = EnvHelper.NewTestEnvironment())
+                /*using (*/
+                var host = EnvHelper.NewTestEnvironment();
                 {
                     var inputs = new InputOutputU[] {
                     new InputOutputU() { X = new float[] { 0.1f, 1.1f }, Y = 0 },
@@ -532,7 +540,8 @@ namespace TestMachineLearningExt
 
                     var data_unused = DataViewConstructionUtils.CreateFromEnumerable(host, inputs_unsued);
                     var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
-                    using (var env = EnvHelper.NewTestEnvironment())
+                    /*using (*/
+                    var env = EnvHelper.NewTestEnvironment();
                     {
                         var tr = new PassThroughTransform(env, new PassThroughTransform.Arguments() { }, data_unused);
                         var mapperClass = new ValueMapperFromTransform<InputOutputU, InputOutputU>(env, tr);
@@ -603,7 +612,8 @@ namespace TestMachineLearningExt
         {
             var df = DataFrameHelperTest.CreateDataFrameWithAllTypes();
             var cols = SchemaHelper.EnumerateColumns(df.Schema).Select(c => new Column1x1() { Source = c, Name = c + "_" }).ToArray();
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment();
             {
                 var tr = new AddRandomTransform(env, new AddRandomTransform.Arguments() { seed = 0, columns = cols }, df);
                 var mapperTr = new ValueMapperDataFrameFromTransform(env, tr);

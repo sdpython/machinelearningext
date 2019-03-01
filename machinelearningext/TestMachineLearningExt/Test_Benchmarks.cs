@@ -27,7 +27,8 @@ namespace TestMachineLearningExt
         {
             var name = FileHelper.GetTestFile("bc-lr.zip");
 
-            using (var env = EnvHelper.NewTestEnvironment())
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment();
             using (var engine0 = new ValueMapperPredictionEngineFloat(env, name, conc: 1))
             {
                 var feat = new float[] { 5, 1, 1, 1, 2, 1, 3, 1, 1 };
@@ -100,10 +101,11 @@ namespace TestMachineLearningExt
 
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
 
-            using (var env = EnvHelper.NewTestEnvironment(seed: 1, conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(seed: 1, conc: 1);
             {
                 // Pipeline
-                var loader = new TextLoader(env, args).Read(new MultiFileSource(trainFilename));
+                var loader = new TextLoader(env, args).Load(new MultiFileSource(trainFilename));
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
                 // Train
@@ -136,7 +138,7 @@ namespace TestMachineLearningExt
             //var reader = ml.Data.TextReader(args);
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
 
-            var data = ml.Data.ReadFromTextFile(trainFilename, args);
+            var data = ml.Data.LoadFromTextFile(trainFilename, args);
             var pipeline = ml.Transforms.Text.FeaturizeText("Features", "SentimentText")
                              .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
             var model = pipeline.Fit(data);
@@ -149,7 +151,8 @@ namespace TestMachineLearningExt
             var testFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-test.tsv");
             var times = new List<Tuple<int, TimeSpan, int, float[]>>();
 
-            using (var env = EnvHelper.NewTestEnvironment(seed: 1, conc: conc))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(seed: 1, conc: conc);
             {
                 if (engine == "mlnet")
                 {
@@ -164,7 +167,7 @@ namespace TestMachineLearningExt
                     };
 
                     // Take a couple examples out of the test data and run predictions on top.
-                    var testLoader = new TextLoader(env, args).Read(new MultiFileSource(testFilename));
+                    var testLoader = new TextLoader(env, args).Load(new MultiFileSource(testFilename));
                     IDataView cache;
                     if (strategy.Contains("extcache"))
                         cache = new ExtendedCacheTransform(env, new ExtendedCacheTransform.Arguments(), testLoader);
@@ -215,7 +218,7 @@ namespace TestMachineLearningExt
                     };
 
                     // Take a couple examples out of the test data and run predictions on top.
-                    var testLoader = new TextLoader(env, args).Read(new MultiFileSource(testFilename));
+                    var testLoader = new TextLoader(env, args).Load(new MultiFileSource(testFilename));
                     IDataView cache;
                     if (strategy.Contains("extcache"))
                         cache = new ExtendedCacheTransform(env, new ExtendedCacheTransform.Arguments(), testLoader);

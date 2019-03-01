@@ -6,7 +6,7 @@ using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model;
-using Microsoft.ML.Training;
+using Microsoft.ML.Trainers;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
 

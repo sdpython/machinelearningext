@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
-using Microsoft.ML.Transforms.Normalizers;
+using Microsoft.ML.Transforms;
 
 
 namespace Scikit.ML.DocHelperMlExt

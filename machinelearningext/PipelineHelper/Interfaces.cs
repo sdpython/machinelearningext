@@ -1,9 +1,8 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using Microsoft.ML;
+using Microsoft.ML.Calibrators;
 using Microsoft.ML.Data;
-using Microsoft.ML.CommandLine;
-using Microsoft.ML.Internal.Calibration;
 
 
 namespace Scikit.ML.PipelineHelper

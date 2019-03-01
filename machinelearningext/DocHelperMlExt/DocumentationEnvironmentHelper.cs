@@ -284,7 +284,7 @@ namespace Scikit.ML.DocHelperMlExt
         public static int MainWithProgress(string args, DelegateEnvironment env = null)
         {
             string currentDirectory = Path.GetDirectoryName(typeof(Maml).Module.FullyQualifiedName);
-            bool dispose = false;
+            //bool dispose = false;
             var keepOut = new StringBuilder();
             var keepErr = new StringBuilder();
             if (env == null)
@@ -300,7 +300,7 @@ namespace Scikit.ML.DocHelperMlExt
                 {
                     keepErr.Append(s);
                     if (env.VerboseLevel <= 2 && s.Contains("Elapsed"))
-                    { 
+                    {
                         // We do nothing.
                     }
                     if (s.Contains("Elapsed"))
@@ -309,7 +309,7 @@ namespace Scikit.ML.DocHelperMlExt
                         Console.Error.Write(s);
                 });
                 env = new DelegateEnvironment(verbose: 2, outWriter: logout, errWriter: logerr);
-                dispose = true;
+                //dispose = true;
             }
 
             int ret = 0;
@@ -331,8 +331,8 @@ namespace Scikit.ML.DocHelperMlExt
                     env.PrintProgress();
                 }
             }
-            if (dispose)
-                env.Dispose();
+            //if (dispose)
+            //env.Dispose();
             return ret;
         }
 

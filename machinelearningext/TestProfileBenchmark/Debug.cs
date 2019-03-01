@@ -12,8 +12,6 @@ using Microsoft.ML.Transforms.TimeSeries;
 using Microsoft.ML.Tools;
 using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Trainers.HalLearners;
-using Microsoft.ML.Transforms.Conversions;
-using Microsoft.ML.Trainers.KMeans;
 //using Microsoft.ML.Trainers.PCA;
 using Microsoft.ML.Transforms;
 using Scikit.ML.Clustering;
@@ -56,7 +54,8 @@ namespace TestProfileBenchmark
 
             public void Train()
             {
-                using (var env = new ConsoleEnvironment())
+                /*using (*/
+                var env = new ConsoleEnvironment();
                 {
                     var df = DataFrameIO.ReadCsv(_dataset, sep: ',',
                                                  dtypes: new DataViewType[] { NumberDataViewType.Single });

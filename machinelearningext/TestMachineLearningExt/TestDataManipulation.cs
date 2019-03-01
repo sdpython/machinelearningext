@@ -73,7 +73,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestReadView()
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
                 var loader = DataFrameIO.ReadCsvToTextLoader(iris, sep: '\t', host: env.Register("TextLoader"));
@@ -151,7 +152,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestDataFrameScoringMulti()
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
                 var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
@@ -176,7 +178,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestDataFrameScoringBinary()
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
                 var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
@@ -201,7 +204,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestDataFrameExtendedAPI()
         {
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/
+            var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var iris = FileHelper.GetTestFile("iris.txt");
                 var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
@@ -1293,7 +1297,7 @@ namespace TestMachineLearningExt
                 new ExampleXY() { X = 3f, Y=4f },
             };
 
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "Concat{col=Z:X,Y}" }, host: host))
@@ -1319,7 +1323,7 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 2, 4, 7 } },
             };
             DataFrame df1;
-            using (var host = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 df1 = DataFrameIO.ReadView(data, env: host, keepVectors: true);

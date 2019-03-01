@@ -268,7 +268,7 @@ namespace Scikit.ML.DataManipulation
             if (host == null)
                 host = new ConsoleEnvironment().Register("TextLoader");
             var multiSource = new MultiFileSource(filenames);
-            return new TextLoader(host, args, multiSource).Read(multiSource);
+            return new TextLoader(host, args, multiSource).Load(multiSource);
         }
 
         /// <summary>

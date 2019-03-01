@@ -22,7 +22,7 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));
@@ -70,7 +70,7 @@ namespace TestMachineLearningExt
             var outData = FileHelper.GetOutputFile("outData1.txt", methodName);
             var outData2 = FileHelper.GetOutputFile("outData2.txt", methodName);
 
-            using (var env = EnvHelper.NewTestEnvironment(conc: 1))
+            /*using (*/var env = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var loader = env.CreateLoader("Text{col=Label:R4:0 col=Slength:R4:1 col=Swidth:R4:2 col=Plength:R4:3 col=Pwidth:R4:4 header=+}",
                     new MultiFileSource(dataFilePath));

@@ -41,7 +41,7 @@ namespace TestMachineLearningExt
                 new InputOutput() { X = 9f, time=2f, one=1f },
                 new InputOutput() { X = 11f, time=3f, one=1f },
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "concat{col=xt:time,one}" }, "sasdcar{iter=50}", host))
@@ -65,7 +65,7 @@ namespace TestMachineLearningExt
                 new InputOutput() { X = 9f, time=2f },
                 new InputOutput() { X = 11f, time=3f },
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
@@ -110,7 +110,7 @@ namespace TestMachineLearningExt
                 new InputOutput() { X = 9f, time=3f },
                 new InputOutput() { X = 8f, time=4f },
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
@@ -154,7 +154,7 @@ namespace TestMachineLearningExt
                 new InputOutput() { X = 1f, time=2f },
                 new InputOutput() { X = 0f, time=3f },
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
@@ -204,7 +204,7 @@ namespace TestMachineLearningExt
                 new InputOutput() { X = 3800f, time=9f },
                 new InputOutput() { X = 3640f, time=10f },
             };
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
 
@@ -242,7 +242,7 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestTimeSeriesDeTrendSerialize()
         {
-            using (var host = EnvHelper.NewTestEnvironment())
+            /*using (*/var host = EnvHelper.NewTestEnvironment();
             {
                 var inputs = new[] {
                     new InputOutput() { X = 7f, time=0f },
