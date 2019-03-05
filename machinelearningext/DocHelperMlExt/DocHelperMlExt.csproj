@@ -30,9 +30,6 @@
     <Reference Include="Microsoft.ML.Maml">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Maml.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.HalLearners">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.HalLearners.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ML.LightGBM">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.LightGBM.dll</HintPath>
     </Reference>

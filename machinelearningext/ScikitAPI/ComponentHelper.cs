@@ -9,7 +9,6 @@ using Microsoft.ML.Trainers;
 using Microsoft.ML.LightGBM;
 using Microsoft.ML.Model.OnnxConverter;
 using Microsoft.ML.Transforms.TimeSeries;
-using Microsoft.ML.Trainers.HalLearners;
 using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Transforms;
 using Microsoft.ML.Transforms.Text;

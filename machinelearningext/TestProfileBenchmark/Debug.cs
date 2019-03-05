@@ -11,7 +11,6 @@ using Microsoft.ML.Model.OnnxConverter;
 using Microsoft.ML.Transforms.TimeSeries;
 using Microsoft.ML.Tools;
 using Microsoft.ML.Trainers.FastTree;
-using Microsoft.ML.Trainers.HalLearners;
 //using Microsoft.ML.Trainers.PCA;
 using Microsoft.ML.Transforms;
 using Scikit.ML.Clustering;

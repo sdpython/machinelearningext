@@ -13,7 +13,6 @@ echo
 echo [build.sh] copy release binaries
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Ensemble/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.FastTree/netstandard2.0/*.dll machinelearning/dist/Release
-cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.HalLearners/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.ImageAnalytics/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Release
@@ -35,7 +34,6 @@ echo
 echo [build.sh] copy debug binaries
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Ensemble/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.FastTree/netstandard2.0/*.dll machinelearning/dist/Debug
-cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.HalLearners/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.ImageAnalytics/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Debug

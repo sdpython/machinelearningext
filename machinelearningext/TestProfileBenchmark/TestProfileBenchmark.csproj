@@ -65,9 +65,6 @@
     <Reference Include="Microsoft.ML.Transforms">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.HalLearners">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.HalLearners.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ML.LightGBM">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.LightGBM.dll</HintPath>
     </Reference>

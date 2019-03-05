@@ -34,7 +34,6 @@ before_test:
   - copy machinelearning\packages\lightgbm\2.2.3\runtimes\win-x64\native machinelearning\bin\x64.Release\Native
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Release
-  - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.HalLearners\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Maml\netstandard2.0\*.dll machinelearning\dist\Release
@@ -56,7 +55,6 @@ before_test:
   - copy machinelearning\packages\lightgbm\2.2.3\runtimes\win-x64\native machinelearning\bin\x64.Debug\Native
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\Debug
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Debug
-  - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.HalLearners\netstandard2.0\*.dll machinelearning\dist\Debug
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\Debug
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\Debug
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Maml\netstandard2.0\*.dll machinelearning\dist\Debug

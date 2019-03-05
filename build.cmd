@@ -20,7 +20,6 @@ if not exist machinelearning\bin\x64.Debug goto end:
 if not exist machinelearning\dist\Release mkdir machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Release
-copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.HalLearners\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Legacy\netstandard2.0\*.dll machinelearning\dist\Release
@@ -44,7 +43,6 @@ copy machinelearning\bin\x64.Release\Native\*.dll machinelearning\dist\Release
 if not exist machinelearning\dist\Debug mkdir machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Debug
-copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.HalLearners\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Legacy\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.LightGBM\netstandard2.0\*.dll machinelearning\dist\Debug
