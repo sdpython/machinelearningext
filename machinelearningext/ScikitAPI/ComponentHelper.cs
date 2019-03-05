@@ -63,7 +63,6 @@ namespace Scikit.ML.ScikitAPI
             res.Add(typeof(FastTreeRankingTrainer).Assembly);
             res.Add(typeof(KMeansPlusPlusTrainer).Assembly);
             res.Add(typeof(LightGbmBinaryTrainer).Assembly);
-            res.Add(typeof(OlsLinearRegressionTrainer).Assembly);
             res.Add(typeof(PcaModelParameters).Assembly);
             res.Add(typeof(PredictionFunctionExtensions).Assembly);
             res.Add(typeof(TextFeaturizingEstimator).Assembly);
