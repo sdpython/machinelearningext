@@ -69,6 +69,7 @@ namespace Scikit.ML.ScikitAPI
             res.Add(typeof(TensorFlowTransformer).Assembly);
             res.Add(typeof(TrainCommand).Assembly);
             res.Add(typeof(ICanSaveOnnx).Assembly);
+            res.Add(typeof(OrdinaryLeastSquaresRegressionTrainer).Assembly);
             res.Add(typeof(SweeperBase).Assembly);
             res.Add(typeof(VectorTypeAttribute).Assembly);
             res.Add(typeof(JsonParser).Assembly);

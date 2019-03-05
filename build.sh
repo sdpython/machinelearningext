@@ -16,6 +16,7 @@ cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.FastTree/netstandard2.0/*.dll
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.ImageAnalytics/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Release
+cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Mkl.Components/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.LightGBM/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Release
@@ -37,6 +38,7 @@ cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.FastTree/netstandard2.0/*.dll m
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.ImageAnalytics/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Debug
+cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Mkl.Components/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.LightGBM/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Debug
