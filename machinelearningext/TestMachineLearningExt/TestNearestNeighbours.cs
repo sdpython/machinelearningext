@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.Data.DataView;
 using Scikit.ML.TestHelper;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.NearestNeighbors;
@@ -13,6 +14,11 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestNearestNeighbors
     {
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         static void TrainkNNBinaryClassification(int k, NearestNeighborsWeights weight, int threads, float ratio = 0.2f,
                                                  string distance = "L2", int conc = 0)
         {
@@ -131,8 +137,8 @@ namespace TestMachineLearningExt
 
                 using (var cursor = concat.GetRowCursor(concat.Schema))
                 {
-                    var getdist = cursor.GetGetter<VBuffer<float>>(7);
-                    var getid = cursor.GetGetter<VBuffer<long>>(8);
+                    var getdist = cursor.GetGetter<VBuffer<float>>(_dc(7));
+                    var getid = cursor.GetGetter<VBuffer<long>>(_dc(8));
                     var ddist = new VBuffer<float>();
                     var did = new VBuffer<long>();
                     while (cursor.MoveNext())

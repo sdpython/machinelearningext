@@ -8,7 +8,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.CommandLine;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.NearestNeighbors;
 
@@ -265,11 +265,11 @@ namespace Scikit.ML.Clustering
                         var sw = Stopwatch.StartNew();
                         sw.Start();
                         var points = new List<IPointIdFloat>();
-                        int index = SchemaHelper.GetColumnIndex(_input.Schema, _args.features);
+                        var index = SchemaHelper.GetColumnIndexDC(_input.Schema, _args.features);
 
                         // Caching data.
                         ch.Info("Caching the data.");
-                        using (var cursor = _input.GetRowCursor(_input.Schema.Where(c => c.Index == index)))
+                        using (var cursor = _input.GetRowCursor(_input.Schema.Where(c => c.Index == index.Index)))
                         {
                             var getter = cursor.GetGetter<VBuffer<float>>(index);
                             var getterId = cursor.GetIdGetter();
@@ -446,9 +446,9 @@ namespace Scikit.ML.Clustering
                 _inputCursor = cursor;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                if (col < _inputCursor.Schema.Count)
+                if (col.Index < _inputCursor.Schema.Count)
                     return _inputCursor.IsColumnActive(col);
                 return true;
             }
@@ -478,15 +478,15 @@ namespace Scikit.ML.Clustering
                 return _inputCursor.MoveNext();
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col < _view.Source.Schema.Count)
+                if (col.Index < _view.Source.Schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
-                else if (col == _view.Source.Schema.Count) // Ordering
+                else if (col.Index == _view.Source.Schema.Count) // Ordering
                     return GetGetterOrdering() as ValueGetter<TValue>;
-                else if (col == _view.Source.Schema.Count + 1) // Reachability Distance
+                else if (col.Index == _view.Source.Schema.Count + 1) // Reachability Distance
                     return GetGetterReachabilityDistance() as ValueGetter<TValue>;
-                else if (col == _view.Source.Schema.Count + 2) // Core Distance
+                else if (col.Index == _view.Source.Schema.Count + 2) // Core Distance
                     return GetGetterCoreDistance() as ValueGetter<TValue>;
                 else
                     throw new IndexOutOfRangeException();

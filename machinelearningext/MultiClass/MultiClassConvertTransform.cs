@@ -9,7 +9,7 @@ using Microsoft.ML.Internal.Utilities;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
@@ -388,23 +388,23 @@ namespace Scikit.ML.MultiClass
             return _exes[iinfo].TypeDst;
         }
 
-        public static Delegate GetGetterAs(DataViewType typeDst, DataViewRow row, int col)
+        public static Delegate GetGetterAs(DataViewType typeDst, DataViewRow row, DataViewSchema.Column col)
         {
             Contracts.CheckValue(typeDst, "typeDst");
             Contracts.CheckParam(typeDst.IsPrimitive(), "typeDst");
             Contracts.CheckValue(row, "row");
-            Contracts.CheckParam(0 <= col && col < row.Schema.Count, "col");
+            Contracts.CheckParam(0 <= col.Index && col.Index < row.Schema.Count, "col");
             Contracts.CheckParam(row.IsColumnActive(col), "col", "column was not active");
 
-            var typeSrc = row.Schema[col].Type;
+            var typeSrc = row.Schema[col.Index].Type;
             Contracts.Check(typeSrc.IsPrimitive(), "Source column type must be primitive");
 
-            Func<DataViewType, DataViewType, DataViewRow, int, ValueGetter<int>> del = GetGetterAsCore<int, int>;
+            Func<DataViewType, DataViewType, DataViewRow, DataViewSchema.Column, ValueGetter<int>> del = GetGetterAsCore<int, int>;
             var methodInfo = del.GetMethodInfo().GetGenericMethodDefinition().MakeGenericMethod(typeSrc.RawType, typeDst.RawType);
             return (Delegate)methodInfo.Invoke(null, new object[] { typeSrc, typeDst, row, col });
         }
 
-        private static ValueGetter<TDst> GetGetterAsCore<TSrc, TDst>(DataViewType typeSrc, DataViewType typeDst, DataViewRow row, int col)
+        private static ValueGetter<TDst> GetGetterAsCore<TSrc, TDst>(DataViewType typeSrc, DataViewType typeDst, DataViewRow row, DataViewSchema.Column col)
         {
             Contracts.Assert(typeof(TSrc) == typeSrc.RawType);
             Contracts.Assert(typeof(TDst) == typeDst.RawType);
@@ -477,6 +477,11 @@ namespace Scikit.ML.MultiClass
             }
         }
 
+        private DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         protected override Delegate GetGetterCore(IChannel ch, DataViewRow input, int iinfo, out Action disposer)
         {
             Host.AssertValueOrNull(ch);
@@ -488,7 +493,7 @@ namespace Scikit.ML.MultiClass
             var typeDst = _exes[iinfo].TypeDst;
 
             if (!typeDst.IsVector())
-                return GetGetterAs(typeDst, input, Infos[iinfo].Source);
+                return GetGetterAs(typeDst, input, _dc(Infos[iinfo].Source));
             return RowCursorUtils.GetVecGetterAs(typeDst.AsVector().ItemType(), input, Infos[iinfo].Source);
         }
 

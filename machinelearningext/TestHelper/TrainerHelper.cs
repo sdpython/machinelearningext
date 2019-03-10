@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model;
+using Microsoft.Data.DataView;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 
@@ -14,6 +16,11 @@ namespace Scikit.ML.TestHelper
 {
     public static class TestTrainerHelper
     {
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         /// <summary>
         /// Finalizes the test on a predictor, calls the predictor with a scorer,
         /// saves the data, saves the models, loads it back, saves the data again,
@@ -138,8 +145,8 @@ namespace Scikit.ML.TestHelper
 
                     if (ty1.RawKind() == DataKind.Single)
                     {
-                        var lgetter = cursor.GetGetter<float>(ilabel);
-                        var pgetter = cursor.GetGetter<uint>(ipred);
+                        var lgetter = cursor.GetGetter<float>(_dc(ilabel));
+                        var pgetter = cursor.GetGetter<uint>(_dc(ipred));
                         float ans = 0;
                         uint pre = 0;
                         while (cursor.MoveNext())
@@ -167,8 +174,8 @@ namespace Scikit.ML.TestHelper
                     }
                     else if (ty1.RawKind() == DataKind.UInt32 && ty1.IsKey())
                     {
-                        var lgetter = cursor.GetGetter<uint>(ilabel);
-                        var pgetter = cursor.GetGetter<uint>(ipred);
+                        var lgetter = cursor.GetGetter<uint>(_dc(ilabel));
+                        var pgetter = cursor.GetGetter<uint>(_dc(ipred));
                         uint ans = 0;
                         uint pre = 0;
                         while (cursor.MoveNext())
@@ -204,8 +211,8 @@ namespace Scikit.ML.TestHelper
 
                     if (ty1.RawKind() == DataKind.Single)
                     {
-                        var lgetter = cursor.GetGetter<float>(ilabel);
-                        var pgetter = cursor.GetGetter<bool>(ipred);
+                        var lgetter = cursor.GetGetter<float>(_dc(ilabel));
+                        var pgetter = cursor.GetGetter<bool>(_dc(ipred));
                         float ans = 0;
                         bool pre = default(bool);
                         while (cursor.MoveNext())
@@ -233,8 +240,8 @@ namespace Scikit.ML.TestHelper
                     }
                     else if (ty1.RawKind() == DataKind.UInt32)
                     {
-                        var lgetter = cursor.GetGetter<uint>(ilabel);
-                        var pgetter = cursor.GetGetter<bool>(ipred);
+                        var lgetter = cursor.GetGetter<uint>(_dc(ilabel));
+                        var pgetter = cursor.GetGetter<bool>(_dc(ipred));
                         uint ans = 0;
                         bool pre = default(bool);
                         while (cursor.MoveNext())
@@ -264,8 +271,8 @@ namespace Scikit.ML.TestHelper
                     }
                     else if (ty1.RawKind() == DataKind.Boolean)
                     {
-                        var lgetter = cursor.GetGetter<bool>(ilabel);
-                        var pgetter = cursor.GetGetter<bool>(ipred);
+                        var lgetter = cursor.GetGetter<bool>(_dc(ilabel));
+                        var pgetter = cursor.GetGetter<bool>(_dc(ipred));
                         bool ans = default(bool);
                         bool pre = default(bool);
                         while (cursor.MoveNext())
@@ -303,8 +310,8 @@ namespace Scikit.ML.TestHelper
                     if (ty2.RawKind() != DataKind.Single)
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));
 
-                    var lgetter = cursor.GetGetter<float>(ilabel);
-                    var pgetter = cursor.GetGetter<float>(ipred);
+                    var lgetter = cursor.GetGetter<float>(_dc(ilabel));
+                    var pgetter = cursor.GetGetter<float>(_dc(ipred));
                     float ans = 0;
                     float pre = 0f;
                     float error = 0f;

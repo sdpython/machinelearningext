@@ -6,6 +6,7 @@ using System.IO;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.ScikitAPI;
@@ -58,7 +59,7 @@ namespace TestMachineLearningExt
             var outModelFilePath = FileHelper.GetOutputFile("outModelFilePath.zip", methodName);
             var iris = FileHelper.GetTestFile("iris.txt");
             /*using (*/
-            var env = new ConsoleEnvironment(conc: 1);
+            var env = new ConsoleEnvironment();
             {
                 ComponentHelper.AddStandardComponents(env);
 

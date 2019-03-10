@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 
@@ -724,6 +724,15 @@ namespace Scikit.ML.DataManipulation
             where DType : IEquatable<DType>, IComparable<DType>
         {
             _data.GetTypedColumn(col, out column, rows);
+        }
+
+        /// <summary>
+        /// Retrieves a typed column.
+        /// </summary>
+        public void GetTypedColumn<DType>(DataViewSchema.Column col, out DataColumn<DType> column, int[] rows = null)
+            where DType : IEquatable<DType>, IComparable<DType>
+        {
+            _data.GetTypedColumn(col.Index, out column, rows);
         }
 
         /// <summary>

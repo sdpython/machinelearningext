@@ -46,7 +46,7 @@ namespace TestProfileBenchmark
                 TextCase = TextNormalizingEstimator.CaseNormalizationMode.Lower,
                 OutputTokens = true,
                 UsePredefinedStopWordRemover = true,
-                VectorNormalizer = normalize ? TextFeaturizingEstimator.TextNormKind.L2 : TextFeaturizingEstimator.TextNormKind.None,
+                VectorNormalizer = normalize ? TextFeaturizingEstimator.NormFunction.L2 : TextFeaturizingEstimator.NormFunction.None,
                 CharFeatureExtractor = new NgramExtractorTransform.NgramExtractorArguments() { NgramLength = 3, AllLengths = false },
                 WordFeatureExtractor = new NgramExtractorTransform.NgramExtractorArguments() { NgramLength = 2, AllLengths = true },
             };
@@ -64,7 +64,6 @@ namespace TestProfileBenchmark
                 // Train
                 var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Options
                 {
-                    NumThreads = 1,
                     LabelColumnName = "Label",
                     FeatureColumnName = "Features"
                 });
@@ -90,7 +89,7 @@ namespace TestProfileBenchmark
                     new TextLoader.Column("SentimentText", DataKind.String, 1)
                 }
             };
-            var ml = new MLContext(seed: 1, conc: 1);
+            var ml = new MLContext(seed: 1);
             //var reader = ml.Data.ReadFromTextFile(args);
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
 
@@ -153,7 +152,7 @@ namespace TestProfileBenchmark
                 else if (engine == "scikit")
                 {
                     Console.WriteLine("engine={0} N={1} ncall={2} cacheScikit={3}", engine, N, ncall, cacheScikit);
-                    var model = new ValueMapperPredictionEngine<SentimentDataBoolFloat>(env, scorer, conc: conc);
+                    var model = new ValueMapperPredictionEngine<SentimentDataBoolFloat>(env, scorer);
                     var output = new ValueMapperPredictionEngine<SentimentDataBoolFloat>.PredictionTypeForBinaryClassification();
                     var sw = new Stopwatch();
                     for (int call = 1; call <= ncall; ++call)

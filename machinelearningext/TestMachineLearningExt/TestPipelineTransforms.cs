@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.ML.Data;
+using Microsoft.Data.DataView;
 using Microsoft.ML.Model;
 using Microsoft.ML.Transforms;
 using Scikit.ML.PipelineHelper;
@@ -18,6 +19,11 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestPipelineTransforms
     {
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         #region DescribeTransform
 
         [TestMethod]
@@ -33,7 +39,7 @@ namespace TestMachineLearningExt
                 var values = new List<int>();
                 using (var cursor = tr.GetRowCursor(tr.Schema))
                 {
-                    var columnGetter = cursor.GetGetter<int>(1);
+                    var columnGetter = cursor.GetGetter<int>(_dc(1));
                     while (cursor.MoveNext())
                     {
                         int got = 0;
@@ -156,7 +162,7 @@ namespace TestMachineLearningExt
                 using (var cursor = data.GetRowCursor(data.Schema))
                 {
                     var sortedValues = new List<int>();
-                    var sortColumnGetter = cursor.GetGetter<int>(1);
+                    var sortColumnGetter = cursor.GetGetter<int>(_dc(1));
                     while (cursor.MoveNext())
                     {
                         int got = 0;
@@ -184,7 +190,7 @@ namespace TestMachineLearningExt
                 using (var cursor = sorted.GetRowCursor(sorted.OutputSchema))
                 {
                     var sortedValues = new List<int>();
-                    var sortColumnGetter = cursor.GetGetter<int>(1);
+                    var sortColumnGetter = cursor.GetGetter<int>(_dc(1));
                     while (cursor.MoveNext())
                     {
                         int got = 0;
@@ -216,7 +222,7 @@ namespace TestMachineLearningExt
                 using (var cursor = data.GetRowCursor(data.Schema))
                 {
                     var sortedValues = new List<int>();
-                    var sortColumnGetter = cursor.GetGetter<int>(1);
+                    var sortColumnGetter = cursor.GetGetter<int>(_dc(1));
                     while (cursor.MoveNext())
                     {
                         int got = 0;
@@ -244,7 +250,7 @@ namespace TestMachineLearningExt
                 using (var cursor = lastTransform.GetRowCursor(data.Schema))
                 {
                     var sortedValues = new List<int>();
-                    var sortColumnGetter = cursor.GetGetter<int>(1);
+                    var sortColumnGetter = cursor.GetGetter<int>(_dc(1));
                     while (cursor.MoveNext())
                     {
                         int got = 0;

@@ -3,6 +3,7 @@
 using Microsoft.ML;
 using Microsoft.ML.Calibrators;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper

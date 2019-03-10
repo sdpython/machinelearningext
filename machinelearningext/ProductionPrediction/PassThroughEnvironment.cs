@@ -1,8 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
 using System;
-using Microsoft.ML;
-using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.ProductionPrediction
@@ -39,8 +38,8 @@ namespace Scikit.ML.ProductionPrediction
 
         private sealed class Host : HostBase
         {
-            public Host(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose, int? conc)
-                : base(source, shortName, parentFullName, rand, verbose, conc)
+            public Host(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
+                : base(source, shortName, parentFullName, rand, verbose)
             {
                 IsCancelled = source.IsCancelled;
             }
@@ -61,9 +60,9 @@ namespace Scikit.ML.ProductionPrediction
                 return new Pipe<TMessage>(parent, name, GetDispatchDelegate<TMessage>());
             }
 
-            protected override IHost RegisterCore(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose, int? conc)
+            protected override IHost RegisterCore(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
             {
-                return new Host(source, shortName, parentFullName, rand, verbose, conc);
+                return new Host(source, shortName, parentFullName, rand, verbose);
             }
         }
 
@@ -71,9 +70,9 @@ namespace Scikit.ML.ProductionPrediction
 
         public PassThroughEnvironment(IHostEnvironment source,
                                     Random rand = null, bool verbose = false,
-                                    int? conc = null, string shortName = null,
+                                    string shortName = null,
                                     string parentFullName = null)
-            : base(rand, verbose, conc.HasValue ? conc.Value : source.ConcurrencyFactor, shortName, parentFullName)
+            : base(rand, verbose, shortName, parentFullName)
         {
             _parent = source;
         }
@@ -92,13 +91,13 @@ namespace Scikit.ML.ProductionPrediction
             return new Pipe<TMessage>(parent, name, GetDispatchDelegate<TMessage>());
         }
 
-        protected override IHost RegisterCore(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose, int? conc)
+        protected override IHost RegisterCore(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
         {
             Contracts.AssertValue(rand);
             Contracts.AssertValueOrNull(parentFullName);
             Contracts.AssertNonEmpty(shortName);
             Contracts.Assert(source == this || source is Host);
-            return new Host(source, shortName, parentFullName, rand, verbose, conc == null ? ConcurrencyFactor : conc);
+            return new Host(source, shortName, parentFullName, rand, verbose);
         }
     }
 }

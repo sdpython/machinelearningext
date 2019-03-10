@@ -7,9 +7,9 @@ using System.Text;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data.Conversion;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper
@@ -726,6 +726,17 @@ namespace Scikit.ML.PipelineHelper
                     return index;
             if (allowNull)
                 return -1;
+            throw Contracts.Except($"Unable to find column '{name}' in schema\n{ToString(schema)}.");
+        }
+
+        public static DataViewSchema.Column GetColumnIndexDC(DataViewSchema schema, string name, bool allowNull = false, bool allowHidden = false)
+        {
+            int index;
+            for (index = 0; index < schema.Count; ++index)
+                if (schema[index].Name == name && (allowHidden || !schema[index].IsHidden))
+                    return schema[index];
+            if (allowNull)
+                return new DataViewSchema.Column(null, -1, false, null, null);
             throw Contracts.Except($"Unable to find column '{name}' in schema\n{ToString(schema)}.");
         }
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using System.Threading.Tasks;
 using Microsoft.ML;
 

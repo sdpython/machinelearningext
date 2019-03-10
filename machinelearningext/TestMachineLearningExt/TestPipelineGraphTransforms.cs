@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.TestHelper;
 using Scikit.ML.ScikitAPI;
@@ -19,6 +20,11 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestPipelineGraphTransforms
     {
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         #region Chain, SelectTag, Tagged
 
         [TestMethod]
@@ -110,9 +116,9 @@ namespace TestMachineLearningExt
                     var outValues0 = new List<float[]>();
                     var outValues1 = new List<float[]>();
                     var outValues2 = new List<float[]>();
-                    var colGetter0 = cursor.GetGetter<VBuffer<float>>(0);
-                    var colGetter1 = cursor.GetGetter<VBuffer<float>>(1);
-                    var colGetter2 = cursor.GetGetter<VBuffer<float>>(2);
+                    var colGetter0 = cursor.GetGetter<VBuffer<float>>(_dc(0));
+                    var colGetter1 = cursor.GetGetter<VBuffer<float>>(_dc(1));
+                    var colGetter2 = cursor.GetGetter<VBuffer<float>>(_dc(2));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();

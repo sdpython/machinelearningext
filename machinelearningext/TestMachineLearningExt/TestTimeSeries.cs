@@ -56,6 +56,11 @@ namespace TestMachineLearningExt
             }
         }
 
+        private DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         [TestMethod]
         public void TestTimeSeriesFloatPerfectTrended()
         {
@@ -84,7 +89,7 @@ namespace TestMachineLearningExt
                     var type = cursor.Schema[pos].Type;
                     if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
-                    var colGetter = cursor.GetGetter<float>(pos);
+                    var colGetter = cursor.GetGetter<float>(_dc(pos));
                     float got = -1f;
                     while (cursor.MoveNext())
                     {
@@ -129,7 +134,7 @@ namespace TestMachineLearningExt
                     var type = cursor.Schema[pos].Type;
                     if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
-                    var colGetter = cursor.GetGetter<float>(pos);
+                    var colGetter = cursor.GetGetter<float>(_dc(pos));
                     float got = -1f;
                     while (cursor.MoveNext())
                     {
@@ -173,7 +178,7 @@ namespace TestMachineLearningExt
                     var type = cursor.Schema[pos].Type;
                     if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
-                    var colGetter = cursor.GetGetter<float>(pos);
+                    var colGetter = cursor.GetGetter<float>(_dc(pos));
                     float got = -1f;
                     while (cursor.MoveNext())
                     {
@@ -223,7 +228,7 @@ namespace TestMachineLearningExt
                     var type = cursor.Schema[pos].Type;
                     if (type != NumberDataViewType.Single)
                         throw new Exception("Unexpected type");
-                    var colGetter = cursor.GetGetter<float>(pos);
+                    var colGetter = cursor.GetGetter<float>(_dc(pos));
                     float got = -1f;
                     while (cursor.MoveNext())
                     {

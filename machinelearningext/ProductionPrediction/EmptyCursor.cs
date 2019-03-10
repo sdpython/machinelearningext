@@ -34,15 +34,15 @@ namespace Scikit.ML.ProductionPrediction
             return false;
         }
 
-        public override bool IsColumnActive(int col)
+        public override bool IsColumnActive(DataViewSchema.Column col)
         {
-            return _needCol(col);
+            return _needCol(col.Index);
         }
 
         /// <summary>
         /// The getter return the default value. A null getter usually fails the pipeline.
         /// </summary>
-        public override ValueGetter<TValue> GetGetter<TValue>(int col)
+        public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
         {
             return (ref TValue value) =>
             {

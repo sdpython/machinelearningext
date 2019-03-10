@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.ML.Data;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.CommandLine;
 using Scikit.ML.PipelineHelper;
 

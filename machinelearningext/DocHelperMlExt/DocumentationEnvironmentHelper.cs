@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.ML;
 using Microsoft.ML.Command;
 using Microsoft.ML.CommandLine;
-using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Tools;
 using Scikit.ML.PipelineHelper;
 

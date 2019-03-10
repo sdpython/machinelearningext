@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 
@@ -233,10 +233,10 @@ namespace Scikit.ML.ProductionPrediction
                 _inputCol = inputCol;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
                 // The column is active if is active in the input view or if it the new vector with the polynomial features.
-                return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
+                return col.Index >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
             public override ValueGetter<DataViewRowId> GetIdGetter()
@@ -265,23 +265,28 @@ namespace Scikit.ML.ProductionPrediction
                 return _inputCursor.MoveNext();
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
                 // If the column is part of the input view.
-                if (col < _inputCursor.Schema.Count)
+                if (col.Index < _inputCursor.Schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
                 // If it is the added column.
-                else if (col == _inputCursor.Schema.Count)
+                else if (col.Index == _inputCursor.Schema.Count)
                     return GetGetterMapper() as ValueGetter<TValue>;
                 // Otherwise, it is an error.
                 else
                     throw Contracts.Except("Unexpected columns {0} > {1}.", col, _inputCursor.Schema.Count);
             }
 
+            private DataViewSchema.Column _dc(int i)
+            {
+                return new DataViewSchema.Column(null, i, false, null, null);
+            }
+
             ValueGetter<TDst> GetGetterMapper()
             {
                 var mapper = _view.Parent.GetMapper<TSrc, TDst>();
-                var getter = _inputCursor.GetGetter<TSrc>(_inputCol);
+                var getter = _inputCursor.GetGetter<TSrc>(_dc(_inputCol));
                 TSrc input = default(TSrc);
                 return (ref TDst output) =>
                 {

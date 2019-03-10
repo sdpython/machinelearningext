@@ -10,6 +10,7 @@ using Microsoft.ML.Model.OnnxConverter;
 //using Microsoft.ML.Sweeper;
 using Microsoft.ML.Transforms.TimeSeries;
 using Microsoft.ML.Tools;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Trainers.FastTree;
 //using Microsoft.ML.Trainers.PCA;
 using Microsoft.ML.Transforms;

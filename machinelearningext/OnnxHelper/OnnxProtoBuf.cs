@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using Google.Protobuf;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.PipelineHelper;

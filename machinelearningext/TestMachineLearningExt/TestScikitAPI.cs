@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.TestHelper;
 using Scikit.ML.ScikitAPI;
@@ -238,7 +238,7 @@ namespace TestMachineLearningExt
             });
 
             /*using (*/
-            var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 3);
+            var host = new DelegateEnvironment(outWriter: logout, errWriter: logerr, verbose: 3);
             using (var ch = host.Start("Train Pipeline"))
             {
                 ComponentHelper.AddStandardComponents(host);
@@ -276,7 +276,7 @@ namespace TestMachineLearningExt
             ILogWriter logerr = new LogWriter(s => stderr.Add(s));
 
             /*using (*/
-            var host = new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 0);
+            var host = new DelegateEnvironment(outWriter: logout, errWriter: logerr, verbose: 0);
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);

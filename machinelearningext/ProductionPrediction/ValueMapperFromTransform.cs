@@ -3,7 +3,7 @@
 using System;
 using System.Linq;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 
@@ -38,15 +38,15 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="sourceToReplace">source to replace</param>
         /// <param name="conc">number of concurrency threads</param>
         public ValueMapperFromTransform(IHostEnvironment env, IDataTransform transform,
-                                        IDataView sourceToReplace = null, int conc = 1)
+                                        IDataView sourceToReplace = null)
         {
             Contracts.AssertValue(env);
             Contracts.AssertValue(transform);
             _env = env;
             _transform = transform;
             _sourceToReplace = sourceToReplace;
-            _disposeEnv = conc > 0;
-            _computeEnv = _disposeEnv ? new PassThroughEnvironment(env, conc: conc, verbose: false) : env;
+            _disposeEnv = false;// conc > 0;
+            _computeEnv = _disposeEnv ? new PassThroughEnvironment(env, verbose: false) : env;
             _valueMapperDispose = GetMapperDispose();
         }
 

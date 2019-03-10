@@ -8,7 +8,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data.Conversion;
 using Scikit.ML.PipelineHelper;
 
@@ -480,9 +480,14 @@ namespace Scikit.ML.MultiClass
                 }
             }
 
+            private DataViewSchema.Column _dc(int i)
+            {
+                return new DataViewSchema.Column(null, i, false, null, null);
+            }
+
             void ComputeLabelDistribution(IChannel ch, Random rand)
             {
-                int nt = DataViewUtils.GetThreadCount(_host, _args.numThreads ?? 0);
+                int nt = DataViewUtils.GetThreadCount(_args.numThreads ?? 0);
                 var cols = _input.Schema.Where(col => col.Index == _colLabel || col.Index == _colWeight).ToArray();
                 var cursors = nt <= 1 ? null : _input.GetRowCursorSet(cols, nt, rand);
                 if (cursors != null && cursors.Length == 1)
@@ -503,8 +508,8 @@ namespace Scikit.ML.MultiClass
                         ops[i] = new Action(() =>
                         {
                             var cursor = cursors[chunkId];
-                            var labelGetter = cursor.GetGetter<TLabel>(_colLabel);
-                            var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_colWeight);
+                            var labelGetter = cursor.GetGetter<TLabel>(_dc(_colLabel));
+                            var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_dc(_colWeight));
                             TLabel value = default(TLabel);
                             float weight = 0;
                             var hist = hists[chunkId];
@@ -544,8 +549,8 @@ namespace Scikit.ML.MultiClass
                 {
                     using (var cursor = _input.GetRowCursor(cols))
                     {
-                        var labelGetter = cursor.GetGetter<TLabel>(_colLabel);
-                        var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_colWeight);
+                        var labelGetter = cursor.GetGetter<TLabel>(_dc(_colLabel));
+                        var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_dc(_colWeight));
                         TLabel value = default(TLabel);
                         float weight = 0;
                         _labelDistribution = new Dictionary<TLabel, float>();
@@ -758,12 +763,17 @@ namespace Scikit.ML.MultiClass
                 };
             }
 
-            public override bool IsColumnActive(int col)
+            private DataViewSchema.Column _dc(int i)
             {
-                if (col < _inputCursor.Schema.Count)
+                return new DataViewSchema.Column(null, i, false, null, null);
+            }
+
+            public override bool IsColumnActive(DataViewSchema.Column col)
+            {
+                if (col.Index < _inputCursor.Schema.Count)
                 {
-                    Contracts.Assert(_inputCursor.IsColumnActive(_colLabel) &&
-                                     (_colWeight == -1 || _inputCursor.IsColumnActive(_colWeight)));
+                    Contracts.Assert(_inputCursor.IsColumnActive(_dc(_colLabel)) &&
+                                     (_colWeight == -1 || _inputCursor.IsColumnActive(_dc(_colWeight))));
                     return _inputCursor.IsColumnActive(col);
                 }
                 return true;
@@ -784,8 +794,8 @@ namespace Scikit.ML.MultiClass
             {
                 if (_labelGetter == null)
                 {
-                    _labelGetter = _inputCursor.GetGetter<TLabel>(_colLabel);
-                    _weightGetter = _colWeight >= 0 ? _inputCursor.GetGetter<float>(_colWeight) : null;
+                    _labelGetter = _inputCursor.GetGetter<TLabel>(_dc(_colLabel));
+                    _weightGetter = _colWeight >= 0 ? _inputCursor.GetGetter<float>(_dc(_colWeight)) : null;
                     _copies = new Tuple<TLabel, TLabelInter>[0];
                     _copy = -1;
                 }
@@ -948,9 +958,9 @@ namespace Scikit.ML.MultiClass
             static private Func<ushort, int> UShortLabelConverter() { return x => (int)x; }
             static private Func<uint, int> UIntLabelConverter() { return x => (int)x; }
 
-            public ValueGetter<TValue> GetGetterLabelAsVector<TValue>(int col, bool useFeatures)
+            public ValueGetter<TValue> GetGetterLabelAsVector<TValue>(DataViewSchema.Column col, bool useFeatures)
             {
-                if (col == _colLabel)
+                if (col.Index == _colLabel)
                 {
                     var lablc = LabelConverter<TLabel>();
                     int nb = lablc(_view.LabelDistribution.Select(c => c.Key).Max()) + 1;
@@ -986,9 +996,9 @@ namespace Scikit.ML.MultiClass
                     throw Contracts.ExceptNotSupp("Outside of the scope of this function. Use GetGetter.");
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col == _colLabel)
+                if (col.Index == _colLabel)
                 {
                     if (((new TValue[0]) as VBuffer<float>[]) != null)
                         return GetGetterLabelAsVector<TValue>(col, true);
@@ -1041,21 +1051,21 @@ namespace Scikit.ML.MultiClass
                         return getter as ValueGetter<TValue>;
                     }
                 }
-                else if (col < _view.Source.Schema.Count)
+                else if (col.Index < _view.Source.Schema.Count)
                 {
                     try
                     {
                         var getter = _inputCursor.GetGetter<TValue>(col);
                         if (getter == null)
-                            throw Contracts.Except($"Unable to create a getter of type '{typeof(TValue)}' for column {col}:{_view.Source.Schema[col].Name} of type {_view.Source.Schema[col].Type}.");
+                            throw Contracts.Except($"Unable to create a getter of type '{typeof(TValue)}' for column {col}:{_view.Source.Schema[col.Index].Name} of type {_view.Source.Schema[col.Index].Type}.");
                         return getter;
                     }
                     catch (Exception e)
                     {
-                        throw Contracts.Except($"Unable to create a getter of type '{typeof(TValue)}' for column {col}:{_view.Source.Schema[col].Name} of type {_view.Source.Schema[col].Type} due to {e}");
+                        throw Contracts.Except($"Unable to create a getter of type '{typeof(TValue)}' for column {col}:{_view.Source.Schema[col.Index].Name} of type {_view.Source.Schema[col.Index].Type} due to {e}");
                     }
                 }
-                else if (col == _view.Source.Schema.Count)
+                else if (col.Index == _view.Source.Schema.Count)
                 {
                     ValueGetter<TLabelInter> getter = (ref TLabelInter value) =>
                     {

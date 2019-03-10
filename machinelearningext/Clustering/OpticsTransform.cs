@@ -8,7 +8,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.CommandLine;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.NearestNeighbors;
 
@@ -304,11 +304,11 @@ namespace Scikit.ML.Clustering
                         var sw = Stopwatch.StartNew();
                         sw.Start();
                         var points = new List<IPointIdFloat>();
-                        int index = SchemaHelper.GetColumnIndex(_input.Schema, _args.features);
+                        var index = SchemaHelper.GetColumnIndexDC(_input.Schema, _args.features);
 
                         // Caching data.
                         ch.Info(MessageSensitivity.None, "Caching the data.");
-                        using (var cursor = _input.GetRowCursor(_input.Schema.Where(c => c.Index == index)))
+                        using (var cursor = _input.GetRowCursor(_input.Schema.Where(c => c.Index == index.Index)))
                         {
                             var getter = cursor.GetGetter<VBuffer<float>>(index);
                             var getterId = cursor.GetIdGetter();
@@ -495,9 +495,9 @@ namespace Scikit.ML.Clustering
                 _newColNumber = newColNumber;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                if (col < _inputCursor.Schema.Count)
+                if (col.Index < _inputCursor.Schema.Count)
                     return _inputCursor.IsColumnActive(col);
                 return true;
             }
@@ -527,32 +527,23 @@ namespace Scikit.ML.Clustering
                 return _inputCursor.MoveNext();
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col < _view.Source.Schema.Count)
-                {
+                if (col.Index < _view.Source.Schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
-                }
                 else                                                // New columns
                 {
-                    int runIndex = (col - _view.Source.Schema.Count) / 2;
+                    int runIndex = (col.Index - _view.Source.Schema.Count) / 2;
                     if (runIndex < _newColNumber)
                     {
-                        int colIndex = (col - _view.Source.Schema.Count) % 2;
-
-                        if (colIndex == 0)                          // Cluster Column
-                        {
+                        int colIndex = (col.Index - _view.Source.Schema.Count) % 2;
+                        if (colIndex == 0) // Cluster Column
                             return GetGetterCluster(runIndex) as ValueGetter<TValue>;
-                        }
-                        else
-                        {                                           // Score
+                        else // Score
                             return GetGetterScore(runIndex) as ValueGetter<TValue>;
-                        }
                     }
                     else
-                    {
                         throw new IndexOutOfRangeException();
-                    }
                 }
             }
 

@@ -2,8 +2,7 @@
 
 using System.IO;
 using System.Text;
-using Microsoft.ML;
-using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Scikit.ML.ScikitAPI;
 
 
@@ -26,7 +25,8 @@ namespace Scikit.ML.TestHelper
             if (errWriter == null)
                 errWriter = new StreamWriter(new MemoryStream());
 
-            var env = new ConsoleEnvironment(seed, verbose, sensitivity, conc, outWriter, errWriter);
+            // conc ?
+            var env = new ConsoleEnvironment(seed, verbose, sensitivity, outWriter, errWriter);
             ComponentHelper.AddStandardComponents(env);
             return env;
         }

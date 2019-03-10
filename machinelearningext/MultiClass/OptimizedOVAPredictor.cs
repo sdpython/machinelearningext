@@ -7,8 +7,8 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Internal.Utilities;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Model;
-using Microsoft.ML.Internal.Internallearn;
 using Scikit.ML.PipelineHelper;
 
 using OptimizedOVAPredictor = Scikit.ML.MultiClass.OptimizedOVAPredictor;

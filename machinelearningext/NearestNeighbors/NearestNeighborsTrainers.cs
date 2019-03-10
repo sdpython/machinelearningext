@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
+using Microsoft.ML.Runtime;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
 using NearestNeighborsTrainer = Scikit.ML.NearestNeighbors.NearestNeighborsTrainer;

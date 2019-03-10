@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 
 using NearestNeighborsBinaryClassifierPredictor = Scikit.ML.NearestNeighbors.NearestNeighborsBinaryClassifierPredictor;
 using NearestNeighborsMultiClassClassifierPredictor = Scikit.ML.NearestNeighbors.NearestNeighborsMultiClassClassifierPredictor;

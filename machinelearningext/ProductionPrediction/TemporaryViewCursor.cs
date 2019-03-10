@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 
@@ -125,16 +125,16 @@ namespace Scikit.ML.ProductionPrediction
                 return false;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                return col == _view._column ||
-                        _columnsNeeded.Where(c => c.Index == col).Any() ||
+                return col.Index == _view._column ||
+                        _columnsNeeded.Where(c => c.Index == col.Index).Any() ||
                         (_otherValues != null && _otherValues.IsColumnActive(col));
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col == _view.ConstantCol)
+                if (col.Index == _view.ConstantCol)
                     return GetGetterPrivate(col) as ValueGetter<TValue>;
                 else if (_otherValues != null)
                     return _otherValues.GetGetter<TValue>(col);
@@ -147,11 +147,11 @@ namespace Scikit.ML.ProductionPrediction
                     throw Contracts.Except("otherValues is null, unable to access other columns.");
             }
 
-            private ValueGetter<TRepValue> GetGetterPrivate(int col)
+            private ValueGetter<TRepValue> GetGetterPrivate(DataViewSchema.Column col)
             {
-                if (col == _view.ConstantCol)
+                if (col.Index == _view.ConstantCol)
                 {
-                    var type = _view.Schema[col].Type;
+                    var type = _view.Schema[col.Index].Type;
                     if (type.IsVector())
                     {
                         switch (type.AsVector().ItemType().RawKind())
@@ -174,9 +174,9 @@ namespace Scikit.ML.ProductionPrediction
                     throw Contracts.ExceptNotSupp();
             }
 
-            private ValueGetter<VBuffer<TRepValueItem>> GetGetterPrivateVector<TRepValueItem>(int col)
+            private ValueGetter<VBuffer<TRepValueItem>> GetGetterPrivateVector<TRepValueItem>(DataViewSchema.Column col)
             {
-                if (col == _view.ConstantCol)
+                if (col.Index == _view.ConstantCol)
                 {
                     VBuffer<TRepValueItem> cast = (VBuffer<TRepValueItem>)(object)_view.Constant;
                     return (ref VBuffer<TRepValueItem> value) =>
@@ -321,10 +321,10 @@ namespace Scikit.ML.ProductionPrediction
                 return false;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                return _columns.ContainsKey(col) ||
-                        _columnsNeeded.Where(c => c.Index == col).Any() ||
+                return _columns.ContainsKey(col.Index) ||
+                        _columnsNeeded.Where(c => c.Index == col.Index).Any() ||
                         (_otherValues != null && _otherValues.IsColumnActive(col));
             }
 
@@ -336,9 +336,9 @@ namespace Scikit.ML.ProductionPrediction
             /// <typeparam name="TValue">column type</typeparam>
             /// <param name="col">column inde</param>
             /// <returns>ValueGetter</returns>
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (_columns.ContainsKey(col))
+                if (_columns.ContainsKey(col.Index))
                     return GetGetterPrivate<TValue>(col) as ValueGetter<TValue>;
                 else if (_otherValues != null)
                     return _otherValues.GetGetter<TValue>(col);
@@ -348,9 +348,9 @@ namespace Scikit.ML.ProductionPrediction
                         "converted into a IValueMapper because it relies on more than one columns.");
             }
 
-            public ValueGetter<TValue> GetGetterPrivate<TValue>(int col)
+            public ValueGetter<TValue> GetGetterPrivate<TValue>(DataViewSchema.Column col)
             {
-                int rowColumns = _columns[col];
+                int rowColumns = _columns[col.Index];
                 var name = _columnsSchema[rowColumns].ColumnName;
                 if (_overwriteRowGetter.ContainsKey(name))
                 {

@@ -8,6 +8,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.DataManipulation;
 using Scikit.ML.PipelineHelper;
@@ -422,10 +423,10 @@ namespace Scikit.ML.ScikitAPI
         /// <param name="df">input data</param>
         /// <param name="view">output, reused</param>
         /// <param name="conc">number of threads used to compute the predictions</param>
-        public void Predict(DataFrame df, ref DataFrame view, int conc = 1)
+        public void Predict(DataFrame df, ref DataFrame view)
         {
             if (_fastValueMapper == null)
-                CreateFastValueMapper(conc);
+                CreateFastValueMapper();
             _fastValueMapper(in df, ref view);
         }
 
@@ -437,13 +438,12 @@ namespace Scikit.ML.ScikitAPI
         /// </summary>
         /// <param name="df">input data</param>
         /// <param name="view">output, reused</param>
-        /// <param name="conc">number of threads used to compute the predictions</param>
-        public void Transform(DataFrame df, ref DataFrame view, int conc = 1)
+        public void Transform(DataFrame df, ref DataFrame view)
         {
-            Predict(df, ref view, conc);
+            Predict(df, ref view);
         }
 
-        protected void CreateFastValueMapper(int conc)
+        protected void CreateFastValueMapper()
         {
             IDataTransform tr = _transforms.Last().transform;
 
@@ -453,7 +453,7 @@ namespace Scikit.ML.ScikitAPI
                 tr = PredictorHelper.Predict(_env, _predictor.predictor, roles);
             }
 
-            _fastValueMapperObject = new ValueMapperDataFrameFromTransform(_env, tr, conc: conc);
+            _fastValueMapperObject = new ValueMapperDataFrameFromTransform(_env, tr);
             _fastValueMapper = _fastValueMapperObject.GetMapper<DataFrame, DataFrame>();
         }
 

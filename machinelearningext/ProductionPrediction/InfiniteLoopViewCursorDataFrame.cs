@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.DataManipulation;
@@ -169,10 +169,10 @@ namespace Scikit.ML.ProductionPrediction
                 _wait = false;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                return _columns.ContainsKey(col) ||
-                    _columnsNeeded.Where(c => c.Index == col).Any() ||
+                return _columns.ContainsKey(col.Index) ||
+                    _columnsNeeded.Where(c => c.Index == col.Index).Any() ||
                     (_otherValues != null && _otherValues.IsColumnActive(col));
             }
 
@@ -184,9 +184,9 @@ namespace Scikit.ML.ProductionPrediction
             /// <typeparam name="TValue">column type</typeparam>
             /// <param name="col">column index</param>
             /// <returns>ValueGetter</returns>
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (_columns.ContainsKey(col))
+                if (_columns.ContainsKey(col.Index))
                     return GetGetterPrivate<TValue>(col) as ValueGetter<TValue>;
                 else if (_otherValues != null)
                     return _otherValues.GetGetter<TValue>(col);
@@ -196,7 +196,7 @@ namespace Scikit.ML.ProductionPrediction
                         "converted into a IValueMapper because it relies on more than one columns.");
             }
 
-            ValueGetter<TValue> GetGetterPrivate<TValue>(int col)
+            ValueGetter<TValue> GetGetterPrivate<TValue>(DataViewSchema.Column col)
             {
                 var coor = SchemaHelper.GetColumnType<TValue>();
                 if (coor.IsVector())
@@ -258,7 +258,7 @@ namespace Scikit.ML.ProductionPrediction
                 }
             }
 
-            ValueGetter<TValue> GetGetterPrivateI<TValue>(int col)
+            ValueGetter<TValue> GetGetterPrivateI<TValue>(DataViewSchema.Column col)
                 where TValue : IEquatable<TValue>, IComparable<TValue>
             {
                 var schema = Schema;
@@ -271,7 +271,7 @@ namespace Scikit.ML.ProductionPrediction
                 };
             }
 
-            ValueGetter<VBuffer<TValue>> GetGetterPrivateIVector<TValue>(int col)
+            ValueGetter<VBuffer<TValue>> GetGetterPrivateIVector<TValue>(DataViewSchema.Column col)
                 where TValue : IEquatable<TValue>, IComparable<TValue>
             {
                 var schema = Schema;
@@ -285,7 +285,7 @@ namespace Scikit.ML.ProductionPrediction
                 };
             }
 
-            ValueGetter<ReadOnlyMemory<char>> GetGetterPrivateIText(int col)
+            ValueGetter<ReadOnlyMemory<char>> GetGetterPrivateIText(DataViewSchema.Column col)
             {
                 var schema = Schema;
                 Contracts.CheckValue(schema, nameof(schema));
@@ -297,7 +297,7 @@ namespace Scikit.ML.ProductionPrediction
                 };
             }
 
-            ValueGetter<VBuffer<ReadOnlyMemory<char>>> GetGetterPrivateIVectorText(int col)
+            ValueGetter<VBuffer<ReadOnlyMemory<char>>> GetGetterPrivateIVectorText(DataViewSchema.Column col)
             {
                 var schema = Schema;
                 Contracts.CheckValue(schema, nameof(schema));

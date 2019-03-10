@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 
@@ -29,9 +30,9 @@ namespace Scikit.ML.ProductionPrediction
 
             public Delegate[] GetCursorGetter(DataViewRowCursor cursor)
             {
-                int indexL = SchemaHelper.GetColumnIndex(cursor.Schema, "PredictedLabel");
-                int indexS = SchemaHelper.GetColumnIndex(cursor.Schema, "Score");
-                int indexP = SchemaHelper.GetColumnIndex(cursor.Schema, "Probability");
+                var indexL = SchemaHelper.GetColumnIndexDC(cursor.Schema, "PredictedLabel");
+                var indexS = SchemaHelper.GetColumnIndexDC(cursor.Schema, "Score");
+                var indexP = SchemaHelper.GetColumnIndexDC(cursor.Schema, "Probability");
                 return new Delegate[]
                 {
                     cursor.GetGetter<bool>(indexL),
@@ -73,8 +74,8 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="conc">number of concurrency threads</param>
         /// <param name="features">features name</param>
         public ValueMapperPredictionEngine(IHostEnvironment env, string modelName,
-                bool outputIsFloat = true, int conc = 1, string features = "Features") :
-            this(env, File.OpenRead(modelName), conc, features)
+                bool outputIsFloat = true, string features = "Features") :
+            this(env, File.OpenRead(modelName), features)
         {
         }
 
@@ -85,8 +86,7 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="modelStream">stream</param>
         /// <param name="conc">number of concurrency threads</param>
         /// <param name="features">features column</param>
-        public ValueMapperPredictionEngine(IHostEnvironment env, Stream modelStream,
-                                           int conc = 1, string features = "Features")
+        public ValueMapperPredictionEngine(IHostEnvironment env, Stream modelStream, string features = "Features")
         {
             _env = env;
             if (_env == null)
@@ -109,7 +109,7 @@ namespace Scikit.ML.ProductionPrediction
             var scorer = _env.CreateDefaultScorer(data, _predictor);
             if (scorer == null)
                 throw _env.Except("Cannot create a scorer.");
-            _CreateMapper(scorer, conc);
+            _CreateMapper(scorer);
         }
 
         /// <summary>
@@ -119,16 +119,15 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="modelStream">stream</param>
         /// <param name="output">name of the output column</param>
         /// <param name="outputIsFloat">output is a gloat (true) or a vector of floats (false)</param>
-        /// <param name="conc">number of concurrency threads</param>
-        public ValueMapperPredictionEngine(IHostEnvironment env, IDataScorerTransform scorer, int conc = 1)
+        public ValueMapperPredictionEngine(IHostEnvironment env, IDataScorerTransform scorer)
         {
             _env = env;
             if (_env == null)
                 throw Contracts.Except("env must not be null");
-            _CreateMapper(scorer, conc);
+            _CreateMapper(scorer);
         }
 
-        void _CreateMapper(IDataScorerTransform scorer, int conc)
+        void _CreateMapper(IDataScorerTransform scorer)
         {
             _mapperBinaryClassification = null;
             var schema = scorer.Schema;
@@ -136,8 +135,7 @@ namespace Scikit.ML.ProductionPrediction
             i1 = SchemaHelper.GetColumnIndex(schema, "PredictedLabel");
             i2 = SchemaHelper.GetColumnIndex(schema, "Score");
             i3 = SchemaHelper.GetColumnIndex(schema, "Probability");
-            var map = new ValueMapperFromTransform<TRowValue, PredictionTypeForBinaryClassification>(_env,
-                                scorer, conc: conc);
+            var map = new ValueMapperFromTransform<TRowValue, PredictionTypeForBinaryClassification>(_env, scorer);
             _mapperBinaryClassification = map.GetMapper<TRowValue, PredictionTypeForBinaryClassification>();
             _valueMapper = map;
         }

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 
@@ -65,8 +65,8 @@ namespace Scikit.ML.ProductionPrediction
             index = SchemaHelper.GetColumnIndex(transform.Schema, outputColumn);
             _outputType = _transform.Schema[index].Type;
 
-            _disposeEnv = conc > 0;
-            _computeEnv = _disposeEnv ? new PassThroughEnvironment(env, conc: conc, verbose: false) : env;
+            _disposeEnv = false;// conc > 0;
+            _computeEnv = _disposeEnv ? new PassThroughEnvironment(env, verbose: false) : env;
         }
 
         public void Dispose()
@@ -98,9 +98,9 @@ namespace Scikit.ML.ProductionPrediction
                                 ? ApplyTransformUtils.ApplyTransformToData(_computeEnv, _transform, inputView)
                                 : ApplyTransformUtils.ApplyAllTransformsToData(_computeEnv, _transform, inputView,
                                                                                _sourceToReplace);
-            int index = SchemaHelper.GetColumnIndex(outputView.Schema, _outputColumn);
-            int newOutputIndex = index;
-            var cur = outputView.GetRowCursor(outputView.Schema.Where(c => c.Index == newOutputIndex).ToArray());
+            var index = SchemaHelper.GetColumnIndexDC(outputView.Schema, _outputColumn);
+            var newOutputIndex = index;
+            var cur = outputView.GetRowCursor(outputView.Schema.Where(c => c.Index == newOutputIndex.Index).ToArray());
             var getter = cur.GetGetter<TDst>(newOutputIndex);
             if (getter == null)
                 throw _env.Except("Unable to get a getter on the transform for type {0}", default(TDst).GetType());

@@ -2,7 +2,7 @@
 
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.NearestNeighbors

@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Data.DataView;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper
@@ -24,9 +25,9 @@ namespace Scikit.ML.PipelineHelper
             _cursorSchema = _inputCursor.Schema;
         }
 
-        public override bool IsColumnActive(int col)
+        public override bool IsColumnActive(DataViewSchema.Column col)
         {
-            if (col < _cursorSchema.Count)
+            if (col.Index < _cursorSchema.Count)
                 return _inputCursor.IsColumnActive(col);
             return false;
         }
@@ -43,6 +44,6 @@ namespace Scikit.ML.PipelineHelper
         public override long Position { get { return _inputCursor.Position; } }
         public override DataViewSchema Schema { get { return _schema; } }
         public override bool MoveNext() { return _inputCursor.MoveNext(); }
-        public override ValueGetter<TValue> GetGetter<TValue>(int col) { return _inputCursor.GetGetter<TValue>(col); }
+        public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col) { return _inputCursor.GetGetter<TValue>(col); }
     }
 }

@@ -9,8 +9,9 @@ using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Transforms;
+using Microsoft.ML.Model;
 using Scikit.ML.TestHelper;
 using Scikit.ML.PipelineLambdaTransforms;
 using Scikit.ML.PipelineTransforms;
@@ -25,6 +26,11 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestProductionPrediction
     {
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         #region TransformValueMapper
 
         [TestMethod]
@@ -495,8 +501,8 @@ namespace TestMachineLearningExt
 
                 using (var cursor = lambdaView.GetRowCursor(lambdaView.Schema))
                 {
-                    var labelGetter = cursor.GetGetter<uint>(1);
-                    var floatGetter = cursor.GetGetter<VBuffer<float>>(2);
+                    var labelGetter = cursor.GetGetter<uint>(_dc(1));
+                    var floatGetter = cursor.GetGetter<VBuffer<float>>(_dc(2));
                     var array = new VBuffer<float>();
                     var cont = new List<Tuple<float, float>>();
                     while (cursor.MoveNext())
@@ -585,7 +591,7 @@ namespace TestMachineLearningExt
             var values = new List<float>();
             using (var cur = view.GetRowCursor(view.Schema))
             {
-                var getter = cur.GetGetter<float>(8);
+                var getter = cur.GetGetter<float>(_dc(8));
                 float val = 0f;
                 view.Set(df);
                 for (int i = 0; i < df.Length; ++i)

@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Microsoft.ML.Internal.Utilities;
 using Scikit.ML.PipelineHelper;
@@ -900,9 +900,9 @@ namespace Scikit.ML.DataManipulation
             ILogWriter logerr = new LogWriter((string s) => { });
             int nth;
             bool dispose = env == null;
-            IHostEnvironment host = env ?? new DelegateEnvironment(conc: 1, outWriter: logout, errWriter: logerr, verbose: 1);
+            IHostEnvironment host = env ?? new DelegateEnvironment(outWriter: logout, errWriter: logerr, verbose: 1);
             var ch = host.Register("Estimate n threads");
-            nth = numThreads.HasValue ? numThreads.Value : DataViewUtils.GetThreadCount(ch, 0, true);
+            nth = numThreads.HasValue ? numThreads.Value : DataViewUtils.GetThreadCount(0, true);
             //if (dispose)
             //    (host as DelegateEnvironment).Dispose();
 
@@ -918,6 +918,11 @@ namespace Scikit.ML.DataManipulation
                 // FillValues(cursors, memory);
                 throw new NotImplementedException();
             }
+        }
+
+        private DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
         }
 
         /// <summary>
@@ -1130,7 +1135,7 @@ namespace Scikit.ML.DataManipulation
                 ValueGetter<VBuffer<DType>> getter;
                 try
                 {
-                    getter = cursor.GetGetter<VBuffer<DType>>(col);
+                    getter = cursor.GetGetter<VBuffer<DType>>(_dc(col));
                 }
                 catch (Exception e)
                 {
@@ -1161,7 +1166,7 @@ namespace Scikit.ML.DataManipulation
             {
                 try
                 {
-                    return cursor.GetGetter<DType>(col);
+                    return cursor.GetGetter<DType>(_dc(col));
                 }
                 catch (InvalidOperationException e)
                 {
@@ -1169,7 +1174,7 @@ namespace Scikit.ML.DataManipulation
                     ValueGetter<ReadOnlyMemory<char>> getter;
                     try
                     {
-                        getter = cursor.GetGetter<ReadOnlyMemory<char>>(col);
+                        getter = cursor.GetGetter<ReadOnlyMemory<char>>(_dc(col));
                     }
                     catch (InvalidOperationException)
                     {
@@ -1201,10 +1206,10 @@ namespace Scikit.ML.DataManipulation
         {
             var dt = cursor.Schema[col].Type;
             if (dt.IsVector())
-                return cursor.GetGetter<VBuffer<DType>>(col);
+                return cursor.GetGetter<VBuffer<DType>>(_dc(col));
             else
             {
-                var getter = cursor.GetGetter<DType>(col);
+                var getter = cursor.GetGetter<DType>(_dc(col));
                 var temp = defaultValue;
                 return (ref VBuffer<DType> value) =>
                 {
@@ -1427,8 +1432,7 @@ namespace Scikit.ML.DataManipulation
         /// </summary>
         public DataViewRowCursor[] GetRowCursorSet(int[] rows, int[] columns, IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
-            var host = new ConsoleEnvironment().Register("Estimate n threads");
-            n = DataViewUtils.GetThreadCount(host, n);
+            n = DataViewUtils.GetThreadCount(n);
             if (n > 1 && (long)n > Length)
                 n = Length;
 
@@ -1503,7 +1507,7 @@ namespace Scikit.ML.DataManipulation
             {
             }
 
-            public override bool IsColumnActive(int col) { return Schema.Where(c => c.Index == col).Any(); }
+            public override bool IsColumnActive(DataViewSchema.Column col) { return Schema.Where(c => c.Index == col.Index).Any(); }
             public override DataViewSchema Schema => _colsSet == null ? _cont.Schema : _schema;
 
             public override long Position => _rowsSet == null
@@ -1524,10 +1528,10 @@ namespace Scikit.ML.DataManipulation
                 return _position < LastPosition;
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                col = _colsSet == null ? col : _colsSet[col];
-                var coor = _cont._mapping[col];
+                col = _colsSet == null ? col : new DataViewSchema.Column(null, _colsSet[col.Index], false, null, null);
+                var coor = _cont._mapping[col.Index];
                 if (coor.Item1.IsVector())
                 {
                     switch (coor.Item1.ItemType().RawKind())

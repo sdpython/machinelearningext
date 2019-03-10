@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
 using Microsoft.ML.Data;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Scikit.ML.TestHelper;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.FeaturesTransforms;
@@ -70,6 +70,11 @@ namespace TestMachineLearningExt
             }
         }
 
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         static void CommonTestPolynomialTransform(IHostEnvironment host, IDataView data, int dimension, out List<float[]> values)
         {
             values = null;
@@ -110,7 +115,7 @@ namespace TestMachineLearningExt
                 using (var cursor = poly.GetRowCursor(poly.Schema))
                 {
                     var outValues = new List<float[]>();
-                    var colGetter = cursor.GetGetter<VBuffer<float>>(1);
+                    var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();
@@ -240,7 +245,7 @@ namespace TestMachineLearningExt
             using (var cursor = scaled.GetRowCursor(scaled.Schema))
             {
                 var outValues = new List<float[]>();
-                var colGetter = cursor.GetGetter<VBuffer<float>>(0);
+                var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(0));
                 VBuffer<float> got = new VBuffer<float>();
                 while (cursor.MoveNext())
                 {

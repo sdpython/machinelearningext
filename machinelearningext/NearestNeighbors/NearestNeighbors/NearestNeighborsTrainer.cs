@@ -9,6 +9,7 @@ using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.EntryPoints;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.NearestNeighbors

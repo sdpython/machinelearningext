@@ -2,8 +2,8 @@
 
 using System.Text;
 using System.Linq;
-using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper

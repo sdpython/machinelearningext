@@ -7,7 +7,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
@@ -82,7 +82,7 @@ namespace Scikit.ML.PipelineTransforms
         Arguments _args;
         IHost _host;
         DataViewSchema _schema;
-        Dictionary<int, int> _columnMapping;
+        Dictionary<int, DataViewSchema.Column> _columnMapping;
 
         public IDataView Source { get { return _input; } }
 
@@ -153,11 +153,11 @@ namespace Scikit.ML.PipelineTransforms
             return ExtendedSchema.Create(extSchema);
         }
 
-        Dictionary<int, int> BuildMapping()
+        Dictionary<int, DataViewSchema.Column> BuildMapping()
         {
-            var res = new Dictionary<int, int>();
+            var res = new Dictionary<int, DataViewSchema.Column>();
             foreach (var col in _args.columns)
-                res[SchemaHelper.GetColumnIndex(_schema, col.Name)] = SchemaHelper.GetColumnIndex(_schema, col.Source);
+                res[SchemaHelper.GetColumnIndex(_schema, col.Name)] = SchemaHelper.GetColumnIndexDC(_schema, col.Source);
             return res;
         }
 
@@ -189,8 +189,7 @@ namespace Scikit.ML.PipelineTransforms
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
-            var host = new ConsoleEnvironment().Register("Estimate n threads");
-            n = DataViewUtils.GetThreadCount(host, n);
+            n = DataViewUtils.GetThreadCount(n);
 
             if (n <= 1)
                 return new DataViewRowCursor[] { GetRowCursor(columnsNeeded, rand) };
@@ -224,9 +223,9 @@ namespace Scikit.ML.PipelineTransforms
                 _rand = new Random(_view._args.seed);
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                if (col < _inputCursor.Schema.Count)
+                if (col.Index < _inputCursor.Schema.Count)
                     return _inputCursor.IsColumnActive(col);
                 return true;
             }
@@ -256,13 +255,13 @@ namespace Scikit.ML.PipelineTransforms
                 return _inputCursor.MoveNext();
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col < _view.Source.Schema.Count)
+                if (col.Index < _view.Source.Schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
-                else if (col < _view.Schema.Count)
+                else if (col.Index < _view.Schema.Count)
                 {
-                    var colType = _schema[_view._columnMapping[col]].Type;
+                    var colType = _schema[_view._columnMapping[col.Index].Index].Type;
                     if (colType.IsVector())
                     {
                         switch (colType.ItemType().RawKind())
@@ -298,7 +297,7 @@ namespace Scikit.ML.PipelineTransforms
                     throw _view._host.Except("Column index {0} does not exist.", col);
             }
 
-            ValueGetter<bool> GetGetter(int col, bool defval)
+            ValueGetter<bool> GetGetter(DataViewSchema.Column col, bool defval)
             {
                 return (ref bool value) =>
                 {
@@ -306,9 +305,9 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<int> GetGetter(int col, int defval)
+            ValueGetter<int> GetGetter(DataViewSchema.Column col, int defval)
             {
-                var getter = _inputCursor.GetGetter<int>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<int>(_view._columnMapping[col.Index]);
                 return (ref int value) =>
                 {
                     getter(ref value);
@@ -326,9 +325,9 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<Int64> GetGetter(int col, Int64 defval)
+            ValueGetter<Int64> GetGetter(DataViewSchema.Column col, Int64 defval)
             {
-                var getter = _inputCursor.GetGetter<Int64>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<Int64>(_view._columnMapping[col.Index]);
                 return (ref Int64 value) =>
                 {
                     getter(ref value);
@@ -336,9 +335,9 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<float> GetGetter(int col, float defval)
+            ValueGetter<float> GetGetter(DataViewSchema.Column col, float defval)
             {
-                var getter = _inputCursor.GetGetter<float>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<float>(_view._columnMapping[col.Index]);
                 return (ref float value) =>
                 {
                     getter(ref value);
@@ -346,9 +345,9 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<double> GetGetter(int col, double defval)
+            ValueGetter<double> GetGetter(DataViewSchema.Column col, double defval)
             {
-                var getter = _inputCursor.GetGetter<double>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<double>(_view._columnMapping[col.Index]);
                 return (ref double value) =>
                 {
                     getter(ref value);
@@ -356,12 +355,12 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<ReadOnlyMemory<char>> GetGetter(int col, ReadOnlyMemory<char> defval)
+            ValueGetter<ReadOnlyMemory<char>> GetGetter(DataViewSchema.Column col, ReadOnlyMemory<char> defval)
             {
                 string alpha = "abcdefghijklmnopqrstuvwxyz";
-                var getter = _inputCursor.GetGetter<ReadOnlyMemory<char>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<ReadOnlyMemory<char>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to get a getter for column {_view._columnMapping[col]} and schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to get a getter for column {_view._columnMapping[col.Index]} and schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref ReadOnlyMemory<char> value) =>
                 {
                     getter(ref value);
@@ -371,11 +370,11 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<bool>> GetGetterVector(int col, bool defval)
+            ValueGetter<VBuffer<bool>> GetGetterVector(DataViewSchema.Column col, bool defval)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<bool>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<bool>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref VBuffer<bool> value) =>
                 {
                     getter(ref value);
@@ -384,11 +383,11 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<int>> GetGetterVector(int col, int defval)
+            ValueGetter<VBuffer<int>> GetGetterVector(DataViewSchema.Column col, int defval)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<int>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<int>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref VBuffer<int> value) =>
                 {
                     getter(ref value);
@@ -397,11 +396,11 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<uint>> GetGetterVector(int col, uint defval)
+            ValueGetter<VBuffer<uint>> GetGetterVector(DataViewSchema.Column col, uint defval)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<uint>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<uint>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref VBuffer<uint> value) =>
                 {
                     getter(ref value);
@@ -410,11 +409,11 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<Int64>> GetGetterVector(int col, Int64 defval)
+            ValueGetter<VBuffer<Int64>> GetGetterVector(DataViewSchema.Column col, Int64 defval)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<Int64>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<Int64>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref VBuffer<Int64> value) =>
                 {
                     getter(ref value);
@@ -423,11 +422,11 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<float>> GetGetterVector(int col, float defval)
+            ValueGetter<VBuffer<float>> GetGetterVector(DataViewSchema.Column col, float defval)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<float>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<float>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref VBuffer<float> value) =>
                 {
                     getter(ref value);
@@ -436,11 +435,11 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<double>> GetGetterVector(int col, double defval)
+            ValueGetter<VBuffer<double>> GetGetterVector(DataViewSchema.Column col, double defval)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<double>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<double>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 return (ref VBuffer<double> value) =>
                 {
                     getter(ref value);
@@ -449,12 +448,12 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
-            ValueGetter<VBuffer<ReadOnlyMemory<char>>> GetGetterVector(int col, ReadOnlyMemory<char> defval)
+            ValueGetter<VBuffer<ReadOnlyMemory<char>>> GetGetterVector(DataViewSchema.Column col, ReadOnlyMemory<char> defval)
             {
                 string alpha = "abcdefghijklmnopqrstuvwxyz";
-                var getter = _inputCursor.GetGetter<VBuffer<ReadOnlyMemory<char>>>(_view._columnMapping[col]);
+                var getter = _inputCursor.GetGetter<VBuffer<ReadOnlyMemory<char>>>(_view._columnMapping[col.Index]);
                 if (getter == null)
-                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
+                    throw _view._host.Except($"Unable to create a getter for column {_view._columnMapping[col.Index]} from schema\n{SchemaHelper.ToString(_inputCursor.Schema)}.");
                 string cs;
                 return (ref VBuffer<ReadOnlyMemory<char>> value) =>
                 {

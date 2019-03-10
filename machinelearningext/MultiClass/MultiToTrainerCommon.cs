@@ -6,7 +6,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
-using Microsoft.ML.Trainers;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Transforms;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
@@ -88,12 +88,17 @@ namespace Scikit.ML.MultiClass
             Host.CheckValue(args, "args");
         }
 
+        private DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         protected Tuple<TLabel, TLabel> MinMaxLabel<TLabel>(MultiToBinaryTransform tr, int index)
             where TLabel : IComparable<TLabel>
         {
             using (var cursor = tr.GetRowCursor(tr.Schema.Where(c => c.Index == index).ToArray()))
             {
-                var getter = cursor.GetGetter<TLabel>(index);
+                var getter = cursor.GetGetter<TLabel>(_dc(index));
                 TLabel cl = default(TLabel), max = default(TLabel), min = default(TLabel);
                 bool first = true;
                 while (cursor.MoveNext())
@@ -158,10 +163,10 @@ namespace Scikit.ML.MultiClass
 
         protected void DebugChecking0Vfloat(IDataView viewI, string labName, ulong count)
         {
-            int index = SchemaHelper.GetColumnIndex(viewI.Schema, labName);
-            var ty = viewI.Schema[index].Type;
+            var index = SchemaHelper.GetColumnIndexDC(viewI.Schema, labName);
+            var ty = viewI.Schema[index.Index].Type;
             Contracts.Assert(ty.IsKey() || ty.IsVector() || ty.RawKind() == DataKind.Single);
-            using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(i => i.Index == index).ToArray()))
+            using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(i => i.Index == index.Index).ToArray()))
             {
                 var getter = cursor.GetGetter<VBuffer<float>>(index);
                 var value = new VBuffer<float>();
@@ -196,9 +201,9 @@ namespace Scikit.ML.MultiClass
 
         protected void DebugChecking0(IDataView viewI, string labName, bool oneO)
         {
-            int index = SchemaHelper.GetColumnIndex(viewI.Schema, labName);
+            var index = SchemaHelper.GetColumnIndexDC(viewI.Schema, labName);
             int nbRows = 0;
-            using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(c => c.Index == index).ToArray()))
+            using (var cursor = viewI.GetRowCursor(viewI.Schema.Where(c => c.Index == index.Index).ToArray()))
             {
                 if (oneO)
                 {
@@ -207,7 +212,7 @@ namespace Scikit.ML.MultiClass
                     Contracts.Assert(gfu != null || gff != null);
                 }
 
-                var ty = viewI.Schema[index].Type;
+                var ty = viewI.Schema[index.Index].Type;
                 if (ty.IsVector() && ty.AsVector().ItemType().RawKind() == DataKind.Single)
                 {
                     var getter = cursor.GetGetter<VBuffer<float>>(index);

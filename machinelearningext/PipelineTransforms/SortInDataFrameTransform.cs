@@ -3,8 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.ML.Data;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.DataManipulation;
 
@@ -323,6 +322,11 @@ namespace Scikit.ML.PipelineTransforms
                 _sortColumn = sortColumn;
             }
 
+            private DataViewSchema.Column _dc(int i)
+            {
+                return new DataViewSchema.Column(null, i, false, null, null);
+            }
+
             void FillCacheIfNotFilled()
             {
                 lock (_lock)
@@ -342,7 +346,7 @@ namespace Scikit.ML.PipelineTransforms
                         // might be higher than going through an array in memory.
                         using (var cursor = _autoView.GetRowCursor(_autoView.Schema.Where(c => c.Index == _sortColumn)))
                         {
-                            var sortColumnGetter = cursor.GetGetter<TValue>(_sortColumn);
+                            var sortColumnGetter = cursor.GetGetter<TValue>(_dc(_sortColumn));
                             while (cursor.MoveNext())
                             {
                                 sortColumnGetter(ref got);

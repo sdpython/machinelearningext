@@ -77,12 +77,12 @@ namespace Scikit.ML.PipelineHelper
             }
 
             public override DataViewSchema Schema { get { return _schema; } }
-            public override bool IsColumnActive(int col) { return _cursor.IsColumnActive(col); }
+            public override bool IsColumnActive(DataViewSchema.Column col) { return _cursor.IsColumnActive(col); }
             public override ValueGetter<DataViewRowId> GetIdGetter() { return _cursor.GetIdGetter(); }
             public override long Batch { get { return _cursor.Batch; } }
             public override long Position { get { return _cursor.Position; } }
             public override bool MoveNext() { return _cursor.MoveNext(); }
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
                 return _cursor.GetGetter<TValue>(col);
             }

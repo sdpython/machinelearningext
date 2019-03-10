@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.ML.LightGBM;
@@ -63,7 +63,7 @@ namespace Scikit.ML.ScikitAPI
             res.Add(typeof(FastTreeRankingTrainer).Assembly);
             res.Add(typeof(KMeansPlusPlusTrainer).Assembly);
             res.Add(typeof(LightGbmBinaryTrainer).Assembly);
-            res.Add(typeof(PcaModelParameters).Assembly);
+            res.Add(typeof(PrincipleComponentModelParameters).Assembly);
             res.Add(typeof(PredictionFunctionExtensions).Assembly);
             res.Add(typeof(TextFeaturizingEstimator).Assembly);
             res.Add(typeof(TensorFlowTransformer).Assembly);

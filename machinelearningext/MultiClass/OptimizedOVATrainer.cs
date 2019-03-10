@@ -7,6 +7,7 @@ using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Calibrators;
 using Microsoft.ML.Transforms;
 using Scikit.ML.RandomTransforms;

@@ -3,7 +3,7 @@
 using System;
 using System.Reflection;
 using Microsoft.ML;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper

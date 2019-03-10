@@ -76,12 +76,17 @@ namespace Scikit.ML.TestHelper
             }
         }
 
+        private DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         public Delegate[] GetCursorGetter(DataViewRowCursor cursor)
         {
             return new Delegate[]
             {
-                cursor.GetGetter<float[]>(0),
-                cursor.GetGetter<uint>(1),
+                cursor.GetGetter<float[]>(_dc(0)),
+                cursor.GetGetter<uint>(_dc(1)),
             };
         }
 

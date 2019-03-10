@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 
@@ -129,9 +129,9 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 _inputCursor = cursor;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                if (col < _inputCursor.Schema.Count)
+                if (col.Index < _inputCursor.Schema.Count)
                     return _inputCursor.IsColumnActive(col);
                 return true;
             }
@@ -161,19 +161,24 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 return _inputCursor.MoveNext();
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col < _view.SourceTags.Schema.Count)
+                if (col.Index < _view.SourceTags.Schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
-                else if (col == _view.SourceTags.Schema.Count)
+                else if (col.Index == _view.SourceTags.Schema.Count)
                     return GetLambdaGetter() as ValueGetter<TValue>;
                 else
                     throw _view.Host.Except("Column index {0} does not exist.", col);
             }
 
+            private DataViewSchema.Column _dc(int i)
+            {
+                return new DataViewSchema.Column(null, i, false, null, null);
+            }
+
             protected ValueGetter<TDst> GetLambdaGetter()
             {
-                var getter = _inputCursor.GetGetter<TSrc>(_view._srcIndex);
+                var getter = _inputCursor.GetGetter<TSrc>(_dc(_view._srcIndex));
                 TSrc temp = default(TSrc);
                 return (ref TDst dst) =>
                 {

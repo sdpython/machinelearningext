@@ -3,8 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.DataView;
-using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper
@@ -25,7 +25,7 @@ namespace Scikit.ML.PipelineHelper
             {
                 if (sch[i].IsHidden)
                     continue;
-                var getter = GetColumnGetter(cur, i, sch);
+                var getter = GetColumnGetter(cur, new DataViewSchema.Column(string.Empty, i, false, null, null), sch);
                 if (getter == null)
                     throw Contracts.Except($"Unable to get getter for column {i} from schema\n{SchemaHelper.ToString(sch)}.");
                 res.Add(getter);
@@ -33,7 +33,7 @@ namespace Scikit.ML.PipelineHelper
             return res.ToArray();
         }
 
-        public static Delegate GetGetterChoice<T1, T2>(DataViewRowCursor cur, int col)
+        public static Delegate GetGetterChoice<T1, T2>(DataViewRowCursor cur, DataViewSchema.Column col)
         {
             Delegate res = null;
             try
@@ -59,7 +59,7 @@ namespace Scikit.ML.PipelineHelper
             return res;
         }
 
-        public static Delegate GetGetterChoice<T1, T2, T3>(DataViewRowCursor cur, int col)
+        public static Delegate GetGetterChoice<T1, T2, T3>(DataViewRowCursor cur, DataViewSchema.Column col)
         {
             Delegate res = null;
             try
@@ -94,11 +94,11 @@ namespace Scikit.ML.PipelineHelper
             return res;
         }
 
-        public static Delegate GetColumnGetter(DataViewRowCursor cur, int col, DataViewSchema sch = null)
+        public static Delegate GetColumnGetter(DataViewRowCursor cur, DataViewSchema.Column col, DataViewSchema sch = null)
         {
             if (sch == null)
                 sch = cur.Schema;
-            var colType = sch[col].Type;
+            var colType = sch[col.Index].Type;
             if (colType.IsVector())
             {
                 switch (colType.ItemType().RawKind())

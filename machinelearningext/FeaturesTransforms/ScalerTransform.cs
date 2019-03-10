@@ -7,7 +7,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
@@ -236,6 +236,11 @@ namespace Scikit.ML.FeaturesTransforms
             ComputeStatistics();
         }
 
+        private DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         void ComputeStatistics()
         {
             lock (_lock)
@@ -269,11 +274,11 @@ namespace Scikit.ML.FeaturesTransforms
                             bool[] isBool = requiredIndexes.Select(c => sch[c].Type == BooleanDataViewType.Instance).ToArray();
                             bool[] isFloat = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Single).ToArray();
                             bool[] isUint = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.UInt32 || sch[c].Type.RawKind() == DataKind.UInt32).ToArray();
-                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BooleanDataViewType.Instance || sch[i].Type.RawKind() == DataKind.Boolean ? cur.GetGetter<bool>(i) : null).ToArray();
-                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.UInt32 || sch[i].Type.RawKind() == DataKind.UInt32 ? cur.GetGetter<uint>(i) : null).ToArray();
-                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextDataViewType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(i) : null).ToArray();
-                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Single ? cur.GetGetter<float>(i) : null).ToArray();
-                            ValueGetter<VBuffer<float>>[] vectorGetters = requiredIndexes.Select(i => sch[i].Type.IsVector() ? cur.GetGetter<VBuffer<float>>(i) : null).ToArray();
+                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BooleanDataViewType.Instance || sch[i].Type.RawKind() == DataKind.Boolean ? cur.GetGetter<bool>(_dc(i)) : null).ToArray();
+                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.UInt32 || sch[i].Type.RawKind() == DataKind.UInt32 ? cur.GetGetter<uint>(_dc(i)) : null).ToArray();
+                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextDataViewType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(_dc(i)) : null).ToArray();
+                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Single ? cur.GetGetter<float>(_dc(i)) : null).ToArray();
+                            ValueGetter<VBuffer<float>>[] vectorGetters = requiredIndexes.Select(i => sch[i].Type.IsVector() ? cur.GetGetter<VBuffer<float>>(_dc(i)) : null).ToArray();
 
                             var schema = _input.Schema;
                             for (int i = 0; i < schema.Count; ++i)
@@ -532,13 +537,13 @@ namespace Scikit.ML.FeaturesTransforms
                 _columnsNeeded = columnsNeeded;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                bool active = col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
+                bool active = col.Index >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
                 if (active)
                     return active;
 #if(DEBUG)
-                if (_columnsNeeded.Where(c => c.Index == col).Any())
+                if (_columnsNeeded.Where(c => c.Index == col.Index).Any())
                     throw Contracts.ExceptNotImpl("Caught in debug mode.");
 #endif
                 return false;
@@ -569,26 +574,31 @@ namespace Scikit.ML.FeaturesTransforms
                 return _inputCursor.MoveNext();
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
                 var schema = _inputCursor.Schema;
-                if (_scalingFactors.ContainsKey(col))
+                if (_scalingFactors.ContainsKey(col.Index))
                 {
-                    var type = schema[_scalingFactors[col].columnId].Type;
+                    var type = schema[_scalingFactors[col.Index].columnId].Type;
                     if (type.IsVector())
-                        return GetGetterVector(_scalingFactors[col]) as ValueGetter<TValue>;
+                        return GetGetterVector(_scalingFactors[col.Index]) as ValueGetter<TValue>;
                     else
-                        return GetGetter(_scalingFactors[col]) as ValueGetter<TValue>;
+                        return GetGetter(_scalingFactors[col.Index]) as ValueGetter<TValue>;
                 }
-                else if (col < schema.Count)
+                else if (col.Index < schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
                 else
                     throw Contracts.Except("Unexpected columns {0}.", col);
             }
 
+            private DataViewSchema.Column _dc(int i)
+            {
+                return new DataViewSchema.Column(null, i, false, null, null);
+            }
+
             ValueGetter<VBuffer<float>> GetGetter(ScalingFactor scales)
             {
-                var getter = _inputCursor.GetGetter<float>(scales.columnId);
+                var getter = _inputCursor.GetGetter<float>(_dc(scales.columnId));
                 float value = 0f;
                 return (ref VBuffer<float> dst) =>
                 {
@@ -605,7 +615,7 @@ namespace Scikit.ML.FeaturesTransforms
 
             ValueGetter<VBuffer<float>> GetGetterVector(ScalingFactor scales)
             {
-                var getter = _inputCursor.GetGetter<VBuffer<float>>(scales.columnId);
+                var getter = _inputCursor.GetGetter<VBuffer<float>>(_dc(scales.columnId));
                 return (ref VBuffer<float> dst) =>
                 {
                     getter(ref dst);

@@ -5,8 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Data.DataView;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
 using Scikit.ML.DataManipulation;
@@ -177,7 +176,7 @@ namespace Scikit.ML.DocHelperMlExt
             };
 
             /*using (*/
-            var host = new ConsoleEnvironment(conc: 1);
+            var host = new ConsoleEnvironment();
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);

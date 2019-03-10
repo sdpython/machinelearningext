@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 
@@ -105,6 +106,11 @@ namespace Scikit.ML.NearestNeighbors
             return new NearestNeighborsTrees(ch, kdtrees);
         }
 
+        private static DataViewSchema.Column _dc(int i)
+        {
+            return new DataViewSchema.Column(null, i, false, null, null);
+        }
+
         private static KdTree BuildKDTree<TLabel>(IDataView data, DataViewRowCursor cursor,
                         int featureIndex, int labelIndex, int idIndex, int weightIndex,
                         out Dictionary<long, Tuple<TLabel, float>> labelsWeights, NearestNeighborsArguments args)
@@ -112,10 +118,10 @@ namespace Scikit.ML.NearestNeighbors
         {
             using (cursor)
             {
-                var featureGetter = cursor.GetGetter<VBuffer<float>>(featureIndex);
-                var labelGetter = labelIndex >= 0 ? cursor.GetGetter<TLabel>(labelIndex) : null;
-                var weightGetter = weightIndex >= 0 ? cursor.GetGetter<float>(weightIndex) : null;
-                var idGetter = idIndex >= 0 ? cursor.GetGetter<long>(idIndex) : null;
+                var featureGetter = cursor.GetGetter<VBuffer<float>>(_dc(featureIndex));
+                var labelGetter = labelIndex >= 0 ? cursor.GetGetter<TLabel>(_dc(labelIndex)) : null;
+                var weightGetter = weightIndex >= 0 ? cursor.GetGetter<float>(_dc(weightIndex)) : null;
+                var idGetter = idIndex >= 0 ? cursor.GetGetter<long>(_dc(idIndex)) : null;
                 var kdtree = new KdTree(distance: args.distance, seed: args.seed);
                 labelsWeights = new Dictionary<long, Tuple<TLabel, float>>();
                 VBuffer<float> features = new VBuffer<float>();

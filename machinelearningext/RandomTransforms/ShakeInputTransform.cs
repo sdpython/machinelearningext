@@ -8,7 +8,7 @@ using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
 using Microsoft.ML.Data.Conversion;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 
@@ -309,7 +309,7 @@ namespace Scikit.ML.RandomTransforms
 
             readonly DataViewSchema _schema;
             readonly Arguments _args;
-            readonly int _inputCol;
+            readonly DataViewSchema.Column _inputCol;
             TInput[][] _shakingValues;
 
             object _lock;
@@ -332,7 +332,7 @@ namespace Scikit.ML.RandomTransforms
                         throw _host.Except("If a ValueMapper return a vector, it should have one dimension or zero.");
                 }
 
-                _inputCol = SchemaHelper.GetColumnIndex(_input.Schema, _args.inputColumn);
+                _inputCol = SchemaHelper.GetColumnIndexDC(_input.Schema, _args.inputColumn);
                 _shakingValues = ExtractShakingValues();
                 if (_shakingValues.Length != _args.inputFeaturesInt.Length)
                     throw _host.Except("Shaking Values and columns to shake do not have the same dimension {0} and '{1}'.", _args.inputFeaturesInt.Length, _args.values);
@@ -378,7 +378,7 @@ namespace Scikit.ML.RandomTransforms
             TInput[][] ExtractShakingValues()
             {
                 bool identity;
-                var ty = _input.Schema[_inputCol].Type;
+                var ty = _input.Schema[_inputCol.Index].Type;
                 var conv = Conversions.Instance.GetStandardConversion<ReadOnlyMemory<char>, TInput>(TextDataViewType.Instance, ty.AsVector().ItemType(), out identity);
                 if (string.IsNullOrEmpty(_args.values))
                     throw _host.ExceptParam("_args.values cannot be null.");
@@ -483,7 +483,7 @@ namespace Scikit.ML.RandomTransforms
             Func<TOutput, TOutput, TOutput> _aggregation;
 
             public ShakeInputCursor(ShakeInputState<TInput> view, DataViewRowCursor cursor, IEnumerable<DataViewSchema.Column> columnsNeeded,
-                                    Arguments args, int column, IValueMapper[] toShake, TInput[][] shakingValues,
+                                    Arguments args, DataViewSchema.Column column, IValueMapper[] toShake, TInput[][] shakingValues,
                                     Func<TOutput, TOutput, TOutput> aggregation)
             {
                 _view = view;
@@ -509,9 +509,9 @@ namespace Scikit.ML.RandomTransforms
                 _aggregation = aggregation;
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
+                return col.Index >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
             public override ValueGetter<DataViewRowId> GetIdGetter()
@@ -551,18 +551,18 @@ namespace Scikit.ML.RandomTransforms
                 return true;
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                if (col < _inputCursor.Schema.Count)
+                if (col.Index < _inputCursor.Schema.Count)
                     return _inputCursor.GetGetter<TValue>(col);
-                else if (col - _inputCursor.Schema.Count >= _collected.Length)
+                else if (col.Index - _inputCursor.Schema.Count >= _collected.Length)
                     throw Contracts.Except("Unexpected columns {0} > {1}.", col, _collected.Length + _inputCursor.Schema.Count);
                 return GetBufferGetter(col) as ValueGetter<TValue>;
             }
 
-            ValueGetter<VBuffer<TOutput>> GetBufferGetter(int col)
+            ValueGetter<VBuffer<TOutput>> GetBufferGetter(DataViewSchema.Column col)
             {
-                int diff = col - _inputCursor.Schema.Count;
+                int diff = col.Index - _inputCursor.Schema.Count;
                 return (ref VBuffer<TOutput> output) =>
                 {
                     output = _collected[diff];

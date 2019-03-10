@@ -7,7 +7,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using Microsoft.ML;
-using Microsoft.ML.Data;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper
@@ -52,10 +52,10 @@ namespace Scikit.ML.PipelineHelper
         /// </summary>
         public static DelegateEnvironment Create(int? seed = null, int verbose = 0,
                                     MessageSensitivity sensitivity = (MessageSensitivity)(-1),
-                                    int conc = 0, ILogWriter outWriter = null, ILogWriter errWriter = null)
+                                    ILogWriter outWriter = null, ILogWriter errWriter = null)
         {
             return new DelegateEnvironment(seed: seed, verbose: verbose, sensitivity: sensitivity,
-                                           conc: conc, outWriter: outWriter, errWriter: errWriter);
+                                           outWriter: outWriter, errWriter: errWriter);
         }
 
         public static void Delete(DelegateEnvironment env)
@@ -300,7 +300,7 @@ namespace Scikit.ML.PipelineHelper
 
                 // Progress units.
                 bool first = true;
-                for (int i = 0; i < ev.ProgressEntry.Header.UnitNames.Length; i++)
+                for (int i = 0; i < ev.ProgressEntry.Header.UnitNames.Count; i++)
                 {
                     if (ev.ProgressEntry.Progress[i] == null)
                         continue;
@@ -313,7 +313,7 @@ namespace Scikit.ML.PipelineHelper
                 }
 
                 // Metrics.
-                for (int i = 0; i < ev.ProgressEntry.Header.MetricNames.Length; i++)
+                for (int i = 0; i < ev.ProgressEntry.Header.MetricNames.Count; i++)
                 {
                     if (ev.ProgressEntry.Metrics[i] == null)
                         continue;
@@ -383,9 +383,9 @@ namespace Scikit.ML.PipelineHelper
         public int VerboseLevel => _verbose;
 
         public DelegateEnvironment(int? seed = null, int verbose = 0,
-            MessageSensitivity sensitivity = MessageSensitivity.All, int conc = 0,
+            MessageSensitivity sensitivity = MessageSensitivity.All,
             ILogWriter outWriter = null, ILogWriter errWriter = null)
-            : this(RandomUtils.Create(seed), verbose, sensitivity, conc, outWriter, errWriter)
+            : this(RandomUtils.Create(seed), verbose, sensitivity, outWriter, errWriter)
         {
             _elapsed = true;
         }
@@ -394,9 +394,9 @@ namespace Scikit.ML.PipelineHelper
         /// This takes ownership of the random number generator.
         /// </summary>
         public DelegateEnvironment(Random rand, int verbose = 0,
-            MessageSensitivity sensitivity = MessageSensitivity.All, int conc = 0,
+            MessageSensitivity sensitivity = MessageSensitivity.All,
             ILogWriter outWriter = null, ILogWriter errWriter = null)
-            : base(rand, verbose > 0, conc, nameof(DelegateEnvironment))
+            : base(rand, verbose > 0, nameof(DelegateEnvironment))
         {
             Contracts.CheckValue(outWriter, nameof(outWriter));
             Contracts.CheckValue(errWriter, nameof(errWriter));
@@ -411,9 +411,9 @@ namespace Scikit.ML.PipelineHelper
         /// This takes ownership of the random number generator.
         /// </summary>
         public DelegateEnvironment(Random rand, int verbose = 0,
-            MessageSensitivity sensitivity = MessageSensitivity.All, int conc = 0,
+            MessageSensitivity sensitivity = MessageSensitivity.All,
             WriteType outWriter = null, WriteType errWriter = null)
-            : base(rand, verbose > 0, conc, nameof(DelegateEnvironment))
+            : base(rand, verbose > 0, nameof(DelegateEnvironment))
         {
             Contracts.CheckValueOrNull(outWriter);
             Contracts.CheckValueOrNull(errWriter);
@@ -439,13 +439,13 @@ namespace Scikit.ML.PipelineHelper
             Root._outErrWriter.PrintMessage(src, msg);
         }
 
-        protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose, int? conc)
+        protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
         {
             Contracts.AssertValue(rand);
             Contracts.AssertValueOrNull(parentFullName);
             Contracts.AssertNonEmpty(shortName);
             Contracts.Assert(source == this || source is Host);
-            return new Host(source, shortName, parentFullName, rand, verbose, conc);
+            return new Host(source, shortName, parentFullName, rand, verbose);
         }
 
         protected override IChannel CreateCommChannel(ChannelProviderBase parent, string name)
@@ -466,8 +466,8 @@ namespace Scikit.ML.PipelineHelper
 
         private sealed class Host : HostBase
         {
-            public Host(HostEnvironmentBase<DelegateEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose, int? conc)
-                : base(source, shortName, parentFullName, rand, verbose, conc)
+            public Host(HostEnvironmentBase<DelegateEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
+                : base(source, shortName, parentFullName, rand, verbose)
             {
                 IsCancelled = source.IsCancelled;
             }
@@ -488,10 +488,10 @@ namespace Scikit.ML.PipelineHelper
                 return new Pipe<TMessage>(parent, name, GetDispatchDelegate<TMessage>());
             }
 
-            protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName,
-                                                  string parentFullName, Random rand, bool verbose, int? conc)
+            protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName, 
+                                                  string parentFullName, Random rand, bool verbose)
             {
-                return new Host(source, shortName, parentFullName, rand, verbose, conc);
+                return new Host(source, shortName, parentFullName, rand, verbose);
             }
         }
     }

@@ -7,7 +7,7 @@ using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
+using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
@@ -207,7 +207,7 @@ namespace Scikit.ML.NearestNeighbors
             {
                 var newColumns = PredicatePropagation(columnsNeeded);
                 var oldCols = SchemaHelper.ColumnsNeeded(newColumns, schema);
-                int featureIndex = SchemaHelper.GetColumnIndex(Schema, _args.column);
+                var featureIndex = SchemaHelper.GetColumnIndexDC(Schema, _args.column);
                 return new NearestNeighborsCursor(_input.GetRowCursor(oldCols, rand), this, newColumns, featureIndex);
             }
             else
@@ -228,7 +228,7 @@ namespace Scikit.ML.NearestNeighbors
             {
                 var newColumns = PredicatePropagation(columnsNeeded);
                 var oldCols = SchemaHelper.ColumnsNeeded(newColumns, schema);
-                int featureIndex = SchemaHelper.GetColumnIndex(Schema, _args.column);
+                var featureIndex = SchemaHelper.GetColumnIndexDC(Schema, _args.column);
                 var res = _input.GetRowCursorSet(oldCols, n, rand)
                                 .Select(c => new NearestNeighborsCursor(c, this, newColumns, featureIndex)).ToArray();
                 return res;
@@ -288,7 +288,9 @@ namespace Scikit.ML.NearestNeighbors
             VBuffer<float> _distance;
             VBuffer<long> _idn;
 
-            public NearestNeighborsCursor(DataViewRowCursor cursor, NearestNeighborsTransform parent, IEnumerable<DataViewSchema.Column> columnsNeeded, int colFeatures)
+            public NearestNeighborsCursor(DataViewRowCursor cursor, NearestNeighborsTransform parent,
+                                          IEnumerable<DataViewSchema.Column> columnsNeeded,
+                                          DataViewSchema.Column colFeatures)
             {
                 _inputCursor = cursor;
                 _parent = parent;
@@ -300,9 +302,9 @@ namespace Scikit.ML.NearestNeighbors
                 _idn = new VBuffer<long>(_k, new long[_k]);
             }
 
-            public override bool IsColumnActive(int col)
+            public override bool IsColumnActive(DataViewSchema.Column col)
             {
-                return col >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
+                return col.Index >= _inputCursor.Schema.Count || _inputCursor.IsColumnActive(col);
             }
 
             public override ValueGetter<DataViewRowId> GetIdGetter()
@@ -359,15 +361,15 @@ namespace Scikit.ML.NearestNeighbors
                 Contracts.Assert(_idn.IsDense);
             }
 
-            public override ValueGetter<TValue> GetGetter<TValue>(int col)
+            public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
                 var schema = _inputCursor.Schema;
                 ValueGetter<TValue> res;
-                if (col < schema.Count)
+                if (col.Index < schema.Count)
                     res = _inputCursor.GetGetter<TValue>(col);
-                else if (col == schema.Count)
+                else if (col.Index == schema.Count)
                     res = GetGetterDistance(col) as ValueGetter<TValue>;
-                else if (col == schema.Count + 1)
+                else if (col.Index == schema.Count + 1)
                     res = GetGetterIdNeighbors(col) as ValueGetter<TValue>;
                 else
                     throw Contracts.Except("Unexpected column position:{0}.", col);
@@ -378,9 +380,9 @@ namespace Scikit.ML.NearestNeighbors
                 return res;
             }
 
-            ValueGetter<VBuffer<float>> GetGetterDistance(int col)
+            ValueGetter<VBuffer<float>> GetGetterDistance(DataViewSchema.Column col)
             {
-                if (col == _inputCursor.Schema.Count)
+                if (col.Index == _inputCursor.Schema.Count)
                     return (ref VBuffer<float> distance) =>
                     {
                         distance = new VBuffer<float>(_distance.Count, _distance.Values);
@@ -389,9 +391,9 @@ namespace Scikit.ML.NearestNeighbors
                     throw Contracts.Except("Unexpected column for distance (position:{0})", col);
             }
 
-            ValueGetter<VBuffer<long>> GetGetterIdNeighbors(int col)
+            ValueGetter<VBuffer<long>> GetGetterIdNeighbors(DataViewSchema.Column col)
             {
-                if (col == _inputCursor.Schema.Count + 1)
+                if (col.Index == _inputCursor.Schema.Count + 1)
                     return (ref VBuffer<long> distance) =>
                     {
                         distance = new VBuffer<long>(_idn.Count, _idn.Values);

@@ -2,7 +2,7 @@
 
 using System;
 using System.Text;
-using Microsoft.ML;
+using Microsoft.ML.Runtime;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Internal.Utilities;
 

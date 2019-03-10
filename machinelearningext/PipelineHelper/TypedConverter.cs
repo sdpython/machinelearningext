@@ -2,8 +2,8 @@
 
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model;
 using Microsoft.ML.Internal.Utilities;
+using Microsoft.ML.Runtime;
 
 
 namespace Scikit.ML.PipelineHelper
