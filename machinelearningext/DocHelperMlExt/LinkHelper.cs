@@ -30,10 +30,10 @@ namespace Scikit.ML.DocHelperMlExt
                 Columns = new[]
                 {
                     NormalizeTransform.AffineColumn.Parse("A"),
-                    new NormalizeTransform.AffineColumn() { Name = "B", Source = "B", FixZero = false },
+                    new NormalizeTransform.AffineColumn() { Name = "B", Source = "B", EnsureZeroUntouched = false },
                 },
-                FixZero = true,
-                MaxTrainingExamples = 1000
+                EnsureZeroUntouched = true,
+                MaximumExampleCount = 1000
             };
             if (args == null)
                 throw new Exception("No NormalizeTransform.");

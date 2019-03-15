@@ -12,14 +12,14 @@ using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
-using MultiToRankerTrainer = Scikit.ML.MultiClass.MultiToRankerTrainer;
+using MultiToRankerTrainer = Scikit.ML.Multiclass.MultiToRankerTrainer;
 
 [assembly: LoadableClass(MultiToRankerTrainer.Summary, typeof(MultiToRankerTrainer), typeof(MultiToRankerTrainer.Arguments),
-    new[] { typeof(SignatureMultiClassClassifierTrainer), typeof(SignatureTrainer) },
+    new[] { typeof(SignatureMulticlassClassifierTrainer), typeof(SignatureTrainer) },
     MultiToRankerTrainer.LoaderSignature, "InternalOVARanker", "iOVArk")]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
@@ -69,7 +69,7 @@ namespace Scikit.ML.MultiClass
 
         private readonly Arguments _args;
 
-        public override PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public override PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
 
         public override TrainerInfo Info
         {
@@ -113,7 +113,7 @@ namespace Scikit.ML.MultiClass
             data.CheckFeatureFloatVector();
 
             int count;
-            data.CheckMultiClassLabel(out count);
+            data.CheckMulticlassLabel(out count);
 
             using (var ch = Host.Start("Training"))
             {
@@ -198,7 +198,7 @@ namespace Scikit.ML.MultiClass
                 int nb_;
                 MinMaxLabelOverDataSet(trans, labName, out nb_);
                 int count3;
-                data.CheckMultiClassLabel(out count3);
+                data.CheckMulticlassLabel(out count3);
                 if ((ulong)count3 != nb)
                     throw ch.Except("Count mismatch (KeyCount){0} != {1}", nb, count3);
                 DebugChecking0(viewI, labName, true);
@@ -231,22 +231,22 @@ namespace Scikit.ML.MultiClass
             #region converting label and group into keys
 
             // We need to convert the label into a Key.
-            var convArgs = new MultiClassConvertTransform.Arguments
+            var convArgs = new MulticlassConvertTransform.Arguments
             {
-                column = new[] { MultiClassConvertTransform.Column.Parse(string.Format("{0}k:{0}", dstName)) },
+                column = new[] { MulticlassConvertTransform.Column.Parse(string.Format("{0}k:{0}", dstName)) },
                 keyCount = new KeyCount(4),
                 resultType = DataKind.UInt32
             };
-            IDataView after_concatenation_key_label = new MultiClassConvertTransform(Host, convArgs, after_concatenation_);
+            IDataView after_concatenation_key_label = new MulticlassConvertTransform(Host, convArgs, after_concatenation_);
 
             // The group must be a key too!
-            convArgs = new MultiClassConvertTransform.Arguments
+            convArgs = new MulticlassConvertTransform.Arguments
             {
-                column = new[] { MultiClassConvertTransform.Column.Parse(string.Format("{0}k:{0}", groupColumnTemp)) },
+                column = new[] { MulticlassConvertTransform.Column.Parse(string.Format("{0}k:{0}", groupColumnTemp)) },
                 keyCount = new KeyCount(),
                 resultType = _args.groupIsU4 ? DataKind.UInt32 : DataKind.UInt64
             };
-            after_concatenation_key_label = new MultiClassConvertTransform(Host, convArgs, after_concatenation_key_label);
+            after_concatenation_key_label = new MulticlassConvertTransform(Host, convArgs, after_concatenation_key_label);
 
             #endregion
 

@@ -34,7 +34,7 @@ namespace Scikit.ML.PipelineHelper
         {
             _predictor = pred;
         }
-        public PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
         public IPredictor Predictor { get { return _predictor; } }
         public DataViewType InputType { get { return (_predictor as IValueMapper).InputType; } }
         public DataViewType OutputType { get { return (_predictor as IValueMapper).OutputType; } }

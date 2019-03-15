@@ -11,14 +11,14 @@ using Microsoft.ML.Runtime;
 using Microsoft.ML.Model;
 using Scikit.ML.PipelineHelper;
 
-using OptimizedOVAPredictor = Scikit.ML.MultiClass.OptimizedOVAPredictor;
+using OptimizedOVAPredictor = Scikit.ML.Multiclass.OptimizedOVAPredictor;
 
 
 [assembly: LoadableClass(typeof(OptimizedOVAPredictor), null, typeof(SignatureLoadModel),
     "Optimized OVA Executor", OptimizedOVAPredictor.LoaderSignature)]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
 
@@ -53,7 +53,7 @@ namespace Scikit.ML.MultiClass
 
         private readonly DataViewType _outputType;
 
-        public override PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public override PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
 
         public DataViewType InputType { get { return _impl.InputType; } }
         public DataViewType OutputType { get { return _outputType; } }

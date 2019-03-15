@@ -136,9 +136,9 @@ namespace Scikit.ML.TestHelper
                 var dist2 = new Dictionary<int, int>();
                 var conf = new Dictionary<Tuple<int, int>, long>();
 
-                if (kind == PredictionKind.MultiClassClassification)
+                if (kind == PredictionKind.MulticlassClassification)
                 {
-                    #region multiclass
+                    #region Multiclass
 
                     if (!ty2.IsKey())
                         throw new Exception(string.Format("Label='{0}' Predicted={1}'\nSchema: {2}", ty1, ty2, SchemaHelper.ToString(cursor.Schema)));

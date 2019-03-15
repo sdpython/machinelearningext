@@ -36,7 +36,7 @@ namespace TestMachineLearningExt
             /*using (*/
             var env = new DelegateEnvironment(outWriter: stout, errWriter: sderr, verbose: 3);
             {
-                var cmd = "? MultiClassClassifierScorer";
+                var cmd = "? MulticlassClassifierScorer";
                 MamlHelper.MamlScript(cmd, false, env);
                 var sout = bout.ToString();
                 Assert.IsTrue(sout.Length > 0);

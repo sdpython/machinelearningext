@@ -13,14 +13,14 @@ using Microsoft.ML.Transforms;
 using Scikit.ML.RandomTransforms;
 using Scikit.ML.PipelineHelper;
 
-using OptimizedOVATrainer = Scikit.ML.MultiClass.OptimizedOVATrainer;
+using OptimizedOVATrainer = Scikit.ML.Multiclass.OptimizedOVATrainer;
 
 [assembly: LoadableClass(OptimizedOVATrainer.Summary, typeof(OptimizedOVATrainer), typeof(OptimizedOVATrainer.Arguments),
-    new[] { typeof(SignatureMultiClassClassifierTrainer), typeof(SignatureTrainer) },
+    new[] { typeof(SignatureMulticlassClassifierTrainer), typeof(SignatureTrainer) },
     OptimizedOVATrainer.UserNameValue, OptimizedOVATrainer.LoadNameValue, "OOVA")]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarTrainer = ITrainer<IPredictor>; //ITrainer<IPredictorProducing<float>>;
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
@@ -83,7 +83,7 @@ namespace Scikit.ML.MultiClass
         // simply by virtue of this being one-versus-all.
         public override TrainerInfo Info => new TrainerInfo(_needNorm, false, true, false, false);
 
-        public override PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public override PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
 
         protected override TVectorPredictor Train(TrainContext ctx)
         {
@@ -92,7 +92,7 @@ namespace Scikit.ML.MultiClass
             data.CheckFeatureFloatVector();
 
             int count;
-            data.CheckMultiClassLabel(out count);
+            data.CheckMulticlassLabel(out count);
             Contracts.Assert(count > 0);
 
             using (var ch = Host.Start("Training"))

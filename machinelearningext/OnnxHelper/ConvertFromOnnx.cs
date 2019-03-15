@@ -4,7 +4,7 @@ using System.IO;
 using Microsoft.Data.DataView;
 using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
-using Microsoft.ML.Transforms;
+using Microsoft.ML.Transforms.Onnx;
 
 
 namespace Scikit.ML.OnnxHelper

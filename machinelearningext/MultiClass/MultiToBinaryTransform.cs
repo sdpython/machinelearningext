@@ -15,19 +15,19 @@ using Scikit.ML.PipelineHelper;
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
 using SignatureDataTransform = Microsoft.ML.Data.SignatureDataTransform;
 using SignatureLoadDataTransform = Microsoft.ML.Data.SignatureLoadDataTransform;
-using MultiToBinaryTransform = Scikit.ML.MultiClass.MultiToBinaryTransform;
+using MultiToBinaryTransform = Scikit.ML.Multiclass.MultiToBinaryTransform;
 
 [assembly: LoadableClass(MultiToBinaryTransform.Summary, typeof(MultiToBinaryTransform),
     typeof(MultiToBinaryTransform.Arguments), typeof(SignatureDataTransform),
-    "MultiClass to Binary classification", MultiToBinaryTransform.LoaderSignature,
+    "Multiclass to Binary classification", MultiToBinaryTransform.LoaderSignature,
     "MultiToBinary", "M2B")]
 
 [assembly: LoadableClass(MultiToBinaryTransform.Summary, typeof(MultiToBinaryTransform),
     null, typeof(SignatureLoadDataTransform),
-    "MultiClass to Binary classification", MultiToBinaryTransform.LoaderSignature)]
+    "Multiclass to Binary classification", MultiToBinaryTransform.LoaderSignature)]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     /// <summary>
     /// Multiplies rows to tranform a multi-class problem into a binary classification problem.

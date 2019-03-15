@@ -12,13 +12,13 @@ using Microsoft.ML.Runtime;
 using Scikit.ML.DataManipulation;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.TestHelper;
-using Scikit.ML.MultiClass;
+using Scikit.ML.Multiclass;
 
 
 namespace TestMachineLearningExt
 {
     [TestClass]
-    public class TestMultiClass
+    public class TestMulticlass
     {
         private static DataViewSchema.Column _dc(int i)
         {
@@ -208,7 +208,7 @@ namespace TestMachineLearningExt
                 {
                     var predictor = trainer.Train(env, ch, roles);
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, predictor, roles, outData, outData2,
-                                                         PredictionKind.MultiClassClassification, checkError, ratio: 0.1f);
+                                                         PredictionKind.MulticlassClassification, checkError, ratio: 0.1f);
                 }
             }
         }
@@ -244,7 +244,7 @@ namespace TestMachineLearningExt
                 {
                     var predictor = trainer.Train(env, ch, roles);
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, predictor, roles, outData, outData2,
-                                                         PredictionKind.MultiClassClassification, checkError, ratio: 0.1f);
+                                                         PredictionKind.MulticlassClassification, checkError, ratio: 0.1f);
                 }
             }
         }
@@ -273,7 +273,7 @@ namespace TestMachineLearningExt
                 {
                     var predictor = trainer.Train(env, ch, roles);
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, predictor, roles, outData, outData2,
-                                                         PredictionKind.MultiClassClassification, checkError, ratio: 0.1f);
+                                                         PredictionKind.MulticlassClassification, checkError, ratio: 0.1f);
                 }
             }
         }
@@ -299,7 +299,7 @@ namespace TestMachineLearningExt
                 {
                     var predictor = trainer.Train(env, ch, roles);
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, predictor, roles, outData, outData2,
-                                                         PredictionKind.MultiClassClassification, checkError, ratio: 0.1f);
+                                                         PredictionKind.MulticlassClassification, checkError, ratio: 0.1f);
                 }
             }
         }
@@ -517,7 +517,7 @@ namespace TestMachineLearningExt
                     var pred = trainer.Train(env, ch, roles);
                     loader = env.CreateLoader(loaderSettings, new MultiFileSource(testFile));
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, pred, roles, outData, outData2,
-                                                         PredictionKind.MultiClassClassification, true,
+                                                         PredictionKind.MulticlassClassification, true,
                                                          ratio: type.StartsWith("U4") && model.ToLower() == "iova" ? 1f : 0.1f);
                 }
             }
@@ -579,7 +579,7 @@ namespace TestMachineLearningExt
                     var sbrr = serr.GetStringBuilder().ToString();
                     loader = env.CreateLoader(loaderSettings, new MultiFileSource(testFile));
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, pred, roles, outData, outData2,
-                                                                PredictionKind.MultiClassClassification, true, ratio: 0.8f);
+                                                                PredictionKind.MulticlassClassification, true, ratio: 0.8f);
                 }
             }
         }

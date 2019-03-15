@@ -55,7 +55,7 @@ namespace Scikit.ML.PipelineHelper
             var iter = roles.Schema.GetColumnRoleNames().Where(c =>
                                         c.Key.Value != RoleMappedSchema.ColumnRole.Feature.Value &&
                                         c.Key.Value != RoleMappedSchema.ColumnRole.Group.Value);
-            if (ipredictor.PredictionKind == PredictionKind.MultiClassClassification && ipredictor is IValueMapperDist)
+            if (ipredictor.PredictionKind == PredictionKind.MulticlassClassification && ipredictor is IValueMapperDist)
             {
                 // There is an issue with the code creating the default scorer. It expects to find a Float
                 // as the output of DistType (from by IValueMapperDist)

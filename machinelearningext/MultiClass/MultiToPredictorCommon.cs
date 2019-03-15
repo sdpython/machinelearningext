@@ -12,7 +12,7 @@ using Microsoft.ML.Internal.Utilities;
 using Scikit.ML.PipelineHelper;
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
 

@@ -83,7 +83,7 @@ namespace TestMachineLearningExt
             }
         }
 
-        public static void TrainkNNMultiClassification(int k, NearestNeighborsWeights weight, int threads, float ratio = 0.2f,
+        public static void TrainkNNMulticlassification(int k, NearestNeighborsWeights weight, int threads, float ratio = 0.2f,
                                                        string distance = "L2")
         {
             var methodName = string.Format("{0}-k{1}-W{2}-T{3}-D{4}", System.Reflection.MethodBase.GetCurrentMethod().Name, k, weight, threads, distance);
@@ -108,7 +108,7 @@ namespace TestMachineLearningExt
                 {
                     var pred = trainer.Train(env, ch, roles);
                     TestTrainerHelper.FinalizeSerializationTest(env, outModelFilePath, pred, roles, outData, outData2,
-                                                           PredictionKind.MultiClassClassification, true, ratio: ratio);
+                                                           PredictionKind.MulticlassClassification, true, ratio: ratio);
                 }
             }
         }
@@ -211,19 +211,19 @@ namespace TestMachineLearningExt
         }
 
         [TestMethod]
-        public void TestI_TrainkNNMultiClassification()
+        public void TestI_TrainkNNMulticlassification()
         {
-            TrainkNNMultiClassification(1, NearestNeighborsWeights.uniform, 1, ratio: 0.05f);
-            TrainkNNMultiClassification(2, NearestNeighborsWeights.uniform, 1);
-            TrainkNNMultiClassification(10, NearestNeighborsWeights.uniform, 1);
+            TrainkNNMulticlassification(1, NearestNeighborsWeights.uniform, 1, ratio: 0.05f);
+            TrainkNNMulticlassification(2, NearestNeighborsWeights.uniform, 1);
+            TrainkNNMulticlassification(10, NearestNeighborsWeights.uniform, 1);
         }
 
         [TestMethod]
-        public void TestI_TrainkNNMultiClassificationMultiThread()
+        public void TestI_TrainkNNMulticlassificationMultiThread()
         {
-            TrainkNNMultiClassification(1, NearestNeighborsWeights.uniform, 2, ratio: 0.05f);
-            TrainkNNMultiClassification(2, NearestNeighborsWeights.uniform, 2);
-            TrainkNNMultiClassification(10, NearestNeighborsWeights.uniform, 2);
+            TrainkNNMulticlassification(1, NearestNeighborsWeights.uniform, 2, ratio: 0.05f);
+            TrainkNNMulticlassification(2, NearestNeighborsWeights.uniform, 2);
+            TrainkNNMulticlassification(10, NearestNeighborsWeights.uniform, 2);
         }
 
         [TestMethod]

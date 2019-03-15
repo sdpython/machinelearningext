@@ -9,14 +9,14 @@ using Microsoft.ML.Data;
 using Microsoft.ML.Runtime;
 
 using NearestNeighborsBinaryClassifierPredictor = Scikit.ML.NearestNeighbors.NearestNeighborsBinaryClassifierPredictor;
-using NearestNeighborsMultiClassClassifierPredictor = Scikit.ML.NearestNeighbors.NearestNeighborsMultiClassClassifierPredictor;
+using NearestNeighborsMulticlassClassifierPredictor = Scikit.ML.NearestNeighbors.NearestNeighborsMulticlassClassifierPredictor;
 
 
 [assembly: LoadableClass(typeof(NearestNeighborsBinaryClassifierPredictor), null, typeof(SignatureLoadModel),
     NearestNeighborsBinaryClassifierPredictor.LongName, NearestNeighborsBinaryClassifierPredictor.LoaderSignature)]
 
-[assembly: LoadableClass(typeof(NearestNeighborsMultiClassClassifierPredictor), null, typeof(SignatureLoadModel),
-    NearestNeighborsMultiClassClassifierPredictor.LongName, NearestNeighborsMultiClassClassifierPredictor.LoaderSignature)]
+[assembly: LoadableClass(typeof(NearestNeighborsMulticlassClassifierPredictor), null, typeof(SignatureLoadModel),
+    NearestNeighborsMulticlassClassifierPredictor.LongName, NearestNeighborsMulticlassClassifierPredictor.LoaderSignature)]
 
 
 namespace Scikit.ML.NearestNeighbors
@@ -107,13 +107,13 @@ namespace Scikit.ML.NearestNeighbors
         }
     }
 
-    public class NearestNeighborsMultiClassClassifierPredictor :
+    public class NearestNeighborsMulticlassClassifierPredictor :
         NearestNeighborsPredictor, INearestNeighborsPredictor, IValueMapper, ICanSaveModel
 #if IMPLIValueMapperDist
         , IValueMapperDist
 #endif
     {
-        public const string LoaderSignature = "kNNMultiClassClassifier";
+        public const string LoaderSignature = "kNNMulticlassClassifier";
         public const string RegistrationName = LoaderSignature;
         public const string LongName = "Nearest Neighbors for Multi Class Classification";
 
@@ -125,10 +125,10 @@ namespace Scikit.ML.NearestNeighbors
                 verReadableCur: 0x00010001,
                 verWeCanReadBack: 0x00010001,
                 loaderSignature: LoaderSignature,
-                loaderAssemblyName: typeof(NearestNeighborsMultiClassClassifierPredictor).Assembly.FullName);
+                loaderAssemblyName: typeof(NearestNeighborsMulticlassClassifierPredictor).Assembly.FullName);
         }
 
-        public PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
 
         int _nbClass;
 
@@ -138,7 +138,7 @@ namespace Scikit.ML.NearestNeighbors
         public DataViewType DistType { get { return OutputType; } }
 #endif
 
-        internal static NearestNeighborsMultiClassClassifierPredictor Create<TLabel>(IHost host,
+        internal static NearestNeighborsMulticlassClassifierPredictor Create<TLabel>(IHost host,
                                 KdTree[] kdtrees, Dictionary<long, Tuple<TLabel, float>> labelWeights,
                                 int k, NearestNeighborsAlgorithm algo, NearestNeighborsWeights weights)
             where TLabel : IComparable<TLabel>
@@ -146,17 +146,17 @@ namespace Scikit.ML.NearestNeighbors
             Contracts.CheckValue(host, "host");
             host.CheckValue(kdtrees, "kdtrees");
             host.Check(!kdtrees.Where(c => c == null).Any(), "kdtrees");
-            NearestNeighborsMultiClassClassifierPredictor res;
+            NearestNeighborsMulticlassClassifierPredictor res;
             using (var ch = host.Start("Creating kNN predictor"))
             {
                 var trees = new NearestNeighborsTrees(host, kdtrees);
                 var pred = new NearestNeighborsValueMapper<TLabel>(host, labelWeights);
-                res = new NearestNeighborsMultiClassClassifierPredictor(host, trees, pred, k, algo, weights);
+                res = new NearestNeighborsMulticlassClassifierPredictor(host, trees, pred, k, algo, weights);
             }
             return res;
         }
 
-        internal NearestNeighborsMultiClassClassifierPredictor(IHost host, NearestNeighborsTrees trees, INearestNeighborsValueMapper predictor,
+        internal NearestNeighborsMulticlassClassifierPredictor(IHost host, NearestNeighborsTrees trees, INearestNeighborsValueMapper predictor,
                                 int k, NearestNeighborsAlgorithm algo, NearestNeighborsWeights weights)
         {
             _host = host;
@@ -168,7 +168,7 @@ namespace Scikit.ML.NearestNeighbors
             ComputeNbClass();
         }
 
-        private NearestNeighborsMultiClassClassifierPredictor(IHostEnvironment env, ModelLoadContext ctx)
+        private NearestNeighborsMulticlassClassifierPredictor(IHostEnvironment env, ModelLoadContext ctx)
         {
             Contracts.CheckValue(env, "env");
             env.CheckNonWhiteSpace(RegistrationName, "name");
@@ -177,12 +177,12 @@ namespace Scikit.ML.NearestNeighbors
             ComputeNbClass();
         }
 
-        public static NearestNeighborsMultiClassClassifierPredictor Create(IHostEnvironment env, ModelLoadContext ctx)
+        public static NearestNeighborsMulticlassClassifierPredictor Create(IHostEnvironment env, ModelLoadContext ctx)
         {
             Contracts.CheckValue(env, "env");
             env.CheckValue(ctx, "ctx");
             ctx.CheckAtModel(GetVersionInfo());
-            return new NearestNeighborsMultiClassClassifierPredictor(env, ctx);
+            return new NearestNeighborsMulticlassClassifierPredictor(env, ctx);
         }
 
         public void Save(ModelSaveContext ctx)
@@ -202,7 +202,7 @@ namespace Scikit.ML.NearestNeighbors
         public ValueMapper<TIn, TOut> GetMapper<TIn, TOut>()
         {
             _host.Check(typeof(TIn) == typeof(VBuffer<float>));
-            var res = _nearestPredictor.GetMapper<TIn, TOut>(_nearestTrees, _k, _algo, _weights, PredictionKind.MultiClassClassification);
+            var res = _nearestPredictor.GetMapper<TIn, TOut>(_nearestTrees, _k, _algo, _weights, PredictionKind.MulticlassClassification);
             if (res == null)
                 throw _host.Except("Incompatible types {0}, {1}", typeof(TIn), typeof(TOut));
             return res;
@@ -212,7 +212,7 @@ namespace Scikit.ML.NearestNeighbors
         public ValueMapper<TIn, TDst, TDist> GetMapper<TIn, TDst, TDist>()
         {
             _host.Check(typeof(TIn) == typeof(VBuffer<float>));
-            var res = _nearestPredictor.GetMapper<TIn, TDst>(_nearestTrees, _k, _algo, _weights, PredictionKind.MultiClassClassification);
+            var res = _nearestPredictor.GetMapper<TIn, TDst>(_nearestTrees, _k, _algo, _weights, PredictionKind.MulticlassClassification);
             if (res == null)
                 throw _host.Except("Incompatible types {0}, {1}", typeof(TIn), typeof(TDst));
             ValueMapper<TIn, TDst, TDst> resDist = (ref TIn input, ref TDst scores, ref TDst probs) =>

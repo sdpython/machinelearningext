@@ -1,5 +1,6 @@
 ﻿// See the LICENSE file in the project root for more information.
 
+#if false
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -82,21 +83,16 @@ namespace TestMachineLearningExt
                 }
             };
 
-            var args2 = new TextFeaturizingEstimator.Arguments()
+            var args2 = new TextFeaturizingEstimator.Options()
             {
-                Columns = new TextFeaturizingEstimator.Column
-                {
-                    Name = "Features",
-                    Source = new[] { "SentimentText" }
-                },
                 KeepDiacritics = false,
                 KeepPunctuations = false,
-                TextCase = TextNormalizingEstimator.CaseNormalizationMode.Lower,
+                CaseMode = TextNormalizingEstimator.CaseMode.Lower,
                 OutputTokens = true,
                 UsePredefinedStopWordRemover = true,
-                VectorNormalizer = normalize ? TextFeaturizingEstimator.NormFunction.L2 : TextFeaturizingEstimator.NormFunction.None,
-                CharFeatureExtractor = new NgramExtractorTransform.NgramExtractorArguments() { NgramLength = 3, AllLengths = false },
-                WordFeatureExtractor = new NgramExtractorTransform.NgramExtractorArguments() { NgramLength = 2, AllLengths = true },
+                Norm = normalize ? TextFeaturizingEstimator.NormFunction.L2 : TextFeaturizingEstimator.NormFunction.None,
+                CharFeatureExtractor = new WordBagEstimator.Options() { NgramLength = 3, UseAllLengths = false },
+                WordFeatureExtractor = new WordBagEstimator.Options() { NgramLength = 2, UseAllLengths = true },
             };
 
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
@@ -316,3 +312,4 @@ namespace TestMachineLearningExt
         }
     }
 }
+#endif

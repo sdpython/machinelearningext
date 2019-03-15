@@ -13,7 +13,7 @@ using Scikit.ML.PipelineTransforms;
 using Scikit.ML.PipelineLambdaTransforms;
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
     using TVectorPredictor = IPredictor; //IPredictorProducing<VBuffer<float>>;

@@ -6,13 +6,13 @@ using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
-using MultiToRankerPredictor = Scikit.ML.MultiClass.MultiToRankerPredictor;
+using MultiToRankerPredictor = Scikit.ML.Multiclass.MultiToRankerPredictor;
 
 [assembly: LoadableClass(typeof(MultiToRankerPredictor), null, typeof(SignatureLoadModel),
     "iOVA Multi To Binary Ranker Predictor", MultiToRankerPredictor.LoaderSignature, "iOVA Ranker Executor")]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
 
@@ -41,7 +41,7 @@ namespace Scikit.ML.MultiClass
 
         #endregion
 
-        public override PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public override PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
 
         internal static MultiToRankerPredictor Create<TLabel>(IHost host, VBuffer<TLabel> classes,
                             TScalarPredictor[] predictors, IPredictor reclassPredictor, bool singleColumn, bool labelKey)

@@ -34,21 +34,16 @@ namespace TestProfileBenchmark
                 }
             };
 
-            var args2 = new TextFeaturizingEstimator.Arguments()
+            var args2 = new TextFeaturizingEstimator.Options()
             {
-                Columns = new TextFeaturizingEstimator.Column
-                {
-                    Name = "Features",
-                    Source = new[] { "SentimentText" }
-                },
                 KeepDiacritics = false,
                 KeepPunctuations = false,
-                TextCase = TextNormalizingEstimator.CaseNormalizationMode.Lower,
+                CaseMode = TextNormalizingEstimator.CaseMode.Lower,
                 OutputTokens = true,
                 UsePredefinedStopWordRemover = true,
-                VectorNormalizer = normalize ? TextFeaturizingEstimator.NormFunction.L2 : TextFeaturizingEstimator.NormFunction.None,
-                CharFeatureExtractor = new NgramExtractorTransform.NgramExtractorArguments() { NgramLength = 3, AllLengths = false },
-                WordFeatureExtractor = new NgramExtractorTransform.NgramExtractorArguments() { NgramLength = 2, AllLengths = true },
+                Norm = normalize ? TextFeaturizingEstimator.NormFunction.L2 : TextFeaturizingEstimator.NormFunction.None,
+                CharFeatureExtractor = new WordBagEstimator.Options() { NgramLength = 3, UseAllLengths = false },
+                WordFeatureExtractor = new WordBagEstimator.Options() { NgramLength = 2, UseAllLengths = true },
             };
 
             var trainFilename = FileHelper.GetTestFile("wikipedia-detox-250-line-data.tsv");
@@ -62,7 +57,7 @@ namespace TestProfileBenchmark
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
                 // Train
-                var trainer = new SdcaBinaryTrainer(env, new SdcaBinaryTrainer.Options
+                var trainer = new SdcaNonCalibratedBinaryClassificationTrainer(env, new SdcaNonCalibratedBinaryClassificationTrainer.Options
                 {
                     LabelColumnName = "Label",
                     FeatureColumnName = "Features"
@@ -95,7 +90,7 @@ namespace TestProfileBenchmark
 
             var data = ml.Data.LoadFromTextFile(trainFilename, args);
             var pipeline = ml.Transforms.Text.FeaturizeText("SentimentText", "Features")
-                .Append(ml.BinaryClassification.Trainers.StochasticDualCoordinateAscent("Label", "Features"));
+                .Append(ml.BinaryClassification.Trainers.SdcaCalibrated("Label", "Features"));
             var model = pipeline.Fit(data);
             return model;
         }

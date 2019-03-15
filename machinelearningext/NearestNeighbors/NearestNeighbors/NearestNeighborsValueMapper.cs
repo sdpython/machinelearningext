@@ -112,7 +112,7 @@ namespace Scikit.ML.NearestNeighbors
                     if (imaxi - imini != 1)
                         throw _host.Except("More than two classes: min(labels)={0} max(labels)={1}", imini, imaxi);
                     return 2;
-                case PredictionKind.MultiClassClassification:
+                case PredictionKind.MulticlassClassification:
                     if (mini.CompareTo(maxi) == 0)
                         throw _host.Except("Only one class, more are expected.");
                     convMapper(in mini, ref imini);
@@ -136,8 +136,8 @@ namespace Scikit.ML.NearestNeighbors
                 {
                     case PredictionKind.BinaryClassification:
                         return GetMapperBinaryPrediction<TIn, TOut>(trees, k, algo, weight);
-                    case PredictionKind.MultiClassClassification:
-                        return GetMapperMultiClassPrediction<TIn, TOut>(trees, k, algo, weight);
+                    case PredictionKind.MulticlassClassification:
+                        return GetMapperMulticlassPrediction<TIn, TOut>(trees, k, algo, weight);
                     default:
                         throw _host.ExceptNotImpl("Not implemented yet for kind={0}", kind);
                 }
@@ -223,9 +223,9 @@ namespace Scikit.ML.NearestNeighbors
 
         #endregion
 
-        #region multiclass classification
+        #region Multiclass classification
 
-        ValueMapper<TIn, TOut> GetMapperMultiClassPrediction<TIn, TOut>(NearestNeighborsTrees trees, int k,
+        ValueMapper<TIn, TOut> GetMapperMulticlassPrediction<TIn, TOut>(NearestNeighborsTrees trees, int k,
                         NearestNeighborsAlgorithm algo, NearestNeighborsWeights weight)
         {
             Dictionary<TLabel, float> hist = null;
@@ -233,10 +233,10 @@ namespace Scikit.ML.NearestNeighbors
             {
                 var conv = new TypedConverters<TLabel>(DataKind.UInt32);
                 var mapperU4 = conv.GetMapper<uint>();
-                var nbClass = ComputeNbClass(PredictionKind.MultiClassClassification);
+                var nbClass = ComputeNbClass(PredictionKind.MulticlassClassification);
                 ValueMapper<VBuffer<float>, VBuffer<float>> mapper = (in VBuffer<float> input, ref VBuffer<float> output) =>
                 {
-                    GetMapperMultiClassPrediction(trees, k, in input, ref output, ref mapperU4, nbClass, ref hist);
+                    GetMapperMulticlassPrediction(trees, k, in input, ref output, ref mapperU4, nbClass, ref hist);
                 };
                 return mapper as ValueMapper<TIn, TOut>;
             }
@@ -244,7 +244,7 @@ namespace Scikit.ML.NearestNeighbors
                 throw _host.ExceptNotImpl("Not implemented for {0}", weight);
         }
 
-        void GetMapperMultiClassPrediction(NearestNeighborsTrees trees, int k, in VBuffer<float> input,
+        void GetMapperMulticlassPrediction(NearestNeighborsTrees trees, int k, in VBuffer<float> input,
                 ref VBuffer<float> output, ref ValueMapper<TLabel, uint> conv, int nbClass,
                 ref Dictionary<TLabel, float> hist)
         {

@@ -11,14 +11,14 @@ using Scikit.ML.PipelineHelper;
 using Scikit.ML.PipelineTransforms;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
-using MultiToBinaryTrainer = Scikit.ML.MultiClass.MultiToBinaryTrainer;
+using MultiToBinaryTrainer = Scikit.ML.Multiclass.MultiToBinaryTrainer;
 
 [assembly: LoadableClass(MultiToBinaryTrainer.Summary, typeof(MultiToBinaryTrainer), typeof(MultiToBinaryTrainer.Arguments),
-    new[] { typeof(SignatureMultiClassClassifierTrainer), typeof(SignatureTrainer) },
+    new[] { typeof(SignatureMulticlassClassifierTrainer), typeof(SignatureTrainer) },
     MultiToBinaryTrainer.LoaderSignature, "InternalOVA", "iOVA")]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     using TScalarTrainer = ITrainer<IPredictor>; // ITrainer<IPredictorProducing<float>>;
     using TScalarPredictor = IPredictor; //IPredictorProducing<float>;
@@ -65,7 +65,7 @@ namespace Scikit.ML.MultiClass
 
         private readonly Arguments _args;
 
-        public override PredictionKind PredictionKind { get { return PredictionKind.MultiClassClassification; } }
+        public override PredictionKind PredictionKind { get { return PredictionKind.MulticlassClassification; } }
 
         public override TrainerInfo Info
         {
@@ -107,7 +107,7 @@ namespace Scikit.ML.MultiClass
             data.CheckFeatureFloatVector();
 
             int count;
-            data.CheckMultiClassLabel(out count);
+            data.CheckMulticlassLabel(out count);
 
             using (var ch = Host.Start("Training"))
             {
@@ -175,7 +175,7 @@ namespace Scikit.ML.MultiClass
                 int nb_;
                 MinMaxLabelOverDataSet(trans, labName, out nb_);
                 int count3;
-                data.CheckMultiClassLabel(out count3);
+                data.CheckMulticlassLabel(out count3);
                 if ((ulong)count3 != nb)
                     throw ch.Except("Count mismatch (KeyCount){0} != {1}", nb, count3);
                 DebugChecking0(viewI, labName, true);

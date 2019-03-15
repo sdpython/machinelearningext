@@ -513,7 +513,7 @@ namespace Scikit.ML.PipelineHelper
                     return new ExtendedSchema((ISchema)null, new[] { "Score" }, new[] { NumberDataViewType.Single });
                 case PredictionKind.Regression:
                     return new ExtendedSchema((ISchema)null, new[] { "Prediction" }, new[] { NumberDataViewType.Single });
-                case PredictionKind.MultiClassClassification:
+                case PredictionKind.MulticlassClassification:
                     return new ExtendedSchema((ISchema)null, new[] { "Scores" }, new[] { new VectorType(NumberDataViewType.Single, dim) });
                 case PredictionKind.MultiOutputRegression:
                     return new ExtendedSchema((ISchema)null, new[] { "Predictions" }, new[] { new VectorType(NumberDataViewType.Single, dim) });

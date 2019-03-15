@@ -15,21 +15,21 @@ using Scikit.ML.PipelineHelper;
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
 using SignatureDataTransform = Microsoft.ML.Data.SignatureDataTransform;
 using SignatureLoadDataTransform = Microsoft.ML.Data.SignatureLoadDataTransform;
-using MultiClassConvertTransform = Scikit.ML.MultiClass.MultiClassConvertTransform;
+using MulticlassConvertTransform = Scikit.ML.Multiclass.MulticlassConvertTransform;
 
-[assembly: LoadableClass(MultiClassConvertTransform.Summary, typeof(MultiClassConvertTransform), typeof(MultiClassConvertTransform.Arguments), typeof(SignatureDataTransform),
-    "Extended Convert Transform", MultiClassConvertTransform.LoaderSignature, "ExtConv", "mcConv")]
+[assembly: LoadableClass(MulticlassConvertTransform.Summary, typeof(MulticlassConvertTransform), typeof(MulticlassConvertTransform.Arguments), typeof(SignatureDataTransform),
+    "Extended Convert Transform", MulticlassConvertTransform.LoaderSignature, "ExtConv", "mcConv")]
 
-[assembly: LoadableClass(MultiClassConvertTransform.Summary, typeof(MultiClassConvertTransform), null, typeof(SignatureLoadDataTransform),
-    "Extended Convert Transform", MultiClassConvertTransform.LoaderSignature, "ExtConv", "mcConv")]
+[assembly: LoadableClass(MulticlassConvertTransform.Summary, typeof(MulticlassConvertTransform), null, typeof(SignatureLoadDataTransform),
+    "Extended Convert Transform", MulticlassConvertTransform.LoaderSignature, "ExtConv", "mcConv")]
 
 
-namespace Scikit.ML.MultiClass
+namespace Scikit.ML.Multiclass
 {
     /// <summary>
     /// Mostly added to convert a float into a key.
     /// </summary>
-    public sealed class MultiClassConvertTransform : OneToOneTransformBase
+    public sealed class MulticlassConvertTransform : OneToOneTransformBase
     {
         public class Column : SchemaHelper.OneToOneColumnForArgument
         {
@@ -74,9 +74,9 @@ namespace Scikit.ML.MultiClass
             }
         }
 
-        internal const string Summary = "Converts a column to a different type, using standard conversions and specialized for MultiClass.";
+        internal const string Summary = "Converts a column to a different type, using standard conversions and specialized for Multiclass.";
 
-        public const string LoaderSignature = "MultiClassConvertTransform";
+        public const string LoaderSignature = "MulticlassConvertTransform";
         private static VersionInfo GetVersionInfo()
         {
             return new VersionInfo(
@@ -85,13 +85,13 @@ namespace Scikit.ML.MultiClass
                 verReadableCur: 0x00010001,
                 verWeCanReadBack: 0x00010001,
                 loaderSignature: LoaderSignature,
-                loaderAssemblyName: typeof(MultiClassConvertTransform).Assembly.FullName);
+                loaderAssemblyName: typeof(MulticlassConvertTransform).Assembly.FullName);
         }
 
         private const string RegistrationName = "McConvert";
         private readonly ColInfoEx[] _exes;
 
-        public MultiClassConvertTransform(IHostEnvironment env, Arguments args, IDataView input)
+        public MulticlassConvertTransform(IHostEnvironment env, Arguments args, IDataView input)
             : base(env, RegistrationName, env.CheckRef(args, "args").column, input, null)
         {
             Host.AssertNonEmpty(Infos);
@@ -175,7 +175,7 @@ namespace Scikit.ML.MultiClass
             return false;
         }
 
-        private MultiClassConvertTransform(IHost host, ModelLoadContext ctx, IDataView input)
+        private MulticlassConvertTransform(IHost host, ModelLoadContext ctx, IDataView input)
             : base(host, ctx, input, null)
         {
             Host.AssertValue(ctx);
@@ -206,7 +206,7 @@ namespace Scikit.ML.MultiClass
             SetMetadata();
         }
 
-        public static MultiClassConvertTransform Create(IHostEnvironment env, ModelLoadContext ctx, IDataView input)
+        public static MulticlassConvertTransform Create(IHostEnvironment env, ModelLoadContext ctx, IDataView input)
         {
             Contracts.CheckValue(env, "env");
             var h = env.Register(RegistrationName);
@@ -221,7 +221,7 @@ namespace Scikit.ML.MultiClass
                     // <remainder handled in ctors>
                     int cbFloat = ctx.Reader.ReadInt32();
                     ch.CheckDecode(cbFloat == sizeof(float));
-                    return new MultiClassConvertTransform(h, ctx, input);
+                    return new MulticlassConvertTransform(h, ctx, input);
                 });
         }
 
@@ -327,7 +327,7 @@ namespace Scikit.ML.MultiClass
                     {
                         case DataKind.UInt32:
                             // Key starts at 1.
-                            // MultiClass future issue
+                            // Multiclass future issue
                             uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                             identity = false;
                             ValueMapper<uint, uint> map_ = (in uint src, ref uint dst) => { dst = src + plus; };
@@ -353,7 +353,7 @@ namespace Scikit.ML.MultiClass
                 }
                 else if (typeSrc.ItemType().RawKind() == DataKind.Int64 && kind == DataKind.UInt32)
                 {
-                    // MultiClass future issue
+                    // Multiclass future issue
                     uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                     identity = false;
                     ValueMapper<long, uint> map_ = (in long src, ref uint dst) =>
@@ -414,7 +414,7 @@ namespace Scikit.ML.MultiClass
             if (typeSrc.RawKind() == DataKind.UInt32 && typeDst.RawKind() == DataKind.UInt32)
             {
                 var getter = row.GetGetter<uint>(col);
-                // MultiClass future issue
+                // Multiclass future issue
                 uint plus = (typeDst.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                 identity = true;
                 var src = default(uint);
@@ -443,7 +443,7 @@ namespace Scikit.ML.MultiClass
             }
             else if (typeSrc.RawKind() == DataKind.Int64 && typeDst.RawKind() == DataKind.UInt32)
             {
-                // MultiClass future issue
+                // Multiclass future issue
                 uint plus = (typeDst.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
                 var getter = row.GetGetter<long>(col);
                 identity = true;

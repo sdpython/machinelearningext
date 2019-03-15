@@ -248,7 +248,7 @@ namespace TestMachineLearningExt
 
                 using (var pipe = new ScikitPipeline(new[] {
                         "Concat{col=Feature:Slength,Swidth}",
-                        "TagTrainScore{tr=iova{p=ft{nl=10 iter=1}} lab=Label feat=Feature tag=model scorer=MultiClassClassifierScorer{ex=AA}}" }, host: env))
+                        "TagTrainScore{tr=iova{p=ft{nl=10 iter=1}} lab=Label feat=Feature tag=model scorer=MulticlassClassifierScorer{ex=AA}}" }, host: env))
                 {
                     pipe.Train(loader);
                     var pred = pipe.Predict(loader);

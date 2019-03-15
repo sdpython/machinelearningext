@@ -10,7 +10,7 @@ using Microsoft.ML.Runtime;
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
 using NearestNeighborsTrainer = Scikit.ML.NearestNeighbors.NearestNeighborsTrainer;
 using NearestNeighborsBinaryClassificationTrainer = Scikit.ML.NearestNeighbors.NearestNeighborsBinaryClassificationTrainer;
-using NearestNeighborsMultiClassClassificationTrainer = Scikit.ML.NearestNeighbors.NearestNeighborsMultiClassClassificationTrainer;
+using NearestNeighborsMulticlassClassificationTrainer = Scikit.ML.NearestNeighbors.NearestNeighborsMulticlassClassificationTrainer;
 
 [assembly: LoadableClass(NearestNeighborsBinaryClassificationTrainer.Summary,
     typeof(NearestNeighborsBinaryClassificationTrainer),
@@ -20,13 +20,13 @@ using NearestNeighborsMultiClassClassificationTrainer = Scikit.ML.NearestNeighbo
     NearestNeighborsBinaryClassificationTrainer.LongName,
     NearestNeighborsBinaryClassificationTrainer.ShortName)]
 
-[assembly: LoadableClass(NearestNeighborsMultiClassClassificationTrainer.Summary,
-    typeof(NearestNeighborsMultiClassClassificationTrainer),
+[assembly: LoadableClass(NearestNeighborsMulticlassClassificationTrainer.Summary,
+    typeof(NearestNeighborsMulticlassClassificationTrainer),
     typeof(NearestNeighborsTrainer.Arguments),
-    new[] { typeof(SignatureMultiClassClassifierTrainer), typeof(SignatureTrainer) },
-    NearestNeighborsMultiClassClassificationTrainer.LoaderSignature,
-    NearestNeighborsMultiClassClassificationTrainer.LongName,
-    NearestNeighborsMultiClassClassificationTrainer.ShortName)]
+    new[] { typeof(SignatureMulticlassClassifierTrainer), typeof(SignatureTrainer) },
+    NearestNeighborsMulticlassClassificationTrainer.LoaderSignature,
+    NearestNeighborsMulticlassClassificationTrainer.LongName,
+    NearestNeighborsMulticlassClassificationTrainer.ShortName)]
 
 namespace Scikit.ML.NearestNeighbors
 {
@@ -56,7 +56,7 @@ namespace Scikit.ML.NearestNeighbors
         }
     }
 
-    public class NearestNeighborsMultiClassClassificationTrainer : NearestNeighborsTrainer
+    public class NearestNeighborsMulticlassClassificationTrainer : NearestNeighborsTrainer
     {
         public const string LoaderSignature = "NearestNeighborsMCC";  // Not more than 24 letters.
         public const string Summary = "k-Nearest Neighbors trainer for Multi-Class Classification";
@@ -64,21 +64,21 @@ namespace Scikit.ML.NearestNeighbors
         public const string ShortName = "kNNmc";
         public const string LongName = "kNNmcl";
 
-        public NearestNeighborsMultiClassClassificationTrainer(IHostEnvironment env, Arguments args) : base(env, args, LoaderSignature)
+        public NearestNeighborsMulticlassClassificationTrainer(IHostEnvironment env, Arguments args) : base(env, args, LoaderSignature)
         {
         }
 
         protected override INearestNeighborsPredictor Train(RoleMappedData data)
         {
             int count;
-            data.CheckMultiClassLabel(out count);
+            data.CheckMulticlassLabel(out count);
             return base.Train(data);
         }
 
         protected override INearestNeighborsPredictor CreateTrainedPredictor<TLabel>(KdTree[] kdtrees,
             Dictionary<long, Tuple<TLabel, float>> labelsWeights)
         {
-            return NearestNeighborsMultiClassClassifierPredictor.Create<TLabel>(Host, kdtrees, labelsWeights,
+            return NearestNeighborsMulticlassClassifierPredictor.Create<TLabel>(Host, kdtrees, labelsWeights,
                                 _args.k, _args.algo, _args.weighting);
         }
     }
