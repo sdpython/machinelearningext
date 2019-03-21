@@ -469,7 +469,7 @@ namespace Scikit.ML.PipelineHelper
             public Host(HostEnvironmentBase<DelegateEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
                 : base(source, shortName, parentFullName, rand, verbose)
             {
-                IsCancelled = source.IsCancelled;
+                IsCanceled = source.IsCanceled;
             }
 
             protected override IChannel CreateCommChannel(ChannelProviderBase parent, string name)

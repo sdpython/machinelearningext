@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Runtime;
@@ -290,7 +289,8 @@ namespace TestMachineLearningExt
                 var pipe = DataViewConstructionUtils.LoadPipeWithPredictor(_env, File.OpenRead(modelName),
                                                         new EmptyDataView(_env, view.Schema));
                 var transformer = new TransformWrapper(_env, pipe);
-                _predictor = _env.CreatePredictionEngine<FloatVectorInput, FloatOutput>(transformer);
+                var model = new ModelOperationsCatalog(_env);
+                _predictor = model.CreatePredictionEngine<FloatVectorInput, FloatOutput>(transformer);
             }
 
             public Tuple<float, float> Predict(float[] features)

@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
@@ -39,8 +38,7 @@ namespace TestProfileBenchmark
                 KeepDiacritics = false,
                 KeepPunctuations = false,
                 CaseMode = TextNormalizingEstimator.CaseMode.Lower,
-                OutputTokens = true,
-                UsePredefinedStopWordRemover = true,
+                OutputTokensColumnName = "tokens",
                 Norm = normalize ? TextFeaturizingEstimator.NormFunction.L2 : TextFeaturizingEstimator.NormFunction.None,
                 CharFeatureExtractor = new WordBagEstimator.Options() { NgramLength = 3, UseAllLengths = false },
                 WordFeatureExtractor = new WordBagEstimator.Options() { NgramLength = 2, UseAllLengths = true },
@@ -57,7 +55,7 @@ namespace TestProfileBenchmark
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
                 // Train
-                var trainer = new SdcaNonCalibratedBinaryClassificationTrainer(env, new SdcaNonCalibratedBinaryClassificationTrainer.Options
+                var trainer = new SdcaCalibratedBinaryTrainer(env, new SdcaCalibratedBinaryTrainer.Options
                 {
                     LabelColumnName = "Label",
                     FeatureColumnName = "Features"
@@ -128,7 +126,8 @@ namespace TestProfileBenchmark
                 if (engine == "mlnet")
                 {
                     Console.WriteLine("engine={0} N={1} ncall={2} cacheScikit={3}", engine, N, ncall, cacheScikit);
-                    var fct = ComponentCreation.CreatePredictionEngine<SentimentDataBoolFloat, SentimentPrediction>(env, transformer);
+                    var model = new ModelOperationsCatalog(env);
+                    var fct = model.CreatePredictionEngine<SentimentDataBoolFloat, SentimentPrediction>(transformer, true);
                     var sw = new Stopwatch();
                     for (int call = 1; call <= ncall; ++call)
                     {

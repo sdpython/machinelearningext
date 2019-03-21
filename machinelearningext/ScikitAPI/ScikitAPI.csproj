@@ -42,6 +42,9 @@
     <Reference Include="Microsoft.ML.Data">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.DataView">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.DataView.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ML.Maml">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Maml.dll</HintPath>
     </Reference>

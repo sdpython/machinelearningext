@@ -41,7 +41,7 @@ namespace Scikit.ML.ProductionPrediction
             public Host(HostEnvironmentBase<PassThroughEnvironment> source, string shortName, string parentFullName, Random rand, bool verbose)
                 : base(source, shortName, parentFullName, rand, verbose)
             {
-                IsCancelled = source.IsCancelled;
+                IsCanceled = source.IsCanceled;
             }
 
             protected override IChannel CreateCommChannel(ChannelProviderBase parent, string name)

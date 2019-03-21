@@ -7,7 +7,6 @@ using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Model;
-using Microsoft.Data.DataView;
 using Microsoft.ML.Runtime;
 using Scikit.ML.PipelineHelper;
 

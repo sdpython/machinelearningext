@@ -5,7 +5,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Data.DataView;
 using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
 using Scikit.ML.TestHelper;

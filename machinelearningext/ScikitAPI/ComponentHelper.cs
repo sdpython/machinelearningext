@@ -58,18 +58,18 @@ namespace Scikit.ML.ScikitAPI
         {
             var res = new List<Assembly>();
             res.Add(typeof(TextLoader).Assembly);
-            res.Add(typeof(LinearModelStatistics).Assembly);
+            res.Add(typeof(LinearBinaryModelParameters).Assembly);
             res.Add(typeof(OneHotEncodingEstimator).Assembly);
             res.Add(typeof(FastTreeRankingTrainer).Assembly);
             res.Add(typeof(KMeansTrainer).Assembly);
-            res.Add(typeof(LightGbmBinaryClassificationTrainer).Assembly);
-            res.Add(typeof(PrincipleComponentModelParameters).Assembly);
+            res.Add(typeof(LightGbmBinaryTrainer).Assembly);
+            res.Add(typeof(PrincipalComponentAnalysisTransformer).Assembly);
             res.Add(typeof(PredictionFunctionExtensions).Assembly);
             res.Add(typeof(TextFeaturizingEstimator).Assembly);
             res.Add(typeof(TensorFlowTransformer).Assembly);
             res.Add(typeof(TrainCommand).Assembly);
             res.Add(typeof(ICanSaveOnnx).Assembly);
-            res.Add(typeof(OrdinaryLeastSquaresRegressionModelParameters).Assembly);
+            res.Add(typeof(OlsTrainer).Assembly);
             res.Add(typeof(SweeperBase).Assembly);
             res.Add(typeof(VectorTypeAttribute).Assembly);
             res.Add(typeof(JsonParser).Assembly);

@@ -3,7 +3,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using Microsoft.Data.DataView;
 using Scikit.ML.TestHelper;
 using Scikit.ML.PipelineHelper;
 using Scikit.ML.NearestNeighbors;
