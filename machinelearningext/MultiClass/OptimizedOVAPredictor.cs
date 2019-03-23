@@ -96,7 +96,7 @@ namespace Scikit.ML.Multiclass
             Host.Assert(Utils.Size(impl.Predictors) > 0);
 
             _impl = impl;
-            _outputType = new VectorType(NumberDataViewType.Single, _impl.Predictors.Length);
+            _outputType = new VectorDataViewType(NumberDataViewType.Single, _impl.Predictors.Length);
         }
 
         private OptimizedOVAPredictor(IHostEnvironment env, ModelLoadContext ctx) : base(env, RegistrationName, ctx)
@@ -121,7 +121,7 @@ namespace Scikit.ML.Multiclass
                 _impl = new ImplRaw(predictors);
             }
 
-            _outputType = new VectorType(NumberDataViewType.Single, _impl.Predictors.Length);
+            _outputType = new VectorDataViewType(NumberDataViewType.Single, _impl.Predictors.Length);
         }
 
         public static OptimizedOVAPredictor Create(IHostEnvironment env, ModelLoadContext ctx)

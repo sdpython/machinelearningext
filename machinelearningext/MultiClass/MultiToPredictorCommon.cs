@@ -41,11 +41,11 @@ namespace Scikit.ML.Multiclass
                 int vs = insideInput.VectorSize();
                 Contracts.Assert(vs > 0);
                 if (_impl.SingleColumn)
-                    return new VectorType(insideInput.AsVector().ItemType(), vs - 1);
+                    return new VectorDataViewType(insideInput.AsVector().ItemType(), vs - 1);
                 else
                 {
                     int nb = _impl.MaxClassIndex() + 1;
-                    return new VectorType(insideInput.AsVector().ItemType(), vs - nb);
+                    return new VectorDataViewType(insideInput.AsVector().ItemType(), vs - nb);
                 }
             }
         }
@@ -370,7 +370,7 @@ namespace Scikit.ML.Multiclass
                     _dstIndices = _classes.Values.Select(c => func(c)).ToArray();
                     // outputType
                     Contracts.Assert(_classes.Count > 0);
-                    _outputType = _outputType = new VectorType(NumberDataViewType.Single, _dstIndices.Max() + 1);
+                    _outputType = _outputType = new VectorDataViewType(NumberDataViewType.Single, _dstIndices.Max() + 1);
 #if IMPLIValueMapperDist
                     _distType = _outputType;
 #endif
@@ -380,7 +380,7 @@ namespace Scikit.ML.Multiclass
                     _dstIndices = null;
                     // outputType
                     Contracts.Assert(_classes.Count > 0);
-                    _outputType = _outputType = new VectorType(NumberDataViewType.Single, _classes.Length);
+                    _outputType = _outputType = new VectorDataViewType(NumberDataViewType.Single, _classes.Length);
 #if IMPLIValueMapperDist
                     _distType = _outputType;
 #endif

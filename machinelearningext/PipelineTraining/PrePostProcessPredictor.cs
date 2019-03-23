@@ -94,7 +94,7 @@ namespace Scikit.ML.PipelineTraining
                 switch (type.AsVector().ItemType().RawKind())
                 {
                     case DataKind.Single:
-                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorType(NumberDataViewType.Single) }));
+                        schema = ExtendedSchema.Create(new ExtendedSchema((ISchema)null, new[] { _inputColumn }, new[] { new VectorDataViewType(NumberDataViewType.Single) }));
                         data = new TemporaryViewCursorColumn<VBuffer<float>>(default(VBuffer<float>), 0, schema);
                         break;
                     default:

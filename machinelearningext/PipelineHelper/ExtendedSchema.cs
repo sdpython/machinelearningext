@@ -75,7 +75,7 @@ namespace Scikit.ML.PipelineHelper
         /// field is <see cref="NumberDataViewType.Single"/>. If the i-th column can't be iterated column-wisely, this function may
         /// return <see langword="null"/>.
         /// </summary>
-        VectorType GetSlotType(int col);
+        VectorDataViewType GetSlotType(int col);
     }
 
     /// <summary>
@@ -444,7 +444,7 @@ namespace Scikit.ML.PipelineHelper
             {
                 var ty = GetColumnType(col);
                 if (ty.IsVector() && ty.AsVector().DimCount() == 1 && ty.AsVector().GetDim(0) > 0)
-                    return new VectorType(TextDataViewType.Instance, ty.AsVector().GetDim(0));
+                    return new VectorDataViewType(TextDataViewType.Instance, ty.AsVector().GetDim(0));
             }
             return null;
         }

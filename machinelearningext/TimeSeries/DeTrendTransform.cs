@@ -234,7 +234,7 @@ namespace Scikit.ML.TimeSeries
             {
                 slotName = input.Schema.GetTempColumnName() + "in";
                 input = LambdaColumnHelper.Create(Host, "takeslot", input, _args.columns[0].Source, slotName,
-                                            new VectorType(NumberDataViewType.Single), NumberDataViewType.Single,
+                                            new VectorDataViewType(NumberDataViewType.Single), NumberDataViewType.Single,
                                             (in VBuffer<float> src, ref float dst) =>
                                             {
                                                 dst = src.GetItemOrDefault(0);
@@ -246,7 +246,7 @@ namespace Scikit.ML.TimeSeries
             {
                 slotTime = input.Schema.GetTempColumnName() + "time";
                 input = LambdaColumnHelper.Create(Host, "makevect", input, _args.timeColumn, slotTime,
-                                            NumberDataViewType.Single, new VectorType(NumberDataViewType.Single, 2),
+                                            NumberDataViewType.Single, new VectorDataViewType(NumberDataViewType.Single, 2),
                                             (in float src, ref VBuffer<float> dst) =>
                                             {
                                                 if (dst.Values != null)
@@ -298,7 +298,7 @@ namespace Scikit.ML.TimeSeries
             var concat = ColumnConcatenatingTransformer.Create(Host, cargs, predict);
 
             var lambdaView = LambdaColumnHelper.Create(Host,
-                "DeTrendTransform", concat, tempColumn, _args.columns[0].Name, new VectorType(NumberDataViewType.Single, 2),
+                "DeTrendTransform", concat, tempColumn, _args.columns[0].Name, new VectorDataViewType(NumberDataViewType.Single, 2),
                 NumberDataViewType.Single,
                 (in VBuffer<float> src, ref float dst) =>
                 {

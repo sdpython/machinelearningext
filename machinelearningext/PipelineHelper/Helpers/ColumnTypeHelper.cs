@@ -18,7 +18,7 @@ namespace Scikit.ML.PipelineHelper
 
         public static bool IsVector(this DataViewType column)
         {
-            return column is VectorType;
+            return column is VectorDataViewType;
         }
 
         public static bool IsNumber(this DataViewType column)
@@ -28,7 +28,7 @@ namespace Scikit.ML.PipelineHelper
 
         public static bool IsKey(this DataViewType column)
         {
-            return column is KeyType;
+            return column is KeyDataViewType;
         }
 
         public static bool IsText(this DataViewType column)
@@ -39,9 +39,9 @@ namespace Scikit.ML.PipelineHelper
             return true;
         }
 
-        public static KeyType AsKey(this DataViewType column)
+        public static KeyDataViewType AsKey(this DataViewType column)
         {
-            return IsKey(column) ? (KeyType)column : null;
+            return IsKey(column) ? (KeyDataViewType)column : null;
         }
 
         public static PrimitiveDataViewType AsPrimitive(this DataViewType column)
@@ -49,9 +49,9 @@ namespace Scikit.ML.PipelineHelper
             return IsPrimitive(column) ? (PrimitiveDataViewType)column : null;
         }
 
-        public static VectorType AsVector(this DataViewType column)
+        public static VectorDataViewType AsVector(this DataViewType column)
         {
-            return IsVector(column) ? (VectorType)column : null;
+            return IsVector(column) ? (VectorDataViewType)column : null;
         }
 
         public static int DimCount(this DataViewType column)

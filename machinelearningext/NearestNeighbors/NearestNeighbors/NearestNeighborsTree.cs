@@ -46,7 +46,7 @@ namespace Scikit.ML.NearestNeighbors
             _host = host;
             _host.Check(!kdtrees.Where(c => c == null).Any(), "kdtree");
             _kdtrees = kdtrees;
-            _inputType = new VectorType(NumberDataViewType.Single, _kdtrees[0].dimension);
+            _inputType = new VectorDataViewType(NumberDataViewType.Single, _kdtrees[0].dimension);
         }
 
         public void Save(ModelSaveContext ctx)
@@ -69,7 +69,7 @@ namespace Scikit.ML.NearestNeighbors
                 _kdtrees[i] = new KdTree(ctx);
                 _host.CheckValue(_kdtrees[i], "kdtree");
             }
-            _inputType = new VectorType(NumberDataViewType.Single, _kdtrees[0].dimension);
+            _inputType = new VectorDataViewType(NumberDataViewType.Single, _kdtrees[0].dimension);
         }
 
         public KeyValuePair<float, long>[] NearestNNeighbors(VBuffer<float> target, int k)

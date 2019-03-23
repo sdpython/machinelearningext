@@ -111,7 +111,7 @@ namespace Scikit.ML.TestHelper
                 {
                     var name = schema[i].Name;
                     view = LambdaColumnHelper.Create(env,
-                                    "Lambda", view, name, name, new VectorType(NumberDataViewType.Single),
+                                    "Lambda", view, name, name, new VectorDataViewType(NumberDataViewType.Single),
                                     TextDataViewType.Instance,
                                     (in VBuffer<float> src, ref ReadOnlyMemory<char> dst) =>
                                     {

@@ -349,8 +349,8 @@ namespace Scikit.ML.RandomTransforms
                         foreach (var c in toShake)
                         {
                             var vt = c.OutputType.IsVector()
-                                            ? new VectorType(c.OutputType.ItemType().AsPrimitive(), c.OutputType.AsVector().DimCount() == 0 ? 0 : c.OutputType.AsVector().GetDim(0) * m)
-                                            : new VectorType(c.OutputType.AsPrimitive(), m);
+                                            ? new VectorDataViewType(c.OutputType.ItemType().AsPrimitive(), c.OutputType.AsVector().DimCount() == 0 ? 0 : c.OutputType.AsVector().GetDim(0) * m)
+                                            : new VectorDataViewType(c.OutputType.AsPrimitive(), m);
                             colTypes.Add(vt);
                         }
                         break;
@@ -358,8 +358,8 @@ namespace Scikit.ML.RandomTransforms
                         foreach (var c in toShake)
                         {
                             var vt = c.OutputType.IsVector()
-                                            ? new VectorType(c.OutputType.ItemType().AsPrimitive(), c.OutputType.AsVector().DimCount() == 0 ? 0 : c.OutputType.AsVector().GetDim(0))
-                                            : new VectorType(c.OutputType.AsPrimitive(), 1);
+                                            ? new VectorDataViewType(c.OutputType.ItemType().AsPrimitive(), c.OutputType.AsVector().DimCount() == 0 ? 0 : c.OutputType.AsVector().GetDim(0))
+                                            : new VectorDataViewType(c.OutputType.AsPrimitive(), 1);
                             colTypes.Add(vt);
                         }
                         break;

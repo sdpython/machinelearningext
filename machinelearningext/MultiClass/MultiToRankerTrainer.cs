@@ -190,7 +190,7 @@ namespace Scikit.ML.Multiclass
             else if (data.Schema.Label.Value.Type.IsKey())
             {
                 ulong nb = data.Schema.Label.Value.Type.AsKey().GetKeyCount();
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberDataViewType.Single, (int)nb) });
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorDataViewType(NumberDataViewType.Single, (int)nb) });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)
@@ -212,7 +212,7 @@ namespace Scikit.ML.Multiclass
                     MinMaxLabelOverDataSet(trans, labName, out nb);
                 else
                     nb = count;
-                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorType(NumberDataViewType.Single, nb) });
+                var sch = new TypeReplacementSchema(desc.Schema, new[] { labName }, new[] { new VectorDataViewType(NumberDataViewType.Single, nb) });
                 viewI = new TypeReplacementDataView(desc, sch);
                 #region debug
 #if (DEBUG)

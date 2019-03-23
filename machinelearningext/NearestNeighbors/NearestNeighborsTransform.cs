@@ -159,8 +159,8 @@ namespace Scikit.ML.NearestNeighbors
         DataViewSchema ComputeExtendedSchema()
         {
             return ExtendedSchema.Create(new ExtendedSchema(_input.Schema, new string[] { _args.distColumn, _args.idNeighborsColumn },
-                                       new DataViewType[] { new VectorType(NumberDataViewType.Single, _args.k),
-                                       new VectorType(NumberDataViewType.Int64, _args.k) }));
+                                       new DataViewType[] { new VectorDataViewType(NumberDataViewType.Single, _args.k),
+                                       new VectorDataViewType(NumberDataViewType.Int64, _args.k) }));
         }
 
         public DataViewSchema Schema { get { return _extendedSchema; } }

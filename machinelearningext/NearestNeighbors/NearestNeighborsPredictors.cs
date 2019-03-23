@@ -131,7 +131,7 @@ namespace Scikit.ML.NearestNeighbors
 
         int _nbClass;
 
-        public DataViewType OutputType { get { return new VectorType(NumberDataViewType.Single, _nbClass); } }
+        public DataViewType OutputType { get { return new VectorDataViewType(NumberDataViewType.Single, _nbClass); } }
 
 #if IMPLIValueMapperDist
         public DataViewType DistType { get { return OutputType; } }

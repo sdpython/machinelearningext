@@ -490,8 +490,8 @@ namespace TestMachineLearningExt
 
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var lambdaView = LambdaColumnHelper.Create<VBuffer<float>, VBuffer<float>>(host,
-                                "Lambda", data, "X", "XX", new VectorType(NumberDataViewType.Single, 2),
-                                new VectorType(NumberDataViewType.Single, 2),
+                                "Lambda", data, "X", "XX", new VectorDataViewType(NumberDataViewType.Single, 2),
+                                new VectorDataViewType(NumberDataViewType.Single, 2),
                                 (in VBuffer<float> src, ref VBuffer<float> dst) =>
                                 {
                                     dst = new VBuffer<float>(2, new float[2]);

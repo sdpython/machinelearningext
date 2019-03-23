@@ -58,9 +58,9 @@ namespace Scikit.ML.Multiclass
             public readonly DataKind Kind;
             public readonly bool HasKeyRange;
             public readonly DataViewType TypeDst;
-            public readonly VectorType SlotTypeDst;
+            public readonly VectorDataViewType SlotTypeDst;
 
-            public ColInfoEx(DataKind kind, bool hasKeyRange, DataViewType type, VectorType slotType)
+            public ColInfoEx(DataKind kind, bool hasKeyRange, DataViewType type, VectorDataViewType slotType)
             {
                 Contracts.AssertValue(type);
                 Contracts.AssertValueOrNull(slotType);
@@ -311,7 +311,7 @@ namespace Scikit.ML.Multiclass
                 ulong max = (ulong)kind;
                 if ((ulong)count > max)
                     count = max;
-                itemType = new KeyType(SchemaHelper.DataKind2ColumnType(kind).RawType, count);
+                itemType = new KeyDataViewType(SchemaHelper.DataKind2ColumnType(kind).RawType, count);
             }
 
             // Ensure that the conversion is legal. We don't actually cache the delegate here. It will get
@@ -369,12 +369,12 @@ namespace Scikit.ML.Multiclass
 
             DataViewType typeDst = itemType;
             if (typeSrc.IsVector())
-                typeDst = new VectorType(itemType, typeSrc.AsVector().Dimensions.ToArray());
+                typeDst = new VectorDataViewType(itemType, typeSrc.AsVector().Dimensions.ToArray());
 
             // An output column is transposable iff the input column was transposable.
-            VectorType slotType = null;
+            VectorDataViewType slotType = null;
             if (info.SlotTypeSrc != null)
-                slotType = new VectorType(itemType, info.SlotTypeSrc.Dimensions.ToArray());
+                slotType = new VectorDataViewType(itemType, info.SlotTypeSrc.Dimensions.ToArray());
 
             ex = new ColInfoEx(kind, range != null, typeDst, slotType);
             return true;
@@ -496,7 +496,7 @@ namespace Scikit.ML.Multiclass
             return RowCursorUtils.GetVecGetterAs(typeDst.AsVector().ItemType(), input, Infos[iinfo].Source);
         }
 
-        protected override VectorType GetSlotTypeCore(int iinfo)
+        protected override VectorDataViewType GetSlotTypeCore(int iinfo)
         {
             Host.Assert(0 <= iinfo && iinfo < Infos.Length);
             return _exes[iinfo].SlotTypeDst;

@@ -155,13 +155,13 @@ namespace Scikit.ML.PipelineHelper
                                          : Contracts.Except("A vector column needs a dimension");
                     int delta = col.Source[0].Max.Value - col.Source[0].Min + 1;
                     var colType = DataKind2ColumnType(col.Type, ch);
-                    return new VectorType(colType.AsPrimitive(), delta);
+                    return new VectorDataViewType(colType.AsPrimitive(), delta);
                 }
             }
             if (col.KeyCount != null)
             {
                 var r = col.KeyCount;
-                return new KeyType(DataKind2ColumnType(col.Type).RawType, r.Count.HasValue ? r.Count.Value : 0);
+                return new KeyDataViewType(DataKind2ColumnType(col.Type).RawType, r.Count.HasValue ? r.Count.Value : 0);
             }
             else
                 return DataKind2ColumnType(col.Type, ch);
@@ -411,7 +411,7 @@ namespace Scikit.ML.PipelineHelper
                 for (int i = 0; i < dimCount; ++i)
                     dims[i] = ctx.Reader.ReadInt32();
                 var kind = (DataKind)ctx.Reader.ReadByte();
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(kind), dims[0]);
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(kind), dims[0]);
             }
             else
             {
@@ -513,9 +513,9 @@ namespace Scikit.ML.PipelineHelper
                 case PredictionKind.Regression:
                     return new ExtendedSchema((ISchema)null, new[] { "Prediction" }, new[] { NumberDataViewType.Single });
                 case PredictionKind.MulticlassClassification:
-                    return new ExtendedSchema((ISchema)null, new[] { "Scores" }, new[] { new VectorType(NumberDataViewType.Single, dim) });
+                    return new ExtendedSchema((ISchema)null, new[] { "Scores" }, new[] { new VectorDataViewType(NumberDataViewType.Single, dim) });
                 case PredictionKind.MultiOutputRegression:
-                    return new ExtendedSchema((ISchema)null, new[] { "Predictions" }, new[] { new VectorType(NumberDataViewType.Single, dim) });
+                    return new ExtendedSchema((ISchema)null, new[] { "Predictions" }, new[] { new VectorDataViewType(NumberDataViewType.Single, dim) });
                 default:
                     throw Contracts.Except("Unable to build the schema for kind {0}", kind);
             }
@@ -554,25 +554,25 @@ namespace Scikit.ML.PipelineHelper
                 return ColumnTypeHelper.PrimitiveFromKind(DataKind.String);
 
             if (type == typeof(VBuffer<bool>) || type == typeof(VBufferEqSort<bool>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Boolean));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Boolean));
             if (type == typeof(VBuffer<byte>) || type == typeof(VBufferEqSort<byte>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.SByte));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.SByte));
             if (type == typeof(VBuffer<ushort>) || type == typeof(VBufferEqSort<ushort>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.UInt16));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.UInt16));
             if (type == typeof(VBuffer<uint>) || type == typeof(VBufferEqSort<uint>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.UInt32));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.UInt32));
             if (type == typeof(VBuffer<int>) || type == typeof(VBufferEqSort<int>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Int32));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Int32));
             if (type == typeof(VBuffer<Int64>) || type == typeof(VBufferEqSort<Int64>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Int64));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Int64));
             if (type == typeof(VBuffer<float>) || type == typeof(VBufferEqSort<float>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Single));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Single));
             if (type == typeof(VBuffer<double>) || type == typeof(VBufferEqSort<double>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Double));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.Double));
             if (type == typeof(VBuffer<ReadOnlyMemory<char>>) || type == typeof(VBuffer<string>) || type == typeof(VBuffer<DvText>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.String));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.String));
             if (type == typeof(VBufferEqSort<string>) || type == typeof(VBufferEqSort<DvText>))
-                return new VectorType(ColumnTypeHelper.PrimitiveFromKind(DataKind.String));
+                return new VectorDataViewType(ColumnTypeHelper.PrimitiveFromKind(DataKind.String));
 
             throw Contracts.ExceptNotSupp("Unsupported output type {0}.", type);
         }

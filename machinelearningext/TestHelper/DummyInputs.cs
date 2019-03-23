@@ -124,7 +124,7 @@ namespace Scikit.ML.TestHelper
 
     public class ExampleValueMapper : IValueMapper
     {
-        public DataViewType InputType { get { return new VectorType(NumberDataViewType.Single, 2); } }
+        public DataViewType InputType { get { return new VectorDataViewType(NumberDataViewType.Single, 2); } }
         public DataViewType OutputType { get { return NumberDataViewType.Single; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>()
         {
@@ -151,7 +151,7 @@ namespace Scikit.ML.TestHelper
 
     public class SHExampleValueMapper : IValueMapper
     {
-        public DataViewType InputType { get { return new VectorType(NumberDataViewType.Single, 2); } }
+        public DataViewType InputType { get { return new VectorDataViewType(NumberDataViewType.Single, 2); } }
         public DataViewType OutputType { get { return NumberDataViewType.Single; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>()
         {
@@ -166,8 +166,8 @@ namespace Scikit.ML.TestHelper
 
     public class ExampleValueMapperVector : IValueMapper
     {
-        public DataViewType InputType { get { return new VectorType(NumberDataViewType.Single, 2); } }
-        public DataViewType OutputType { get { return new VectorType(NumberDataViewType.Single); } }
+        public DataViewType InputType { get { return new VectorDataViewType(NumberDataViewType.Single, 2); } }
+        public DataViewType OutputType { get { return new VectorDataViewType(NumberDataViewType.Single); } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>()
         {
             return GetMapper_() as ValueMapper<TSrc, TDst>;
