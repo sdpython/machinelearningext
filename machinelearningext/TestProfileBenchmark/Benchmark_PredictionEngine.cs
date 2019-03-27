@@ -55,7 +55,7 @@ namespace TestProfileBenchmark
                 var trans = TextFeaturizingEstimator.Create(env, args2, loader);
 
                 // Train
-                var trainer = new SdcaCalibratedBinaryTrainer(env, new SdcaCalibratedBinaryTrainer.Options
+                var trainer = new SdcaLogisticRegressionBinaryTrainer(env, new SdcaLogisticRegressionBinaryTrainer.Options
                 {
                     LabelColumnName = "Label",
                     FeatureColumnName = "Features"
@@ -88,7 +88,7 @@ namespace TestProfileBenchmark
 
             var data = ml.Data.LoadFromTextFile(trainFilename, args);
             var pipeline = ml.Transforms.Text.FeaturizeText("SentimentText", "Features")
-                .Append(ml.BinaryClassification.Trainers.SdcaCalibrated("Label", "Features"));
+                .Append(ml.BinaryClassification.Trainers.SdcaLogisticRegression("Label", "Features"));
             var model = pipeline.Fit(data);
             return model;
         }
