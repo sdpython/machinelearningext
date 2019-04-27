@@ -54,11 +54,8 @@
     <Reference Include="Microsoft.ML.Maml">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Maml.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.StandardLearners">
+    <Reference Include="Microsoft.ML.KMeansClustering">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.KMeansClustering.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ML.StandardLearners">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.StandardLearners.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ML.CpuMath">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.CpuMath.dll</HintPath>
@@ -68,6 +65,9 @@
     </Reference>
     <Reference Include="Microsoft.ML.Transforms">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.StandardTrainers">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.StandardTrainers.dll</HintPath>
     </Reference>
   </ItemGroup>
   

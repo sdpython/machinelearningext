@@ -128,7 +128,15 @@ namespace Scikit.ML.DataManipulation
         /// Returns the name and the type of a column such as
         /// <pre>name:type:index</pre>.
         /// </summary>
-        public string NameType(int col) { return string.Format("{0}:{1}:{2}", _names[col], _kinds[col], col); }
+        /// <param name="col">column index</param>
+        /// <param name="internalTypeName">type is R4 instead of Single</param>
+        /// <returns></returns>
+        public string NameType(int col, bool internalTypeName = false)
+        {
+            return internalTypeName
+                   ? string.Format("{0}:{1}:{2}", _names[col], _kinds[col], col)
+                   : string.Format("{0}:{1}:{2}", _names[col], ColumnTypeHelper.DataViewType2Internal(_kinds[col]), col);
+        }
 
         /// <summary>
         /// Returns the number of rows.

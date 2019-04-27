@@ -106,6 +106,32 @@ namespace Scikit.ML.PipelineHelper
             }
         }
 
+        public static InternalDataKind DataViewType2Internal(DataViewType kind)
+        {
+            return DataKind2Internal(kind.RawKind());
+        }
+
+        public static InternalDataKind DataKind2Internal(DataKind kind)
+        {
+            switch (kind)
+            {
+                case DataKind.Boolean: return InternalDataKind.BL;
+                case DataKind.SByte: return InternalDataKind.I1;
+                case DataKind.Byte: return InternalDataKind.U1;
+                case DataKind.Int16: return InternalDataKind.I2;
+                case DataKind.UInt16: return InternalDataKind.U2;
+                case DataKind.Int32: return InternalDataKind.I4;
+                case DataKind.UInt32: return InternalDataKind.U4;
+                case DataKind.Int64: return InternalDataKind.I8;
+                case DataKind.UInt64: return InternalDataKind.U8;
+                case DataKind.Single: return InternalDataKind.R4;
+                case DataKind.Double: return InternalDataKind.R8;
+                case DataKind.String: return InternalDataKind.TX;
+                default:
+                    throw Contracts.ExceptNotImpl($"Datakind not implemented for kind {kind}.");
+            }
+        }
+
         public static int VectorSize(this DataViewType column)
         {
             return IsVector(column) ? AsVector(column).Size : 0;
@@ -143,7 +169,7 @@ namespace Scikit.ML.PipelineHelper
             if (kind == DataKind.DateTimeOffset)
                 return DateTimeOffsetDataViewType.Instance;
             return NumberFromKind(kind);
-        }       
+        }
 
         public static bool IsBool(this DataViewType column)
         {

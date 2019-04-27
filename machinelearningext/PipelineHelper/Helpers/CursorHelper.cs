@@ -94,6 +94,13 @@ namespace Scikit.ML.PipelineHelper
             return res;
         }
 
+        static ValueGetter<DTYPE> CheckNotNull<DTYPE>(ValueGetter<DTYPE> fct)
+        {
+            if (fct == null)
+                throw Contracts.Except(string.Format("fct cannot be null for TYPE {0}.", typeof(DTYPE)));
+            return fct;
+        }
+
         public static Delegate GetColumnGetter(DataViewRowCursor cur, DataViewSchema.Column col, DataViewSchema sch = null)
         {
             if (sch == null)
@@ -118,12 +125,12 @@ namespace Scikit.ML.PipelineHelper
             {
                 switch (colType.RawKind())
                 {
-                    case DataKind.Boolean: return cur.GetGetter<bool>(col);
-                    case DataKind.Int32: return cur.GetGetter<int>(col);
-                    case DataKind.UInt32: return cur.GetGetter<uint>(col);
-                    case DataKind.Int64: return cur.GetGetter<Int64>(col);
-                    case DataKind.Single: return cur.GetGetter<float>(col);
-                    case DataKind.Double: return cur.GetGetter<double>(col);
+                    case DataKind.Boolean: return CheckNotNull(cur.GetGetter<bool>(col));
+                    case DataKind.Int32: return CheckNotNull(cur.GetGetter<int>(col));
+                    case DataKind.UInt32: return CheckNotNull(cur.GetGetter<uint>(col));
+                    case DataKind.Int64: return CheckNotNull(cur.GetGetter<Int64>(col));
+                    case DataKind.Single: return CheckNotNull(cur.GetGetter<float>(col));
+                    case DataKind.Double: return CheckNotNull(cur.GetGetter<double>(col));
                     case DataKind.String: return GetGetterChoice<DvText, ReadOnlyMemory<char>>(cur, col);
                     default:
                         throw new NotImplementedException(string.Format("Not implemented for kind {0}", colType));

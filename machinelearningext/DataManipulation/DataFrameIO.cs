@@ -253,7 +253,11 @@ namespace Scikit.ML.DataManipulation
             var sch = df.Schema;
             var cols = new TextLoader.Column[sch.Count];
             for (int i = 0; i < cols.Length; ++i)
+            {
                 cols[i] = TextLoader.Column.Parse(df.NameType(i));
+                if (cols[i] == null)
+                    throw Contracts.Except("Unable to parse '{0}'.", df.NameType(i));
+            }
 
             var args = new TextLoader.Options()
             {

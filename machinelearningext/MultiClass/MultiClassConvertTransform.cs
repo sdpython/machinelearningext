@@ -266,7 +266,29 @@ namespace Scikit.ML.Multiclass
             }
         }
 
+        private static void CheckRange(float src, uint dst, IExceptionContext ectx = null)
+        {
+            if (src < 0 || src >= uint.MaxValue)
+            {
+                if (ectx != null)
+                    ectx.Except("Value long {0} cannot be converted into uint.", src);
+                else
+                    Contracts.Except("Value long {0} cannot be converted into uint.", src);
+            }
+        }
+
         private static void CheckRange(long src, ulong dst, IExceptionContext ectx = null)
+        {
+            if (src < 0)
+            {
+                if (ectx != null)
+                    ectx.Except("Value long {0} cannot be converted into ulong.", src);
+                else
+                    Contracts.Except("Value long {0} cannot be converted into ulong.", src);
+            }
+        }
+
+        private static void CheckRange(float src, ulong dst, IExceptionContext ectx = null)
         {
             if (src < 0)
             {
@@ -287,12 +309,7 @@ namespace Scikit.ML.Multiclass
 
             var typeSrc = info.TypeSrc;
             if (range != null)
-            {
                 itemType = TypeParsingUtils.ConstructKeyType(SchemaHelper.DataKind2InternalDataKind(kind), range);
-                if (!typeSrc.ItemType().IsKey() && !typeSrc.ItemType().IsText() && typeSrc.ItemType().RawKind() != kind &&
-                    !(typeSrc.ItemType().RawKind() == DataKind.Int64 && (kind == DataKind.UInt64 || kind == DataKind.UInt32)))
-                    return false;
-            }
             else if (!typeSrc.ItemType().IsKey())
                 itemType = ColumnTypeHelper.PrimitiveFromKind(kind);
             else if (!ColumnTypeHelper.IsValidDataKind(kind))
@@ -350,6 +367,18 @@ namespace Scikit.ML.Multiclass
                     if (del == null)
                         throw Contracts.ExceptNotSupp("Issue with casting");
                 }
+                else if (typeSrc.ItemType().RawKind() == DataKind.Single && kind == DataKind.UInt64)
+                {
+                    ulong plus = (itemType.IsKey() ? (ulong)1 : (ulong)0) - (typeSrc.IsKey() ? (ulong)1 : (ulong)0);
+                    identity = false;
+                    ValueMapper<float, ulong> map_ = (in float src, ref ulong dst) =>
+                    {
+                        CheckRange(src, dst, ectx); dst = (ulong)src + plus;
+                    };
+                    del = (Delegate)map_;
+                    if (del == null)
+                        throw Contracts.ExceptNotSupp("Issue with casting");
+                }
                 else if (typeSrc.ItemType().RawKind() == DataKind.Int64 && kind == DataKind.UInt32)
                 {
                     // Multiclass future issue
@@ -358,6 +387,31 @@ namespace Scikit.ML.Multiclass
                     ValueMapper<long, uint> map_ = (in long src, ref uint dst) =>
                     {
                         CheckRange(src, dst, ectx); dst = (uint)src + plus;
+                    };
+                    del = (Delegate)map_;
+                    if (del == null)
+                        throw Contracts.ExceptNotSupp("Issue with casting");
+                }
+                else if (typeSrc.ItemType().RawKind() == DataKind.Single && kind == DataKind.UInt32)
+                {
+                    // Multiclass future issue
+                    uint plus = (itemType.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
+                    identity = false;
+                    ValueMapper<float, uint> map_ = (in float src, ref uint dst) =>
+                    {
+                        CheckRange(src, dst, ectx); dst = (uint)src + plus;
+                    };
+                    del = (Delegate)map_;
+                    if (del == null)
+                        throw Contracts.ExceptNotSupp("Issue with casting");
+                }
+                else if (typeSrc.ItemType().RawKind() == DataKind.Single && kind == DataKind.String)
+                {
+                    // Multiclass future issue
+                    identity = false;
+                    ValueMapper<float, DvText> map_ = (in float src, ref DvText dst) =>
+                    {
+                        dst = new DvText(string.Format("{0}", (int)src));
                     };
                     del = (Delegate)map_;
                     if (del == null)
@@ -425,12 +479,42 @@ namespace Scikit.ML.Multiclass
                     };
                 return mapu as ValueGetter<TDst>;
             }
+            else if (typeSrc.RawKind() == DataKind.Single && typeDst.RawKind() == DataKind.UInt32)
+            {
+                var getter = row.GetGetter<float>(col);
+                // Multiclass future issue
+                uint plus = (typeDst.IsKey() ? (uint)1 : (uint)0) - (typeSrc.IsKey() ? (uint)1 : (uint)0);
+                identity = true;
+                var src = default(float);
+                ValueGetter<uint> mapu =
+                    (ref uint dst) =>
+                    {
+                        getter(ref src);
+                        dst = (uint)src + plus;
+                    };
+                return mapu as ValueGetter<TDst>;
+            }
             else if (typeSrc.RawKind() == DataKind.Int64 && typeDst.RawKind() == DataKind.UInt64)
             {
                 ulong plus = (typeDst.IsKey() ? (ulong)1 : (ulong)0) - (typeSrc.IsKey() ? (ulong)1 : (ulong)0);
                 var getter = row.GetGetter<long>(col);
                 identity = true;
                 var src = default(long);
+                ValueGetter<ulong> mapu =
+                    (ref ulong dst) =>
+                    {
+                        getter(ref src);
+                        CheckRange(src, dst);
+                        dst = (ulong)src + plus;
+                    };
+                return mapu as ValueGetter<TDst>;
+            }
+            else if (typeSrc.RawKind() == DataKind.Single && typeDst.RawKind() == DataKind.UInt64)
+            {
+                ulong plus = (ulong)((typeDst.IsKey() ? 1 : 0) - (typeSrc.IsKey() ? 1 : 0));
+                var getter = row.GetGetter<ulong>(col);
+                identity = true;
+                var src = default(ulong);
                 ValueGetter<ulong> mapu =
                     (ref ulong dst) =>
                     {
@@ -453,6 +537,20 @@ namespace Scikit.ML.Multiclass
                         getter(ref src);
                         CheckRange(src, dst);
                         dst = (uint)src + plus;
+                    };
+                return mapu as ValueGetter<TDst>;
+            }
+            else if (typeSrc.RawKind() == DataKind.Single && typeDst.RawKind() == DataKind.String)
+            {
+                // Multiclass future issue
+                var getter = row.GetGetter<float>(col);
+                identity = true;
+                var src = default(float);
+                ValueGetter<DvText> mapu =
+                    (ref DvText dst) =>
+                    {
+                        getter(ref src);
+                        dst = new DvText(string.Format("{0}", (int)src));
                     };
                 return mapu as ValueGetter<TDst>;
             }

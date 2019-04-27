@@ -180,7 +180,8 @@ namespace Scikit.ML.PipelineHelper
             return ToString(ExtendedSchema.Create(schemaInst), sep, vectorVec, keepHidden);
         }
 
-        public static string ToString(DataViewSchema schema, string sep = "; ", bool vectorVec = true, bool keepHidden = false)
+        public static string ToString(DataViewSchema schema, string sep = "; ",
+                                      bool vectorVec = true, bool keepHidden = false)
         {
             var builder = new StringBuilder();
             string name, type;
@@ -196,7 +197,15 @@ namespace Scikit.ML.PipelineHelper
                 var t = schema[i].Type;
                 if (vectorVec || (!t.IsVector() && !t.IsKey()))
                 {
-                    type = schema[i].Type.ToString().Replace(" ", "");
+                    var vecType = schema[i].Type;
+                    if (vecType.IsVector())
+                    {
+                        var dimension = vecType.VectorSize() >= 0 ? string.Format(",{0}", vecType.VectorSize()) : string.Empty;
+                        type = string.Format("Vec<{0}{1}>", ColumnTypeHelper.DataViewType2Internal(vecType.ItemType()), dimension);
+                        si = (i + lag).ToString();
+                    }
+                    else
+                        type = ColumnTypeHelper.DataViewType2Internal(vecType.ItemType()).ToString();
                     si = (i + lag).ToString();
                 }
                 else

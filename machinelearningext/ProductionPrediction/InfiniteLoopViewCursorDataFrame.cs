@@ -32,7 +32,7 @@ namespace Scikit.ML.ProductionPrediction
         readonly DataViewSchema _schema;
         readonly DataViewRowCursor _otherValues;
         readonly DataViewSchema _columnsSchema;
-        CursorType _ownCursor;
+        CursorType[] _ownCursor;
 
         public int[] ReplacedCol => _columns;
 
@@ -42,7 +42,8 @@ namespace Scikit.ML.ProductionPrediction
         /// <param name="columns">columns to be replaced</param>
         /// <param name="schema">schema of the view</param>
         /// <param name="otherValues">cursor which contains the others values</param>
-        public InfiniteLoopViewCursorDataFrame(int[] columns = null, DataViewSchema schema = null, DataViewRowCursor otherValues = null)
+        public InfiniteLoopViewCursorDataFrame(int[] columns = null, DataViewSchema schema = null,
+                                               DataViewRowCursor otherValues = null)
         {
             if (columns == null)
                 columns = Enumerable.Range(0, schema.Count).ToArray();
@@ -64,36 +65,30 @@ namespace Scikit.ML.ProductionPrediction
         {
             if (_ownCursor == null)
                 throw Contracts.Except("GetRowCursor on this view was never called. No cursor is registered.");
-            _ownCursor.Set(ref value, position);
+            for (int i = 0; i < _ownCursor.Length; ++i)
+                _ownCursor[i].Set(ref value, position, i);
         }
 
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             if (_ownCursor != null)
-                throw Contracts.Except("GetRowCursor was called a second time which probably means this function was called from multiple threads. " +
-                    "Be sure that an environment is called by parameter conc:1.");
-            _ownCursor = new CursorType(this, columnsNeeded, _otherValues);
-            return _ownCursor;
+                throw Contracts.Except("GetRowCursor was called a second time which probably means this " +
+                                       "function was called from multiple threads.");
+            _ownCursor = new CursorType[] {
+                new CursorType(this, columnsNeeded, _otherValues, 0, 1)
+            };
+            return _ownCursor[0];
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
-            var cur = GetRowCursor(columnsNeeded, rand);
-            if (n >= 2)
-            {
-                /*
-                var setColumns = new HashSet<int>(_columns);
-                var res = new DataViewRowCursor[n];
-                var empty = new EmptyCursor(this,
-                                    col => setColumns.Contains(col) || needCol(col) || (_otherValues != null && _otherValues.IsColumnActive(col)));
-                for (int i = 0; i < n; ++i)
-                    res[i] = i == 0 ? cur : empty;
-                return res.Take(1).ToArray();
-                */
-                return new DataViewRowCursor[] { cur };
-            }
-            else
-                return new DataViewRowCursor[] { cur };
+            if (_ownCursor != null)
+                throw Contracts.Except("GetRowCursorSet was called a second time which probably means this " +
+                                       "function was called from multiple threads.");
+            _ownCursor = new CursorType[n];
+            for (int i = 0; i < n; ++i)
+                _ownCursor[i] = new CursorType(this, columnsNeeded, _otherValues, i, n);
+            return _ownCursor;
         }
 
         enum CursorState { Good, NotStarted, Done };
@@ -111,15 +106,20 @@ namespace Scikit.ML.ProductionPrediction
             bool _wait;
             long _position;
             long _batch;
+            int _start;
+            int _inc;
 
-            public CursorType(InfiniteLoopViewCursorDataFrame view, IEnumerable<DataViewSchema.Column> columnsNeeded, DataViewRowCursor otherValues)
+            public CursorType(InfiniteLoopViewCursorDataFrame view, IEnumerable<DataViewSchema.Column> columnsNeeded,
+                              DataViewRowCursor otherValues, int start, int inc)
             {
                 _columnsNeeded = columnsNeeded;
+                _start = start;
+                _inc = inc;
                 _view = view;
                 _state = CursorState.NotStarted;
                 _otherValues = otherValues;
                 _wait = true;
-                _position = 0;
+                _position = -1;
                 _batch = 1;
                 _container = null;
                 _positionDataFrame = -1;
@@ -129,7 +129,7 @@ namespace Scikit.ML.ProductionPrediction
                     _columns[view.ReplacedCol[i]] = i;
             }
 
-            public long? GetRowCount() { return 1; }
+            public long? GetRowCount() { return null; }
             public override long Batch { get { return _batch; } }
             public override long Position { get { return _position; } }
             public override DataViewSchema Schema { get { return _view.Schema; } }
@@ -152,20 +152,23 @@ namespace Scikit.ML.ProductionPrediction
                 if (_state == CursorState.Done)
                     throw Contracts.Except("The state of the cursor should not be Done.");
                 if (_wait)
-                    throw Contracts.Except("The cursor has no value to show. This exception happens because a different thread is " +
-                        "requested the next value or because a view is requesting for more than one value at a time.");
+                    throw Contracts.Except("The cursor has no value to show. This exception happens because a different " +
+                                           "thread is requested the next value or because a view is requesting for more " +
+                                           "than one value at a time.");
                 _state = CursorState.Good;
-                ++_positionDataFrame;
-                ++_position;
-                ++_batch;
+                _positionDataFrame += _inc;
+                _position += _inc;
+                _batch += _inc;
                 _wait = _positionDataFrame >= _container.Length;
                 return true;
             }
 
-            public void Set(ref DataFrame value, int position)
+            public void Set(ref DataFrame value, int position, int checkStart)
             {
+                if (checkStart != _start)
+                    throw Contracts.Except($"Mismatch between _start={_start} and checkStart={checkStart}");
                 _container = value;
-                _positionDataFrame = position;
+                _positionDataFrame = position < 0 ? _start - _inc : position + _start;
                 _wait = false;
             }
 

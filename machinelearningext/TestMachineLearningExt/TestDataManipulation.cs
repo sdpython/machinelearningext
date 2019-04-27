@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using Microsoft.ML;
 using Microsoft.ML.Data;
 using Scikit.ML.DataManipulation;
 using Scikit.ML.TestHelper;
@@ -19,7 +20,59 @@ namespace TestMachineLearningExt
     {
         #region automated generation
 
+        #endregion
 
+        #region official API
+
+        public class IrisData
+        {
+            [LoadColumn(0)]
+            public float SepalLength;
+            [LoadColumn(1)]
+            public float SepalWidth;
+            [LoadColumn(2)]
+            public float PetalLength;
+            [LoadColumn(3)]
+            public float PetalWidth;
+            [LoadColumn(4)]
+            public string Label;
+        }
+
+        public class IrisPrediction
+        {
+            [ColumnName("PredictedLabel")]
+            public string PredictedLabels;
+        }
+
+        [TestMethod]
+        public void TestOfficialAPI()
+        {
+            MLContext mlContext = new MLContext();
+            var iris = FileHelper.GetTestFile("iris.txt");
+            IDataView trainingDataView = mlContext.Data.LoadFromTextFile<IrisData>(
+                    path: iris, hasHeader: true, separatorChar: '\t');
+
+            var pipeline = mlContext.Transforms.Conversion.MapValueToKey("Label")
+                .Append(mlContext.Transforms.Concatenate("Features", "SepalLength", "SepalWidth", "PetalLength", "PetalWidth"))
+                .AppendCacheCheckpoint(mlContext)
+                .Append(mlContext.MulticlassClassification.Trainers.OneVersusAll(
+                    mlContext.BinaryClassification.Trainers.SdcaLogisticRegression(maximumNumberOfIterations: 2)))
+                .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+
+            // STEP 4: Train your model based on the data set
+            var model = pipeline.Fit(trainingDataView);
+
+            // STEP 5: Use your model to make a prediction
+            // You can change these numbers to test different predictions
+            var prediction = mlContext.Model.CreatePredictionEngine<IrisData, IrisPrediction>(model).Predict(
+                new IrisData()
+                {
+                    SepalLength = 3.3f,
+                    SepalWidth = 1.6f,
+                    PetalLength = 0.2f,
+                    PetalWidth = 5.1f,
+                });
+        }
 
         #endregion
 
@@ -157,7 +210,8 @@ namespace TestMachineLearningExt
                 var iris = FileHelper.GetTestFile("iris.txt");
                 var df = DataFrameIO.ReadCsv(iris, sep: '\t', dtypes: new DataViewType[] { NumberDataViewType.Single });
                 var conc = env.CreateTransform("Concat{col=Features:Sepal_length,Sepal_width}", df);
-                var trainingData = env.CreateExamples(conc, "Features", label: "Label");
+                var conc_ = env.CreateTransform("mcConv{col=Label:U4[0-1]:Label}", conc);
+                var trainingData = env.CreateExamples(conc_, "Features", label: "Label");
                 var trainer = env.CreateTrainer("ova{p=ap}");
                 using (var ch = env.Start("test"))
                 {
@@ -169,7 +223,7 @@ namespace TestMachineLearningExt
                     Assert.AreEqual(predictions.Schema[5].Name, "Features.0");
                     Assert.AreEqual(predictions.Schema[6].Name, "Features.1");
                     Assert.AreEqual(predictions.Schema[7].Name, "PredictedLabel");
-                    Assert.AreEqual(predictions.Shape, new Tuple<int, int>(150, 11));
+                    Assert.AreEqual(predictions.Shape, new Tuple<int, int>(150, 10));
                 }
             }
         }
@@ -1296,7 +1350,8 @@ namespace TestMachineLearningExt
                 new ExampleXY() { X = 3f, Y=4f },
             };
 
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "Concat{col=Z:X,Y}" }, host: host))
@@ -1322,7 +1377,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 2, 4, 7 } },
             };
             DataFrame df1;
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 df1 = DataFrameIO.ReadView(data, env: host, keepVectors: true);

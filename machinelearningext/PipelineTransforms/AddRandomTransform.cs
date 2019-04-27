@@ -334,6 +334,16 @@ namespace Scikit.ML.PipelineTransforms
                 };
             }
 
+            ValueGetter<uint> GetGetter(DataViewSchema.Column col, uint defval)
+            {
+                var getter = _inputCursor.GetGetter<uint>(_view._columnMapping[col.Index]);
+                return (ref uint value) =>
+                {
+                    getter(ref value);
+                    value += (uint)(_rand.Next() % 2) * 2 - 1;
+                };
+            }
+
             ValueGetter<float> GetGetter(DataViewSchema.Column col, float defval)
             {
                 var getter = _inputCursor.GetGetter<float>(_view._columnMapping[col.Index]);

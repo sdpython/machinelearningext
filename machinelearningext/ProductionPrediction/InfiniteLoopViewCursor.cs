@@ -141,8 +141,9 @@ namespace Scikit.ML.ProductionPrediction
                 if (_state == CursorState.Done)
                     throw Contracts.Except("The state of the cursor should not be Done.");
                 if (_wait)
-                    throw Contracts.Except("The cursor has no value to show. This exception happens because a different thread is " +
-                        "requested the next value or because a view is requesting for more than one value at a time.");
+                    throw Contracts.Except("The cursor has no value to show. This exception happens because a different " +
+                                           "thread is requested the next value or because a view is requesting for " +
+                                           "more than one value at a time.");
                 _state = CursorState.Good;
                 ++_position;
                 ++_batch;
@@ -370,8 +371,9 @@ namespace Scikit.ML.ProductionPrediction
                 if (_state == CursorState.Done)
                     throw Contracts.Except("The state of the cursor should not be Done.");
                 if (_wait)
-                    throw Contracts.Except("The cursor has no value to show. This exception happens because a different thread is " +
-                        "requested the next value or because a view is requesting for more than one value at a time.");
+                    throw Contracts.Except("The cursor has no value to show. This exception happens because a different " +
+                                           "thread is requested the next value or because a view is requesting for more " +
+                                           "than one value at a time.");
                 _state = CursorState.Good;
                 ++_position;
                 ++_batch;
