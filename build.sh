@@ -17,6 +17,7 @@ cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.ImageAnalytics/netstandard2.0
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Mkl.Components/netstandard2.0/*.dll machinelearning/dist/Release
+cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Mkl.Components.StaticPipe/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.LightGBM/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Release
 cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Release
@@ -39,6 +40,7 @@ cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.ImageAnalytics/netstandard2.0/*
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Mkl.Components/netstandard2.0/*.dll machinelearning/dist/Debug
+cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Mkl.Components.StaticPipe/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.LightGBM/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Debug
 cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Debug
@@ -56,8 +58,8 @@ cp machinelearning/bin/x64.Release/Native/*.so machinelearning/dist/Release
 echo
 echo [build.sh] copy native binaries
 cp machinelearning/bin/x64.Debug/Native/*.so machinelearning/dist/Debug
-cp machinelearning/bin/x64.Release/Native/*.so machinelearning/dist/Release
 cp machinelearning/bin/x64.Debug/Native/*.dll machinelearning/dist/Debug
+cp machinelearning/bin/x64.Release/Native/*.so machinelearning/dist/Release
 cp machinelearning/bin/x64.Release/Native/*.dll machinelearning/dist/Release
 
 echo
@@ -69,9 +71,9 @@ cd ..
 
 echo
 echo [build.sh] final copy
-cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/TestProfileBenchmark/netcoreapp2.1
-cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/TestProfileBenchmark/netcoreapp2.1
-cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
-cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/TestMachineLearningExt/netcoreapp2.1
-cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/DocHelperMlExt/netstandard2.0
-cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/DocHelperMlExt/netstandard2.0
+cp machinelearning/bin/x64.Debug/Native/*.* machinelearningext/bin/AnyCPU.Debug/TestProfileBenchmark/netcoreapp2.1
+cp machinelearning/bin/x64.Debug/Native/*.* machinelearningext/bin/AnyCPU.Debug/TestMachineLearningExt/netcoreapp2.1
+cp machinelearning/bin/x64.Debug/Native/*.* machinelearningext/bin/AnyCPU.Debug/DocHelperMlExt/netstandard2.0
+cp machinelearning/bin/x64.Release/Native/*.* machinelearningext/bin/AnyCPU.Release/TestProfileBenchmark/netcoreapp2.1
+cp machinelearning/bin/x64.Release/Native/*.* machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
+cp machinelearning/bin/x64.Release/Native/*.* machinelearningext/bin/AnyCPU.Release/DocHelperMlExt/netstandard2.0

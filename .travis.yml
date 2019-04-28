@@ -70,6 +70,7 @@ before_script:
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Mkl.Components/netstandard2.0/*.dll machinelearning/dist/Release
+  - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Mkl.Components.StaticPipe/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.LightGbm/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Release
@@ -90,6 +91,7 @@ before_script:
   - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.KMeansClustering/netstandard2.0/*.dll machinelearning/dist/Debug
   - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Maml/netstandard2.0/*.dll machinelearning/dist/Debug
   - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Mkl.Components/netstandard2.0/*.dll machinelearning/dist/Debug
+  - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.Mkl.Components.StaticPipe/netstandard2.0/*.dll machinelearning/dist/Debug
   - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.LightGbm/netstandard2.0/*.dll machinelearning/dist/Debug
   - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxConverter/netstandard2.0/*.dll machinelearning/dist/Debug
   - cp machinelearning/bin/AnyCPU.Debug/Microsoft.ML.OnnxTransformer/netstandard2.0/*.dll machinelearning/dist/Debug
@@ -115,12 +117,15 @@ before_script:
   - dotnet build -c Release
   - cd ..
   # final copy
-  - cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/TestProfileBenchmark/netcoreapp2.1
-  - cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/TestProfileBenchmark/netcoreapp2.1
-  - cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
-  - cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/TestMachineLearningExt/netcoreapp2.1
-  - cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/DocHelperMlExt/netstandard2.0
-  - cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/DocHelperMlExt/netstandard2.0
+  - cp machinelearning/bin/x64.Debug/Native/*.* machinelearningext/bin/AnyCPU.Debug/TestProfileBenchmark/netcoreapp2.1
+  - cp machinelearning/bin/x64.Debug/Native/*.* machinelearningext/bin/AnyCPU.Debug/TestMachineLearningExt/netcoreapp2.1
+  - cp machinelearning/bin/x64.Debug/Native/*.* machinelearningext/bin/AnyCPU.Debug/DocHelperMlExt/netstandard2.0
+  - cp machinelearning/bin/x64.Release/Native/*.* machinelearningext/bin/AnyCPU.Release/TestProfileBenchmark/netcoreapp2.1
+  - cp machinelearning/bin/x64.Release/Native/*.* machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
+  - cp machinelearning/bin/x64.Release/Native/*.* machinelearningext/bin/AnyCPU.Release/DocHelperMlExt/netstandard2.0
+  # check
+  - ls machinelearningext/bin/AnyCPU.Debug/TestMachineLearningExt/netcoreapp2.1
+  - ls machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
 
 script:
   # unit tests for machinelearning: too long

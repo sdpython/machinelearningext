@@ -60,6 +60,9 @@
     <Reference Include="Microsoft.ML.Mkl.Components">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Mkl.Components.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.Mkl.Components.StaticPipe">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Mkl.Components.StaticPipe.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ML.PCA">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.PCA.dll</HintPath>
     </Reference>
