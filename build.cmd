@@ -23,7 +23,7 @@ copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.FastTree\netstandard2.0\*.d
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Legacy\netstandard2.0\*.dll machinelearning\dist\Release
-copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.LightGBM\netstandard2.0\*.dll machinelearning\dist\Release
+copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.LightGbm\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Maml\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Mkl.Components\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Mkl.Components.StaticPipe\netstandard2.0\*.dll machinelearning\dist\Release
@@ -47,7 +47,7 @@ copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Ensemble\netstandard2.0\*.dll
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Legacy\netstandard2.0\*.dll machinelearning\dist\Debug
-copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.LightGBM\netstandard2.0\*.dll machinelearning\dist\Debug
+copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.LightGbm\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Maml\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Mkl.Components\netstandard2.0\*.dll machinelearning\dist\Debug
