@@ -15,11 +15,11 @@ namespace Scikit.ML.ProductionPrediction
     /// Converts a ValueMapper into a IDataTransform.
     /// Similar to a scorer but in a more explicit way.
     /// </summary>
-    public class TransformFromValueMapper : IDataTransform, IValueMapper
+    public class TransformFromValueMapper : IDataTransformSingle, IValueMapper
     {
         #region members
 
-        readonly IDataTransform _transform;
+        readonly IDataTransformSingle _transform;
         readonly IDataView _source;
         readonly IHostEnvironment _host;
         readonly IValueMapper _mapper;
@@ -85,6 +85,11 @@ namespace Scikit.ML.ProductionPrediction
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            return _transform.GetRowCursorSingle(columnsNeeded, rand);
+        }
+
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             return _transform.GetRowCursorSet(columnsNeeded, n, rand);
@@ -100,7 +105,7 @@ namespace Scikit.ML.ProductionPrediction
 
         #region Cast
 
-        IDataTransform CreateMemoryTransform()
+        IDataTransformSingle CreateMemoryTransform()
         {
             if (InputType.IsVector())
             {
@@ -124,7 +129,7 @@ namespace Scikit.ML.ProductionPrediction
             }
         }
 
-        IDataTransform CreateMemoryTransformIn<TSrc>()
+        IDataTransformSingle CreateMemoryTransformIn<TSrc>()
         {
             if (OutputType.IsVector())
             {
@@ -152,7 +157,7 @@ namespace Scikit.ML.ProductionPrediction
             }
         }
 
-        IDataTransform CreateMemoryTransformInOut<TSrc, TDst>()
+        IDataTransformSingle CreateMemoryTransformInOut<TSrc, TDst>()
         {
             return new MemoryTransform<TSrc, TDst>(_host, this);
         }
@@ -161,7 +166,7 @@ namespace Scikit.ML.ProductionPrediction
 
         #region memory transform
 
-        class MemoryTransform<TSrc, TDst> : IDataTransform
+        class MemoryTransform<TSrc, TDst> : IDataTransformSingle
         {
             readonly IHostEnvironment _host;
             readonly TransformFromValueMapper _parent;
@@ -184,17 +189,28 @@ namespace Scikit.ML.ProductionPrediction
 
             public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
+                return GetRowCursor(columnsNeeded, rand, (c, r) => Source.GetRowCursor(c, r));
+            }
+
+            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+            {
+                return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(Source, c, r));
+            }
+
+            private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,
+                                                   DelegateGetRowCursor getterCursor)
+            {
                 int index = SchemaHelper.GetColumnIndex(Source.Schema, _parent.InputName);
                 if (columnsNeeded.Where(c => c.Index == index).Any())
                 {
                     var newCols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, index, Schema.Count);
                     var oldCols = SchemaHelper.ColumnsNeeded(newCols, Source.Schema);
-                    var cursor = Source.GetRowCursor(oldCols, rand);
+                    var cursor = getterCursor(oldCols, rand);
                     return new MemoryCursor<TSrc, TDst>(this, cursor, index);
                 }
                 else
                     // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                    return new SameCursor(Source.GetRowCursor(columnsNeeded, rand), Schema);
+                    return new SameCursor(getterCursor(columnsNeeded, rand), Schema);
             }
 
             public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

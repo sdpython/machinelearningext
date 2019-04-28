@@ -27,7 +27,7 @@ namespace Scikit.ML.RandomTransforms
     /// <summary>
     /// Randomly multiplies rows.
     /// </summary>
-    public class ResampleTransform : IDataTransform
+    public class ResampleTransform : IDataTransformSingle
     {
         #region identification
 
@@ -182,6 +182,17 @@ namespace Scikit.ML.RandomTransforms
 
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
+            return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(_input, c, r));
+        }
+
+        private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,
+                                               DelegateGetRowCursor getterCursor)
+        {
             int classColumn = -1;
             if (!string.IsNullOrEmpty(_args.column))
                 classColumn = SchemaHelper.GetColumnIndex(_input.Schema, _args.column);
@@ -189,7 +200,7 @@ namespace Scikit.ML.RandomTransforms
                 LoadCache(rand);
             else
                 Contracts.Assert(_cacheReplica == null);
-            var cursor = _input.GetRowCursor(columnsNeeded, rand);
+            var cursor = getterCursor(columnsNeeded, rand);
 
             if (classColumn == -1)
                 return new ResampleCursor<float>(this, cursor, columnsNeeded, _args.lambda, _args.seed, rand, _cacheReplica, 

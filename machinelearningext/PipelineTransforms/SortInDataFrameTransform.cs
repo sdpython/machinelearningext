@@ -293,7 +293,7 @@ namespace Scikit.ML.PipelineTransforms
         /// <summary>
         /// Templated transform which sorts rows based on one column.
         /// </summary>
-        public class SortInDataFrameState<TValue> : IDataTransform
+        public class SortInDataFrameState<TValue> : IDataTransformSingle
             where TValue : IComparable<TValue>
         {
             DataFrame _autoView;
@@ -378,6 +378,14 @@ namespace Scikit.ML.PipelineTransforms
                 _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (1).");
                 _host.AssertValue(_autoView, "_autoView");
                 return _autoView.GetRowCursor(columnsNeeded, rand);
+            }
+
+            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+            {
+                FillCacheIfNotFilled();
+                _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (1).");
+                _host.AssertValue(_autoView, "_autoView");
+                return CursorHelper.GetRowCursorSingle(_autoView, columnsNeeded, rand);
             }
 
             public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

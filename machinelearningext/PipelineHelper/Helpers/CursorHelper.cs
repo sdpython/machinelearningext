@@ -137,5 +137,16 @@ namespace Scikit.ML.PipelineHelper
                 }
             }
         }
+
+        public static DataViewRowCursor GetRowCursorSingle(IDataView input, IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            var datat = input as TransformBase;
+            if (datat != null)
+                return datat.GetRowCursorSingle(columnsNeeded, rand);
+            var datas = input as IDataTransformSingle;
+            if (datas != null)
+                return datas.GetRowCursorSingle(columnsNeeded, rand);
+            return input.GetRowCursor(columnsNeeded, rand);
+        }
     }
 }

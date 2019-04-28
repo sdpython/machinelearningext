@@ -28,7 +28,7 @@ namespace Scikit.ML.PipelineGraphTransforms
     /// <summary>
     /// Stacks multiple transforms into a single one.
     /// </summary>
-    public class ChainTransform : IDataTransform
+    public class ChainTransform : IDataTransformSingle
     {
         public const string LoaderSignature = "ChainTransform";  // Not more than 24 letters.
         public const string Summary = "Chains multiple transforms into a single one.";
@@ -126,6 +126,12 @@ namespace Scikit.ML.PipelineGraphTransforms
         {
             _host.AssertValue(_dataTransforms, "_dataTransforms");
             return _dataTransforms.Last().GetRowCursor(columnsNeeded, rand);
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            _host.AssertValue(_dataTransforms, "_dataTransforms");
+            return CursorHelper.GetRowCursorSingle(_dataTransforms.Last(), columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

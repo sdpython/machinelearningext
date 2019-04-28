@@ -1,5 +1,7 @@
 ﻿// See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Calibrators;
 using Microsoft.ML.Data;
@@ -8,6 +10,16 @@ using Microsoft.ML.Runtime;
 
 namespace Scikit.ML.PipelineHelper
 {
+    public delegate DataViewRowCursor DelegateGetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand);
+
+    /// <summary>
+    /// More options to creates cursors.
+    /// </summary>
+    public interface IDataTransformSingle : IDataTransform
+    {
+        DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null);
+    }
+
     /// <summary>
     /// The transform is trainable: it must be trained on the training data.
     /// </summary>

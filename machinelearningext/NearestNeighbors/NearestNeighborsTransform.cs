@@ -26,7 +26,7 @@ using NearestNeighborsTransform = Scikit.ML.NearestNeighbors.NearestNeighborsTra
 
 namespace Scikit.ML.NearestNeighbors
 {
-    public class NearestNeighborsTransform : IDataTransform
+    public class NearestNeighborsTransform : IDataTransformSingle
     {
         public const string LoaderSignature = "NearNeighborsTransform";  // Not more than 24 letters.
         public const string Summary = "Retrieves the closest neighbors among a set of points.";
@@ -198,6 +198,17 @@ namespace Scikit.ML.NearestNeighbors
 
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
+            return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(_input, c, r));
+        }
+
+        private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,
+                                               DelegateGetRowCursor getterCursor)
+        {
             ComputeNearestNeighbors();
             _host.AssertValue(_input, "_input");
             var schema = _input.Schema;
@@ -207,13 +218,13 @@ namespace Scikit.ML.NearestNeighbors
                 var newColumns = PredicatePropagation(columnsNeeded);
                 var oldCols = SchemaHelper.ColumnsNeeded(newColumns, schema);
                 var featureIndex = SchemaHelper.GetColumnIndexDC(Schema, _args.column);
-                return new NearestNeighborsCursor(_input.GetRowCursor(oldCols, rand), this, newColumns, featureIndex);
+                return new NearestNeighborsCursor(getterCursor(oldCols, rand), this, newColumns, featureIndex);
             }
             else
             {
                 // The new column is not required. We do not need to compute it. But we need to keep the same schema.
                 var oldCols = SchemaHelper.ColumnsNeeded(columnsNeeded, schema);
-                return new SameCursor(_input.GetRowCursor(oldCols, rand), Schema);
+                return new SameCursor(getterCursor(oldCols, rand), Schema);
             }
         }
 

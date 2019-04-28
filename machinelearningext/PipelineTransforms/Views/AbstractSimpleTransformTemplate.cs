@@ -9,8 +9,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Runtime;
-using Microsoft.ML.Data;
 using Microsoft.ML.CommandLine;
+using Scikit.ML.PipelineHelper;
 
 
 namespace Scikit.ML.PipelineTransforms
@@ -18,7 +18,7 @@ namespace Scikit.ML.PipelineTransforms
     /// <summary>
     /// Common class to pass through transform.
     /// </summary>
-    public abstract class AbstractSimpleTransformTemplate : IDataTransform
+    public abstract class AbstractSimpleTransformTemplate : IDataTransformSingle
     {
         public class Arguments
         {
@@ -150,6 +150,19 @@ namespace Scikit.ML.PipelineTransforms
             }
             _host.CheckValue(_sourcePipe, "_sourcePipe");
             return _sourcePipe.GetRowCursor(columnsNeeded, rand);
+        }
+
+        public virtual DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            _host.CheckValue(_sourceCtx, "_sourceCtx");
+            if (!IsInitialized())
+            {
+                lock (_lock)
+                    if (!IsInitialized())
+                        DelayedInitialisationLockFree();
+            }
+            _host.CheckValue(_sourcePipe, "_sourcePipe");
+            return CursorHelper.GetRowCursorSingle(_sourcePipe, columnsNeeded, rand);
         }
 
         public virtual DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

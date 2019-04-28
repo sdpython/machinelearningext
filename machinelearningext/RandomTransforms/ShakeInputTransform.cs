@@ -16,7 +16,7 @@ namespace Scikit.ML.RandomTransforms
     /// <summary>
     /// Shake one input of a predictor and merges all outputs. This can be used to measure the sensitivity to one input.
     /// </summary>
-    public class ShakeInputTransform : IDataTransform
+    public class ShakeInputTransform : IDataTransformSingle
     {
         #region identification
 
@@ -134,7 +134,7 @@ namespace Scikit.ML.RandomTransforms
 
         IValueMapper[] _toShake;
         IDataView _input;
-        IDataTransform _transform;          // templated transform (not the serialized version)
+        IDataTransformSingle _transform;          // templated transform (not the serialized version)
         Arguments _args;
         IHost _host;
 
@@ -250,6 +250,12 @@ namespace Scikit.ML.RandomTransforms
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            _host.AssertValue(_transform, "_transform");
+            return _transform.GetRowCursorSingle(columnsNeeded, rand);
+        }
+
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
@@ -260,9 +266,9 @@ namespace Scikit.ML.RandomTransforms
 
         #region transform own logic
 
-        private IDataTransform CreateTemplatedTransform()
+        private IDataTransformSingle CreateTemplatedTransform()
         {
-            IDataTransform transform = null;
+            IDataTransformSingle transform = null;
 
             int index = SchemaHelper.GetColumnIndex(_input.Schema, _args.inputColumn);
             var typeCol = _input.Schema[index].Type;
@@ -300,7 +306,7 @@ namespace Scikit.ML.RandomTransforms
         /// <summary>
         /// Templated transform which sorts rows based on one column.
         /// </summary>
-        public class ShakeInputState<TInput> : IDataTransform
+        public class ShakeInputState<TInput> : IDataTransformSingle
         {
             IHost _host;
             IDataView _input;
@@ -421,6 +427,17 @@ namespace Scikit.ML.RandomTransforms
 
             public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
+                return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
+            }
+
+            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+            {
+                return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(_input, c, r));
+            }
+
+            private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,
+                                                   DelegateGetRowCursor getterCursor)
+            {
                 var kind = _toShake[0].OutputType.IsVector()
                                 ? _toShake[0].OutputType.ItemType().RawKind()
                                 : _toShake[0].OutputType.RawKind();
@@ -431,7 +448,7 @@ namespace Scikit.ML.RandomTransforms
                 switch (kind)
                 {
                     case DataKind.Single:
-                        var cursor = _input.GetRowCursor(oldCols, rand);
+                        var cursor = getterCursor(oldCols, rand);
                         return new ShakeInputCursor<TInput, float>(this, cursor, newCols, _args, _inputCol, _toShake, _shakingValues,
                                         (float x, float y) => { return x + y; });
                     default:

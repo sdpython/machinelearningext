@@ -204,7 +204,7 @@ namespace Scikit.ML.Clustering
             }
         }
 
-        public class DBScanState : IDataTransform
+        public class DBScanState : IDataTransformSingle
         {
             IHost _host;
             IDataView _input;
@@ -404,6 +404,14 @@ namespace Scikit.ML.Clustering
                 TrainTransform();
                 _host.AssertValue(_reversedMapping, "_reversedMapping");
                 var cursor = _input.GetRowCursor(columnsNeeded, rand);
+                return new DBScanCursor(this, cursor);
+            }
+
+            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+            {
+                TrainTransform();
+                _host.AssertValue(_reversedMapping, "_reversedMapping");
+                var cursor = CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand);
                 return new DBScanCursor(this, cursor);
             }
 

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
-using Microsoft.ML.Data;
 using Microsoft.ML.Runtime;
+using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
 using SignatureDataTransform = Microsoft.ML.Data.SignatureDataTransform;
@@ -28,7 +28,7 @@ namespace Scikit.ML.PipelineGraphTransforms
     /// <summary>
     /// Tags the source data view in order to reuse it later in the pipeline.
     /// </summary>
-    public class TagViewTransform : IDataTransform, ITaggedDataView
+    public class TagViewTransform : IDataTransformSingle, ITaggedDataView
     {
         #region identification
 
@@ -189,6 +189,12 @@ namespace Scikit.ML.PipelineGraphTransforms
         {
             _host.AssertValue(_source, "_source");
             return _source.GetRowCursor(columnsNeeded, rand);
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            _host.AssertValue(_source, "_source");
+            return CursorHelper.GetRowCursorSingle(_source, columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

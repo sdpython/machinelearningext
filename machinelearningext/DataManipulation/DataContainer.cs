@@ -917,7 +917,7 @@ namespace Scikit.ML.DataManipulation
             // Fills values.
             if (nth == 1)
             {
-                using (var cursor = view.GetRowCursor(view.Schema))
+                using (var cursor = CursorHelper.GetRowCursorSingle(view, view.Schema))
                     FillValues(cursor, memory);
             }
             else

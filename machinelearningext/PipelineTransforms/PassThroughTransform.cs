@@ -30,7 +30,7 @@ namespace Scikit.ML.PipelineTransforms
     /// <summary>
     /// Inserts a transform which does nothing just to get a transform pointer.
     /// </summary>
-    public class PassThroughTransform : IDataTransform, ISaveAsOnnx
+    public class PassThroughTransform : IDataTransformSingle, ISaveAsOnnx
     {
         public const string LoaderSignature = "PassThroughTransform";  // Not more than 24 letters.
         public const string Summary = "Inserts a transform which does nothing just to get a transform pointer. It can be used to dump a view on disk.";
@@ -171,6 +171,13 @@ namespace Scikit.ML.PipelineTransforms
             _host.AssertValue(_input, "_input");
             DumpView();
             return Source.GetRowCursor(columnsNeeded, rand);
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            _host.AssertValue(_input, "_input");
+            DumpView();
+            return CursorHelper.GetRowCursorSingle(Source, columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

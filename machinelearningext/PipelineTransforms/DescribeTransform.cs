@@ -30,7 +30,7 @@ namespace Scikit.ML.PipelineTransforms
     /// <summary>
     /// Compute various statistics on a list of columns.
     /// </summary>
-    public class DescribeTransform : IDataTransform, ISaveAsOnnx
+    public class DescribeTransform : IDataTransformSingle, ISaveAsOnnx
     {
         public const string LoaderSignature = "DescribeTransform";  // Not more than 24 letters.
         public const string Summary = "Computes various statistics on a list of columns.";
@@ -196,6 +196,13 @@ namespace Scikit.ML.PipelineTransforms
             ComputeStatistics();
             _host.AssertValue(_input, "_input");
             return _input.GetRowCursor(columnsNeeded, rand);
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            ComputeStatistics();
+            _host.AssertValue(_input, "_input");
+            return CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

@@ -217,7 +217,7 @@ namespace Scikit.ML.Clustering
             }
         }
 
-        public class OpticsOrderingState : IDataTransform
+        public class OpticsOrderingState : IDataTransformSingle
         {
             IHost _host;
             IDataView _input;
@@ -409,6 +409,14 @@ namespace Scikit.ML.Clustering
                 TrainTransform();
                 _host.AssertValue(_Results, "_Results");
                 var cursor = _input.GetRowCursor(columnsNeeded, rand);
+                return new OpticsOrderingCursor(this, cursor);
+            }
+
+            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+            {
+                TrainTransform();
+                _host.AssertValue(_Results, "_Results");
+                var cursor = CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand);
                 return new OpticsOrderingCursor(this, cursor);
             }
 

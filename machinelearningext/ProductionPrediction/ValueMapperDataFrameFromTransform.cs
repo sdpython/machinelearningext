@@ -92,12 +92,9 @@ namespace Scikit.ML.ProductionPrediction
             var outputView = _sourceToReplace == _transform.Source
                                 ? ApplyTransformUtils.ApplyTransformToData(_computeEnv, _transform, inputView)
                                 : ApplyTransformUtils.ApplyAllTransformsToData(_computeEnv, _transform, inputView, _sourceToReplace);
-            var datat = outputView as TransformBase;
 
             // We assume all columns are needed, otherwise they should be removed.
-            using (var cur = datat == null
-                            ? outputView.GetRowCursor(outputView.Schema)
-                            : datat.GetRowCursorSingle(outputView.Schema))
+            using (var cur = CursorHelper.GetRowCursorSingle(outputView, outputView.Schema))
             {
                 var getRowFiller = DataFrame.GetRowFiller(cur);
 

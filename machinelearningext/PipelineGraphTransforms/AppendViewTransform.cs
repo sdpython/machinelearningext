@@ -7,6 +7,7 @@ using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data;
 using Microsoft.ML.Runtime;
+using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
 using SignatureDataTransform = Microsoft.ML.Data.SignatureDataTransform;
@@ -27,7 +28,7 @@ namespace Scikit.ML.PipelineGraphTransforms
     /// <summary>
     /// Concatenates two views.
     /// </summary>
-    public class AppendViewTransform : IDataTransform
+    public class AppendViewTransform : IDataTransformSingle
     {
         #region identification
 
@@ -162,6 +163,12 @@ namespace Scikit.ML.PipelineGraphTransforms
         {
             _host.AssertValue(_source, "_source");
             return _mergedView.GetRowCursor(columnsNeeded, rand);
+        }
+
+        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
+        {
+            _host.AssertValue(_source, "_source");
+            return CursorHelper.GetRowCursorSingle(_mergedView, columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
