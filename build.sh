@@ -30,7 +30,7 @@ cp machinelearning/packages/lightgbm/2.2.3/runtimes/linux-x64/native/*.so machin
 cp machinelearning/packages/mlnetmkldeps/0.0.0.9/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
 cp machinelearning/packages/google.protobuf/3.5.1/lib/netstandard1.0/*.* machinelearning/bin/x64.Release/Native
 cp machinelearning/packages/system.codedom/4.5.0/lib/netstandard2.0/*.dll machinelearning/dist/Release
-cp machinelearning/bin/x64.Release/Native/*.so machinelearning/dist/Release
+cp machinelearning/bin/x64.Release/Native/*.* machinelearning/dist/Release
 
 echo
 echo [build.sh] copy debug binaries
@@ -53,14 +53,12 @@ cp machinelearning/packages/lightgbm/2.2.3/runtimes/linux-x64/native/*.so machin
 cp machinelearning/packages/mlnetmkldeps/0.0.0.9/runtimes/linux-x64/native/*.so machinelearning/bin/x64.Release/Native
 cp machinelearning/packages/google.protobuf/3.5.1/lib/netstandard1.0/*.* machinelearning/bin/x64.Release/Native
 cp machinelearning/packages/system.codedom/4.5.0/lib/netstandard2.0/*.dll machinelearning/dist/Release
-cp machinelearning/bin/x64.Release/Native/*.so machinelearning/dist/Release
+cp machinelearning/bin/x64.Release/Native/*.* machinelearning/dist/Release
 
 echo
 echo [build.sh] copy native binaries
-cp machinelearning/bin/x64.Debug/Native/*.so machinelearning/dist/Debug
-cp machinelearning/bin/x64.Debug/Native/*.dll machinelearning/dist/Debug
-cp machinelearning/bin/x64.Release/Native/*.so machinelearning/dist/Release
-cp machinelearning/bin/x64.Release/Native/*.dll machinelearning/dist/Release
+cp machinelearning/bin/x64.Debug/Native/*.* machinelearning/dist/Debug
+cp machinelearning/bin/x64.Release/Native/*.* machinelearning/dist/Release
 
 echo
 echo [build.sh] build machinelearningext
