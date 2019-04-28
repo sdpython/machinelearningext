@@ -118,6 +118,9 @@ before_script:
   - cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/TestMachineLearningExt/netcoreapp2.1
   - cp machinelearning/bin/x64.Release/Native/*.so machinelearningext/bin/AnyCPU.Release/DocHelperMlExt/netstandard2.0
   - cp machinelearning/bin/x64.Debug/Native/*.so machinelearningext/bin/AnyCPU.Debug/DocHelperMlExt/netstandard2.0
+  # check
+  - ls machinelearning/dist/Debug
+  - ls machinelearning/dist/Release
 
 script:
   # unit tests for machinelearning: too long
