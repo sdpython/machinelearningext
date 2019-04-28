@@ -69,8 +69,8 @@
     <Reference Include="Microsoft.ML.Transforms">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.LightGbm">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.LightGbm.dll</HintPath>
+    <Reference Include="Microsoft.ML.LightGBM">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.LightGBM.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ML.OnnxConverter">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxConverter.dll</HintPath>
