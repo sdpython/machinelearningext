@@ -31,6 +31,8 @@ rep = [
      'public int[] Indices => _indices;'),
     ('internal Column(string name, int index, bool isHidden, DataViewType type, Annotations annotations)',
      '/*internal*/public Column(string name, int index, bool isHidden, DataViewType type, Annotations annotations)'),
+    ('internal sealed partial class ModelLoadContext : IDisposable',
+     '/*internal*/public sealed partial class ModelLoadContext : IDisposable'),
 ]
 
 for name in explore_folder_iterfile(folder, pattern=".*[.]cs$"):
