@@ -18,7 +18,7 @@ install:
   - git submodule update --init --recursive
   - cd ..
   - set DOTNET_CLI_TELEMETRY_OPTOUT=1
-  - pip install pyquickhelper
+  - %PYTHON%\\python -m pip install pyquickhelper>=1.9
 
 build: off
 

@@ -29,6 +29,8 @@ rep = [
      'public readonly int Length;\n        public int Count => _count;'
      '\n        public T[] Values => _values;\n        '
      'public int[] Indices => _indices;'),
+    ('internal Column(string name, int index, bool isHidden, DataViewType type, Annotations annotations)',
+     '/*internal*/public Column(string name, int index, bool isHidden, DataViewType type, Annotations annotations)'),
 ]
 
 for name in explore_folder_iterfile(folder, pattern=".*[.]cs$"):
