@@ -11,3 +11,4 @@ using Microsoft.ML;
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.PipelineTransforms" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.ScikitAPI" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.TestHelper" + PublicKey.TestValue)]
+[assembly: InternalsVisibleTo(assemblyName: "TestProfileBenchmark" + PublicKey.TestValue)]

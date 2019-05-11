@@ -137,7 +137,10 @@ for k in os.listdir("machinelearningext"):
         continue
     libs.append(k)
 pattern = '[assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.{}")]'
-addition = "\n".join(pattern.format(k) for k in libs)
+patterns = [pattern.format(k) for k in libs]
+patterns.append('[assembly: InternalsVisibleTo(assemblyName: "TestMachineLearningExt")]')
+patterns.append('[assembly: InternalsVisibleTo(assemblyName: "TestProfileBenchmark")]')
+addition = "\n".join(patterns)
 
 
 rep = [

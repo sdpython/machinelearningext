@@ -36,7 +36,6 @@ using Scikit.ML.DataManipulation;
 
 
 namespace TestProfileBenchmark
-
 {
     public static class DynamicCSFunctions_example_diabetes
     {
