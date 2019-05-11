@@ -9,7 +9,7 @@ using Microsoft.ML.Data;
 
 namespace Scikit.ML.PipelineHelper
 {
-    public static class IOHelper
+    internal static class IOHelper
     {
         public static void Write(ModelSaveContext ctx, string value)
         {

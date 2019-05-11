@@ -9,7 +9,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// Implements functions declared as internal.
     /// </summary>
-    public static class ColumnTypeHelper
+    internal static class ColumnTypeHelper
     {
         public static bool IsPrimitive(this DataViewType column)
         {

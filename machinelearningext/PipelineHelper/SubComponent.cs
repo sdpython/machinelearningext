@@ -11,7 +11,7 @@ namespace Scikit.ML.PipelineHelper
 {
     #region subcomponents
 
-    public interface ISubComponent<out TComponent> : IComponentFactory<TComponent>, ICommandLineComponentFactory
+    internal interface ISubComponent<out TComponent> : IComponentFactory<TComponent>, ICommandLineComponentFactory
     {
         TComponent CreateInstance(IHostEnvironment env, params object[] extra);
         string Kind { get; }

@@ -1,4 +1,8 @@
 echo
+
+echo [build.sh] clean sources
+python3 -u clean_source.py
+
 echo [build.sh] build machinelearning
 cd machinelearning
 bash build.sh -release

@@ -7,6 +7,9 @@ if exist bin\x64.Release goto mldeb:
 :compileml:
 git submodule update --init
 
+:clean_source:
+python -u clean_source.py
+
 cmd /C build.cmd
 cmd /C build.cmd -Release
 :mldeb:

@@ -52,7 +52,7 @@ namespace Scikit.ML.PipelineHelper
             IOHelper.Write(ctx, distDouble);
         }
 
-        public ColumnStatObs(ModelLoadContext ctx)
+        internal ColumnStatObs(ModelLoadContext ctx)
         {
             kind = (StatKind)ctx.Reader.ReadInt32();
             stat = IOHelper.ReadVBufferDouble(ctx);

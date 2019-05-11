@@ -16,7 +16,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// Helpers about ISchema.
     /// </summary>
-    public static class SchemaHelper
+    internal static class SchemaHelper
     {
         public static DataViewType DataKind2ColumnType(DataKind kind, IChannel ch = null)
         {

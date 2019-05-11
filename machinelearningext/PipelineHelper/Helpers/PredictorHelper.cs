@@ -12,7 +12,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// Basic operations with predictors.
     /// </summary>
-    public static class PredictorHelper
+    internal static class PredictorHelper
     {
         /// <summary>
         /// Computes the predictions using a default scorer.

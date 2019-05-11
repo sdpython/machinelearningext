@@ -16,7 +16,7 @@ namespace Scikit.ML.PipelineHelper
     /// Wrapper for a trainer with
     /// extra functionalities.
     /// </summary>
-    public class ExtendedTrainer : ITrainerExtended, ITrainer
+    internal class ExtendedTrainer : ITrainerExtended, ITrainer
     {
         ITrainer _trainer;
         string _loadName;
@@ -125,7 +125,7 @@ namespace Scikit.ML.PipelineHelper
         }
     }
 
-    public static class TrainerHelper
+    internal static class TrainerHelper
     {
         /// <summary>
         /// Create a trainer.

@@ -7,7 +7,7 @@ using Microsoft.ML.Runtime;
 
 namespace Scikit.ML.PipelineHelper
 {
-    public class WrappedPredictorWithNoDistInterface : IPredictor, IValueMapper, ICanSaveModel
+    internal class WrappedPredictorWithNoDistInterface : IPredictor, IValueMapper, ICanSaveModel
     {
         #region identification
 

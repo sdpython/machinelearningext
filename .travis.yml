@@ -47,9 +47,12 @@ before_install:
   - sudo apt-get install apt-transport-https
   - sudo apt-get update
   - sudo apt-get install dotnet-sdk-2.1
+  - pip install pyquickhelper
 
 before_script:
   - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  # clean source
+  - python -u clean_source.py
   # machinelearning
   - cd machinelearning
   - bash build.sh -Release

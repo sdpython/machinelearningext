@@ -18,6 +18,7 @@ install:
   - git submodule update --init --recursive
   - cd ..
   - set DOTNET_CLI_TELEMETRY_OPTOUT=1
+  - pip install pyquickhelper
 
 build: off
 
@@ -25,6 +26,9 @@ before_build:
   - cmd: dotnet --version
 
 before_test:
+  # clean source
+  - python -u clean_source.py
+  # build
   - cd machinelearning
   - cmd /C build.cmd
   - cmd /C build.cmd -Release

@@ -16,6 +16,8 @@ install:
   - $PYINT --version
   - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
   - export DOTNET_CLI_TELEMETRY_OPTOUT=1
+  # clean sources
+  - python -u clean_source.py
   # Build machinelearning
   # if this part fails due to permission issue, it should be manually
   # called on the jenkins server.

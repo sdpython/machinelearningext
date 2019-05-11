@@ -41,7 +41,7 @@ namespace Scikit.ML.PipelineHelper
         public TextWriter AsTextWriter => _asTextWriter;
     }
 
-    public class DelegateEnvironment : HostEnvironmentBase<DelegateEnvironment>
+    internal class DelegateEnvironment : HostEnvironmentBase<DelegateEnvironment>
     {
         private bool _elapsed;
         public bool Elapsed => _elapsed;

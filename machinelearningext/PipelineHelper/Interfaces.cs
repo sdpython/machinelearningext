@@ -15,7 +15,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// More options to creates cursors.
     /// </summary>
-    public interface IDataTransformSingle : IDataTransform
+    internal interface IDataTransformSingle : IDataTransform
     {
         DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null);
     }
@@ -31,7 +31,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// Extended interface for trainers.
     /// </summary>
-    public interface ITrainerExtended
+    internal interface ITrainerExtended
     {
         /// <summary>
         /// Returns the inner trainer.
@@ -60,7 +60,7 @@ namespace Scikit.ML.PipelineHelper
                          bool? cacheData = null, IPredictor inpPredictor = null);
     }
 
-    public interface IPredictorExtended : IPredictor
+    internal interface IPredictorExtended : IPredictor
     {
         /// <summary>
         /// Computes the prediction for a predictor.
