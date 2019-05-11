@@ -33,6 +33,18 @@ rep = [
      '/*internal*/public Column(string name, int index, bool isHidden, DataViewType type, Annotations annotations)'),
     ('internal sealed partial class ModelLoadContext : IDisposable',
      '/*internal*/public sealed partial class ModelLoadContext : IDisposable'),
+    ('[BestFriend]\n    internal interface IValueMapper',
+     '/*[BestFriend]\n    internal*/ public interface IValueMapper'),
+    ('[BestFriend]\n    internal delegate void ValueMapper<',
+     '/*[BestFriend]\n    internal*/ public delegate void ValueMapper<'),
+    ('[BestFriend]\n    internal abstract class Repository',
+     '/*[BestFriend]\n    internal*/ public abstract class Repository'),
+    ('[BestFriend]\n    interface IDataTransform :',
+     '/*[BestFriend]\n    internal*/ public IDataTransform :'),
+    ('[BestFriend]\n    internal readonly struct VersionInfo',
+     '/*[BestFriend]\n    internal*/ public readonly struct VersionInfo'),
+    ('[BestFriend]\n    internal sealed partial class ModelLoadContext :',
+     '/*[BestFriend]\n    internal*/ public sealed partial class ModelLoadContext :'),
 ]
 
 for name in explore_folder_iterfile(folder, pattern=".*[.]cs$"):
