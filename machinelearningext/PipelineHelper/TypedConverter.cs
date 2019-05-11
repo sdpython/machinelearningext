@@ -11,7 +11,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// The class is not protected against multithreading.
     /// </summary>
-    internal class TypedConverters<TLabel>
+    public class TypedConverters<TLabel>
     {
         bool identity;
 

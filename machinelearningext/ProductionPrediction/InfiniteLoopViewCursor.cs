@@ -118,7 +118,7 @@ namespace Scikit.ML.ProductionPrediction
                 _ignoreOtherColumn = view._ignoreOtherColumn;
             }
 
-            public override int Count() { return 1; }
+            //public override int Count() { return 1; }
             public override long Batch { get { return _batch; } }
             public override long Position { get { return _position; } }
             public override DataViewSchema Schema { get { return _view.Schema; } }
@@ -348,7 +348,7 @@ namespace Scikit.ML.ProductionPrediction
                     _columns[view.ReplacedCol[i]] = i;
             }
 
-            public override int Count() { return 1; }
+            //public override int Count() { return 1; }
             public override long Batch { get { return _batch; } }
             public override long Position { get { return _position; } }
             public override DataViewSchema Schema { get { return _view.Schema; } }

@@ -43,7 +43,7 @@ namespace Scikit.ML.ScikitAPI
         public class StepPredictor
         {
             public string trainerSettings;
-            public ITrainerExtended trainer;
+            internal ITrainerExtended trainer;
             public IPredictor predictor;
             public RoleMappedData roleMapData;
         }

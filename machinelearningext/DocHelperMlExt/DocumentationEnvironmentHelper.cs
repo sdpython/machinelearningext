@@ -23,7 +23,7 @@ namespace Scikit.ML.DocHelperMlExt
     /// Mostly taken from the location below and modified to add custom logging.
     /// https://github.com/dotnet/machinelearning/tree/master/src/Microsoft.ML.Core/ComponentModel
     /// </summary>
-    public class DocumentationEnvironmentHelper
+    internal class DocumentationEnvironmentHelper
     {
         #region private
 

@@ -6,7 +6,7 @@ using Microsoft.ML.Runtime;
 
 namespace Scikit.ML.PipelineHelper
 {
-    internal abstract class TrainerBase<TPredictor> : ITrainer<TPredictor>
+    public abstract class TrainerBase<TPredictor> : ITrainer<TPredictor>
         where TPredictor : IPredictor
     {
         /// <summary>

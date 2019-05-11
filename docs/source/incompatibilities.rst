@@ -25,25 +25,12 @@ The compilation failed due to a couple of warnings treated as error
 on appveyor and Visual Studio 2015. The option was removed:
 `Remove option /WX for native libraries <https://github.com/xadupre/machinelearning/commit/a7eb9efb54a0849bb76279a807ab4fef7b8752d2>`_.
 
-Internal
-========
+Internal to public
+==================
 
-A couple of classes where duplicated because they became internal and
-then many internal where turned into public due to
-`BestFriendAttribute <https://github.com/dotnet/machinelearning/blob/master/src/Microsoft.ML.Core/BestFriendAttribute.cs>`_.
-See also `internal to public (1) <https://github.com/sdpython/machinelearning/commit/e24b0f7925d5e9460c329c73c4b6cb0674b9c031>`_,
-`internal to public (2) <https://github.com/sdpython/machinelearning/commit/033474a760a513a1ed2bff80a6e96011e7dc4bab>`_.
+The `PR 1 <https://github.com/sdpython/machinelearning/pull/1>`_
+sumarizes one part of the changes, the script
+`clean_source.py <https://github.com/sdpython/machinelearningext/blob/master/clean_source.py>`_
+holds the rest of the needed modifications.
 
-Other changes
 
-Empty cursor
-============
-
-The following commit
-`Avoids splitting a cursor if the set it walks through is empty or very small <https://github.com/sdpython/machinelearning/commit/ad154c5b5f04ccb16563954025107a3a49e32357>`_
-avoids splitting a single cursor in multiple thread if the cursor
-contains only one row even if requested.
-This is needed by the InfiniteLoopView cursor which outputs
-only one row each time.
-
-VBuffer

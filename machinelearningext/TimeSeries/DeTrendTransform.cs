@@ -128,7 +128,7 @@ namespace Scikit.ML.TimeSeries
             return h.Apply("Loading Model", ch => new DeTrendTransform(h, ctx, input));
         }
 
-        protected override void SaveModel(ModelSaveContext ctx)
+        private protected override void SaveModel(ModelSaveContext ctx)
         {
             Host.CheckValue(_trend, "No trend predictor was ever trained. The model cannot be saved.");
             Host.CheckValue(ctx, "ctx");

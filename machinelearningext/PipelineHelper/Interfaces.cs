@@ -15,7 +15,7 @@ namespace Scikit.ML.PipelineHelper
     /// <summary>
     /// More options to creates cursors.
     /// </summary>
-    internal interface IDataTransformSingle : IDataTransform
+    public interface IDataTransformSingle : IDataTransform
     {
         DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null);
     }

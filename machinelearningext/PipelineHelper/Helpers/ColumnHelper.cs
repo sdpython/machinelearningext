@@ -8,7 +8,7 @@ using Microsoft.ML.Runtime;
 
 namespace Scikit.ML.PipelineHelper
 {
-    internal class Column1x1 : OneToOneColumn
+    public class Column1x1 : OneToOneColumn
     {
         public static Column1x1 Parse(string str)
         {

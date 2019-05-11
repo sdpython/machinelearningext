@@ -136,7 +136,7 @@ namespace Scikit.ML.PipelineTransforms
             return h.Apply("Loading Model", ch => new SortInDataFrameTransform(h, ctx, input));
         }
 
-        protected override void SaveModel(ModelSaveContext ctx)
+        private protected override void SaveModel(ModelSaveContext ctx)
         {
             Host.CheckValue(ctx, "ctx");
             ctx.CheckAtModel();

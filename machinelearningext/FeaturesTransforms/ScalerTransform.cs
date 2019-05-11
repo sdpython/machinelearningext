@@ -171,7 +171,7 @@ namespace Scikit.ML.FeaturesTransforms
                     int nb = ctx.Reader.ReadInt32();
                     var li = new List<ColumnStatObs>();
                     for (int k = 0; k < nb; ++k)
-                        li.Add(new ColumnStatObs(ctx));
+                        li.Add(new ColumnStatObs(ColumnStatObs.StatKind.sum));
                     _scalingStat[key] = li;
                 }
                 _scalingFactors = GetScalingParameters();

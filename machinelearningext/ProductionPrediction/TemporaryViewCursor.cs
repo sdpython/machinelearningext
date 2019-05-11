@@ -288,7 +288,7 @@ namespace Scikit.ML.ProductionPrediction
                     _columns[view.ConstantCol[i]] = i;
             }
 
-            public override int Count() { return 1; }
+            //public override int Count() { return 1; }
             public override long Batch { get { return 1; } }
             public override long Position { get { return 0; } }
             public override DataViewSchema Schema { get { return _view.Schema; } }

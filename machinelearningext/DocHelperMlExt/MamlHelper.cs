@@ -34,7 +34,7 @@ namespace Scikit.ML.DocHelperMlExt
     /// <summary>
     /// Helpers to run scripts through maml.
     /// </summary>
-    public static class MamlHelper
+    internal static class MamlHelper
     {
         #region command line
 

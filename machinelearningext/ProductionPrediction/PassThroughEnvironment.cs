@@ -8,7 +8,7 @@ namespace Scikit.ML.ProductionPrediction
 {
     using Stopwatch = System.Diagnostics.Stopwatch;
 
-    public class PassThroughEnvironment : HostEnvironmentBase<PassThroughEnvironment>
+    internal class PassThroughEnvironment : HostEnvironmentBase<PassThroughEnvironment>
     {
         protected class Channel : ChannelBase
         {

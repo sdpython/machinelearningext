@@ -19,7 +19,6 @@ namespace Scikit.ML.OnnxHelper
         /// </summary>
         public static IDataTransform ReadOnnx(Stream fs, IDataView view)
         {
-            var args = new OnnxTransformer.Options();
             throw Contracts.ExceptNotImpl("Reading ONNX format is not implemented yet.");
         }
     }

@@ -8,7 +8,7 @@ using Scikit.ML.ScikitAPI;
 
 namespace Scikit.ML.TestHelper
 {
-    public static class EnvHelper
+    internal static class EnvHelper
     {
         /// <summary>
         /// Creates a new environment. It should be done

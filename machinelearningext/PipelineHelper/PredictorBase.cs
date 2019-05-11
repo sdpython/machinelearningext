@@ -8,7 +8,7 @@ using Microsoft.ML.Runtime;
 
 namespace Scikit.ML.PipelineHelper
 {
-    internal abstract class PredictorBase<OutputType> : IPredictorProducing<OutputType>
+    public abstract class PredictorBase<OutputType> : IPredictorProducing<OutputType>
     {
         IHostEnvironment _env;
         public IHost Host;
