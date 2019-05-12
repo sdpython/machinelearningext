@@ -155,7 +155,9 @@ for name in explore_folder_iterfile(folder, pattern=".*AssemblyInfo[.]cs$"):
         print("Unicode issue with file '{}'".format(name))
         continue
     if '[assembly: InternalsVisibleTo(assemblyName: "TLC"' not in content and \
-       '[assembly: InternalsVisibleTo("TLC"' not in content:
+       '[assembly: InternalsVisibleTo("TLC"' not in content and \
+       '[assembly: InternalsVisibleTo(assemblyName: "Microsoft.ML.Tests"' not in content and \
+       '[assembly: InternalsVisibleTo(assemblyName: "Microsoft.ML.EntryPoints"' not in content:
         continue
     if "Scikit.ML." in content:
         continue
