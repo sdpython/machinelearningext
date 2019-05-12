@@ -25,7 +25,7 @@ namespace Scikit.ML.PipelineHelper
             {
                 if (sch[i].IsHidden)
                     continue;
-                var getter = GetColumnGetter(cur, new DataViewSchema.Column(string.Empty, i, false, null, null), sch);
+                var getter = GetColumnGetter(cur, SchemaHelper._dc(i, cur), sch);
                 if (getter == null)
                     throw Contracts.Except($"Unable to get getter for column {i} from schema\n{SchemaHelper.ToString(sch)}.");
                 res.Add(getter);

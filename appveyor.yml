@@ -19,6 +19,7 @@ install:
   - cd ..
   - set DOTNET_CLI_TELEMETRY_OPTOUT=1
   - "%PYTHON%\\python -m pip install pyquickhelper>=1.9"
+  - "set PATH=%PATH%;C:\\projects\\jyquickhelper\\build\\update_modules\\Graphviz\\bin"
 
 build: off
 
@@ -27,7 +28,7 @@ before_build:
 
 before_test:
   # clean source
-  - python -u clean_source.py
+  - - "%PYTHON%\\python -u clean_source.py"
   # build
   - cd machinelearning
   - cmd /C build.cmd
@@ -106,8 +107,8 @@ after_test:
   - if not exist dist mkdir dist
   - if not exist dist\Release mkdir dist\Release
   - if not exist dist\Debug mkdir dist\Debug
-  - python -u copy_binaries.py Release dist\Release
-  - python -u copy_binaries.py Debug dist\Debug
+  - "%PYTHON%\\python -u copy_binaries.py Release dist\Release"
+  - "%PYTHON%\\python -u copy_binaries.py Debug dist\Debug"
   # benchmark
   - copy _tests\1.0.0.0\Release\TestScikitAPITrain\*.txt dist
 

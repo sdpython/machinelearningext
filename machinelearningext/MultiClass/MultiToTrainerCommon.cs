@@ -87,17 +87,12 @@ namespace Scikit.ML.Multiclass
             Host.CheckValue(args, "args");
         }
 
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         protected Tuple<TLabel, TLabel> MinMaxLabel<TLabel>(MultiToBinaryTransform tr, int index)
             where TLabel : IComparable<TLabel>
         {
             using (var cursor = tr.GetRowCursor(tr.Schema.Where(c => c.Index == index).ToArray()))
             {
-                var getter = cursor.GetGetter<TLabel>(_dc(index));
+                var getter = cursor.GetGetter<TLabel>(SchemaHelper._dc(index, cursor));
                 TLabel cl = default(TLabel), max = default(TLabel), min = default(TLabel);
                 bool first = true;
                 while (cursor.MoveNext())

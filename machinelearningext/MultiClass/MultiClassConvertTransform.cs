@@ -574,11 +574,6 @@ namespace Scikit.ML.Multiclass
             }
         }
 
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         protected override Delegate GetGetterCore(IChannel ch, DataViewRow input, int iinfo, out Action disposer)
         {
             Host.AssertValueOrNull(ch);
@@ -590,7 +585,8 @@ namespace Scikit.ML.Multiclass
             var typeDst = _exes[iinfo].TypeDst;
 
             if (!typeDst.IsVector())
-                return GetGetterAs(typeDst, input, _dc(Infos[iinfo].Source));
+                return GetGetterAs(typeDst, input, SchemaHelper._dc(
+                    Infos[iinfo].Source, Infos[iinfo].Name, Infos[iinfo].TypeSrc));
             return RowCursorUtils.GetVecGetterAs(typeDst.AsVector().ItemType(), input, Infos[iinfo].Source);
         }
 

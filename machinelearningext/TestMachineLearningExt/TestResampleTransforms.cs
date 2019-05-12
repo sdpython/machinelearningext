@@ -17,11 +17,6 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestResampleTransforms
     {
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         #region ResampleTransform
 
         private void TestResampleTransform(float ratio)
@@ -41,7 +36,7 @@ namespace TestMachineLearningExt
                 var values = new List<int>();
                 using (var cursor = tr.GetRowCursor(tr.Schema))
                 {
-                    var columnGetter = cursor.GetGetter<int>(_dc(1));
+                    var columnGetter = cursor.GetGetter<int>(SchemaHelper._dc(1, cursor));
                     while (cursor.MoveNext())
                     {
                         int got = 0;
@@ -127,7 +122,7 @@ namespace TestMachineLearningExt
                 using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
-                    var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
+                    var colGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(1, cursor));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();
@@ -169,7 +164,7 @@ namespace TestMachineLearningExt
                 using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
-                    var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
+                    var colGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(1, cursor));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();
@@ -210,7 +205,7 @@ namespace TestMachineLearningExt
                 using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
-                    var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
+                    var colGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(1, cursor));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();
@@ -252,7 +247,7 @@ namespace TestMachineLearningExt
                 using (var cursor = shake.GetRowCursor(shake.Schema))
                 {
                     var outValues = new List<float>();
-                    var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
+                    var colGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(1, cursor));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();

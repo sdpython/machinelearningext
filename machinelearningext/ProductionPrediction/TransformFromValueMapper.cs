@@ -293,15 +293,10 @@ namespace Scikit.ML.ProductionPrediction
                     throw Contracts.Except("Unexpected columns {0} > {1}.", col, _inputCursor.Schema.Count);
             }
 
-            private DataViewSchema.Column _dc(int i)
-            {
-                return new DataViewSchema.Column(null, i, false, null, null);
-            }
-
             ValueGetter<TDst> GetGetterMapper()
             {
                 var mapper = _view.Parent.GetMapper<TSrc, TDst>();
-                var getter = _inputCursor.GetGetter<TSrc>(_dc(_inputCol));
+                var getter = _inputCursor.GetGetter<TSrc>(SchemaHelper._dc(_inputCol, _inputCursor));
                 TSrc input = default(TSrc);
                 return (ref TDst output) =>
                 {

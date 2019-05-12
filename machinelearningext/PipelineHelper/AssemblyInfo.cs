@@ -4,6 +4,7 @@ using Microsoft.ML;
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.Clustering" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.DataManipulation" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.DocHelperMlExt" + PublicKey.TestValue)]
+[assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.FeaturesTransforms" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.Multiclass" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.OnnxHelper" + PublicKey.TestValue)]
 [assembly: InternalsVisibleTo(assemblyName: "Scikit.ML.PipelineGraphTraining" + PublicKey.TestValue)]

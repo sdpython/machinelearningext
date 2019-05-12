@@ -70,11 +70,6 @@ namespace TestMachineLearningExt
             }
         }
 
-        private static DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         static void CommonTestPolynomialTransform(IHostEnvironment host, IDataView data, int dimension, out List<float[]> values)
         {
             values = null;
@@ -115,7 +110,7 @@ namespace TestMachineLearningExt
                 using (var cursor = poly.GetRowCursor(poly.Schema))
                 {
                     var outValues = new List<float[]>();
-                    var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
+                    var colGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(1, cursor));
                     while (cursor.MoveNext())
                     {
                         VBuffer<float> got = new VBuffer<float>();
@@ -245,7 +240,7 @@ namespace TestMachineLearningExt
             using (var cursor = scaled.GetRowCursor(scaled.Schema))
             {
                 var outValues = new List<float[]>();
-                var colGetter = cursor.GetGetter<VBuffer<float>>(_dc(0));
+                var colGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(0, cursor));
                 VBuffer<float> got = new VBuffer<float>();
                 while (cursor.MoveNext())
                 {

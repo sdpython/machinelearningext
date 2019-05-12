@@ -485,11 +485,6 @@ namespace Scikit.ML.Multiclass
                 }
             }
 
-            private DataViewSchema.Column _dc(int i)
-            {
-                return new DataViewSchema.Column(null, i, false, null, null);
-            }
-
             void ComputeLabelDistribution(IChannel ch, Random rand)
             {
                 int nt = DataViewUtils.GetThreadCount(_args.numThreads ?? 0);
@@ -513,8 +508,10 @@ namespace Scikit.ML.Multiclass
                         ops[i] = new Action(() =>
                         {
                             var cursor = cursors[chunkId];
-                            var labelGetter = cursor.GetGetter<TLabel>(_dc(_colLabel));
-                            var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_dc(_colWeight));
+                            var labelGetter = cursor.GetGetter<TLabel>(SchemaHelper._dc(_colLabel, cursor));
+                            var weightGetter = _colWeight == -1 
+                                ? null 
+                                : cursor.GetGetter<float>(SchemaHelper._dc(_colWeight, cursor));
                             TLabel value = default(TLabel);
                             float weight = 0;
                             var hist = hists[chunkId];
@@ -554,8 +551,10 @@ namespace Scikit.ML.Multiclass
                 {
                     using (var cursor = _input.GetRowCursor(cols))
                     {
-                        var labelGetter = cursor.GetGetter<TLabel>(_dc(_colLabel));
-                        var weightGetter = _colWeight == -1 ? null : cursor.GetGetter<float>(_dc(_colWeight));
+                        var labelGetter = cursor.GetGetter<TLabel>(SchemaHelper._dc(_colLabel, cursor));
+                        var weightGetter = _colWeight == -1 
+                            ? null 
+                            : cursor.GetGetter<float>(SchemaHelper._dc(_colWeight, cursor));
                         TLabel value = default(TLabel);
                         float weight = 0;
                         _labelDistribution = new Dictionary<TLabel, float>();
@@ -779,17 +778,12 @@ namespace Scikit.ML.Multiclass
                 };
             }
 
-            private DataViewSchema.Column _dc(int i)
-            {
-                return new DataViewSchema.Column(null, i, false, null, null);
-            }
-
             public override bool IsColumnActive(DataViewSchema.Column col)
             {
                 if (col.Index < _inputCursor.Schema.Count)
                 {
-                    Contracts.Assert(_inputCursor.IsColumnActive(_dc(_colLabel)) &&
-                                     (_colWeight == -1 || _inputCursor.IsColumnActive(_dc(_colWeight))));
+                    Contracts.Assert(_inputCursor.IsColumnActive(SchemaHelper._dc(_colLabel, _inputCursor)) &&
+                                     (_colWeight == -1 || _inputCursor.IsColumnActive(SchemaHelper._dc(_colWeight, _inputCursor))));
                     return _inputCursor.IsColumnActive(col);
                 }
                 return true;
@@ -810,8 +804,8 @@ namespace Scikit.ML.Multiclass
             {
                 if (_labelGetter == null)
                 {
-                    _labelGetter = _inputCursor.GetGetter<TLabel>(_dc(_colLabel));
-                    _weightGetter = _colWeight >= 0 ? _inputCursor.GetGetter<float>(_dc(_colWeight)) : null;
+                    _labelGetter = _inputCursor.GetGetter<TLabel>(SchemaHelper._dc(_colLabel, _inputCursor));
+                    _weightGetter = _colWeight >= 0 ? _inputCursor.GetGetter<float>(SchemaHelper._dc(_colWeight, _inputCursor)) : null;
                     _copies = new Tuple<TLabel, TLabelInter>[0];
                     _copy = -1;
                 }

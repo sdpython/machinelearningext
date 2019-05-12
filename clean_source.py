@@ -107,6 +107,8 @@ rep = [
      '/*[BestFriend]\n    internal*/ public abstract class RowToRowMapperTransformBase'),
     ('[BestFriend]\n    internal abstract class RowToRowTransformBase',
      '/*[BestFriend]\n    internal*/ public abstract class RowToRowTransformBase'),
+    ('Contracts.Check(!IsCollection || AllowMultiple, "Collection arguments must allow multiple");',
+     '// Contracts.Check(!IsCollection || AllowMultiple, "Collection arguments must allow multiple");'),
 ]
 
 for name in explore_folder_iterfile(folder, pattern=".*[.]cs$"):
@@ -157,6 +159,7 @@ for name in explore_folder_iterfile(folder, pattern=".*AssemblyInfo[.]cs$"):
     if '[assembly: InternalsVisibleTo(assemblyName: "TLC"' not in content and \
        '[assembly: InternalsVisibleTo("TLC"' not in content and \
        '[assembly: InternalsVisibleTo(assemblyName: "Microsoft.ML.Tests"' not in content and \
+       '[assembly: InternalsVisibleTo(assemblyName: "RunTests"' not in content and \
        '[assembly: InternalsVisibleTo(assemblyName: "Microsoft.ML.EntryPoints"' not in content:
         continue
     if "Scikit.ML." in content:

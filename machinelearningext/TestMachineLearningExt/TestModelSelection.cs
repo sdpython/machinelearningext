@@ -18,11 +18,6 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestModelSelection
     {
-        private static DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         #region SplitTrainTestTransform
 
         static void TestSplitTrainTestTransform(string option, int numThreads = 1)
@@ -50,9 +45,9 @@ namespace TestMachineLearningExt
                 using (var cursor = transformedData.GetRowCursor(transformedData.OutputSchema))
                 {
                     int index = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
-                    var sortColumnGetter = cursor.GetGetter<int>(_dc(index));
+                    var sortColumnGetter = cursor.GetGetter<int>(SchemaHelper._dc(index, cursor));
                     index = SchemaHelper.GetColumnIndex(cursor.Schema, args.newColumn);
-                    var partGetter = cursor.GetGetter<int>(_dc(index));
+                    var partGetter = cursor.GetGetter<int>(SchemaHelper._dc(index, cursor));
                     var schema = SchemaHelper.ToString(cursor.Schema);
                     if (string.IsNullOrEmpty(schema))
                         throw new Exception("null");
@@ -109,9 +104,9 @@ namespace TestMachineLearningExt
                     var schema2 = SchemaHelper.ToString(transformedData.OutputSchema);
                     SchemaHelper.CheckSchema(host, transformedData.OutputSchema, cursor.Schema);
                     int index = SchemaHelper.GetColumnIndex(cursor.Schema, "Y");
-                    var sortColumnGetter = cursor.GetGetter<int>(_dc(index));
+                    var sortColumnGetter = cursor.GetGetter<int>(SchemaHelper._dc(index, cursor));
                     index = SchemaHelper.GetColumnIndex(cursor.Schema, args.newColumn);
-                    var partGetter = cursor.GetGetter<int>(_dc(index));
+                    var partGetter = cursor.GetGetter<int>(SchemaHelper._dc(index, cursor));
                     int got = 0;
                     int part = 0;
                     while (cursor.MoveNext())

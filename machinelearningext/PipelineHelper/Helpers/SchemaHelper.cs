@@ -744,7 +744,7 @@ namespace Scikit.ML.PipelineHelper
                 if (schema[index].Name == name && (allowHidden || !schema[index].IsHidden))
                     return schema[index];
             if (allowNull)
-                return new DataViewSchema.Column(null, -1, false, null, null);
+                return new DataViewSchema.Column("null", int.MaxValue, false, schema[0].Type, null);
             throw Contracts.Except($"Unable to find column '{name}' in schema\n{ToString(schema)}.");
         }
 
@@ -818,7 +818,10 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// Returns from superset inside subset.
         /// </summary>
-        public static IEnumerable<DataViewSchema.Column> SchemaIntersection(IEnumerable<DataViewSchema.Column> subset, IEnumerable<DataViewSchema.Column> superset, int addition = -1)
+        public static IEnumerable<DataViewSchema.Column> SchemaIntersection(
+                            IEnumerable<DataViewSchema.Column> subset,
+                            IEnumerable<DataViewSchema.Column> superset,
+                            int addition = -1)
         {
             var hash = new HashSet<Tuple<string, int>>(subset.Select(c => new Tuple<string, int>(c.Name, c.Index)).ToArray());
             var auto = superset.Where(c => hash.Contains(new Tuple<string, int>(c.Name, c.Index))).ToList();
@@ -834,6 +837,36 @@ namespace Scikit.ML.PipelineHelper
                 }
             }
             return auto.ToArray();
+        }
+
+        /// <summary>
+        /// Create a DataViewSchema.Column for column i.
+        /// </summary>
+        /// <param name="i">column index</param>
+        /// <param name="cur">cursor</param>
+        /// <returns>DataViewSchema.Column</returns>
+        public static DataViewSchema.Column _dc(int i, DataViewRowCursor cur)
+        {
+            if (i >= 0)
+            {
+                var name = cur.Schema[i].Name;
+                var ctype = cur.Schema[i].Type;
+                return new DataViewSchema.Column(name, i, false, ctype, null);
+            }
+            else
+            {
+                var name = "null";
+                var ctype = cur.Schema[0].Type;
+                return new DataViewSchema.Column(name, int.MaxValue, false, ctype, null);
+            }
+        }
+
+        /// <summary>
+        /// Create a DataViewSchema.Column for column i.
+        /// </summary>
+        public static DataViewSchema.Column _dc(int i, string name, DataViewType ctype)
+        {
+            return new DataViewSchema.Column(name, i, false, ctype, null);
         }
     }
 }

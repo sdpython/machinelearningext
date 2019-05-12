@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Scikit.ML.PipelineHelper;
 using Scikit.ML.ProductionPrediction;
 
 
@@ -76,17 +77,12 @@ namespace Scikit.ML.TestHelper
             }
         }
 
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         public Delegate[] GetCursorGetter(DataViewRowCursor cursor)
         {
             return new Delegate[]
             {
-                cursor.GetGetter<float[]>(_dc(0)),
-                cursor.GetGetter<uint>(_dc(1)),
+                cursor.GetGetter<float[]>(SchemaHelper._dc(0, cursor)),
+                cursor.GetGetter<uint>(SchemaHelper._dc(1, cursor)),
             };
         }
 

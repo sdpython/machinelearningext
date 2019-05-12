@@ -25,11 +25,6 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestProductionPrediction
     {
-        private static DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         #region TransformValueMapper
 
         [TestMethod]
@@ -501,8 +496,8 @@ namespace TestMachineLearningExt
 
                 using (var cursor = lambdaView.GetRowCursor(lambdaView.Schema))
                 {
-                    var labelGetter = cursor.GetGetter<uint>(_dc(1));
-                    var floatGetter = cursor.GetGetter<VBuffer<float>>(_dc(2));
+                    var labelGetter = cursor.GetGetter<uint>(SchemaHelper._dc(1, cursor));
+                    var floatGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(2, cursor));
                     var array = new VBuffer<float>();
                     var cont = new List<Tuple<float, float>>();
                     while (cursor.MoveNext())
@@ -591,7 +586,7 @@ namespace TestMachineLearningExt
             var values = new List<float>();
             using (var cur = view.GetRowCursor(view.Schema))
             {
-                var getter = cur.GetGetter<float>(_dc(8));
+                var getter = cur.GetGetter<float>(SchemaHelper._dc(8, cur));
                 float val = 0f;
                 view.Set(df);
                 for (int i = 0; i < df.Length; ++i)

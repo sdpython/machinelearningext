@@ -212,11 +212,6 @@ namespace Scikit.ML.PipelineTransforms
             return _input.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         private void ComputeStatistics()
         {
             lock (_lock)
@@ -280,13 +275,13 @@ namespace Scikit.ML.PipelineTransforms
                             bool[] isInt = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Int32 || sch[c].Type.RawKind() == DataKind.Int32).ToArray();
                             bool[] isInt8 = requiredIndexes.Select(c => sch[c].Type == NumberDataViewType.Int64 || sch[c].Type.RawKind() == DataKind.Int64).ToArray();
 
-                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BooleanDataViewType.Instance || sch[i].Type.RawKind() == DataKind.Boolean ? cur.GetGetter<bool>(_dc(i)) : null).ToArray();
-                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.UInt32 || sch[i].Type.RawKind() == DataKind.UInt32 ? cur.GetGetter<uint>(_dc(i)) : null).ToArray();
-                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextDataViewType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(_dc(i)) : null).ToArray();
-                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Single ? cur.GetGetter<float>(_dc(i)) : null).ToArray();
-                            ValueGetter<VBuffer<float>>[] vectorGetters = requiredIndexes.Select(i => sch[i].Type.IsVector() ? cur.GetGetter<VBuffer<float>>(_dc(i)) : null).ToArray();
-                            ValueGetter<int>[] intGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Int32 || sch[i].Type.RawKind() == DataKind.Int32 ? cur.GetGetter<int>(_dc(i)) : null).ToArray();
-                            ValueGetter<long>[] int8Getters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Int64 || sch[i].Type.RawKind() == DataKind.Int64 ? cur.GetGetter<long>(_dc(i)) : null).ToArray();
+                            ValueGetter<bool>[] boolGetters = requiredIndexes.Select(i => sch[i].Type == BooleanDataViewType.Instance || sch[i].Type.RawKind() == DataKind.Boolean ? cur.GetGetter<bool>(SchemaHelper._dc(i, cur)) : null).ToArray();
+                            ValueGetter<uint>[] uintGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.UInt32 || sch[i].Type.RawKind() == DataKind.UInt32 ? cur.GetGetter<uint>(SchemaHelper._dc(i, cur)) : null).ToArray();
+                            ValueGetter<ReadOnlyMemory<char>>[] textGetters = requiredIndexes.Select(i => sch[i].Type == TextDataViewType.Instance ? cur.GetGetter<ReadOnlyMemory<char>>(SchemaHelper._dc(i, cur)) : null).ToArray();
+                            ValueGetter<float>[] floatGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Single ? cur.GetGetter<float>(SchemaHelper._dc(i, cur)) : null).ToArray();
+                            ValueGetter<VBuffer<float>>[] vectorGetters = requiredIndexes.Select(i => sch[i].Type.IsVector() ? cur.GetGetter<VBuffer<float>>(SchemaHelper._dc(i, cur)) : null).ToArray();
+                            ValueGetter<int>[] intGetters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Int32 || sch[i].Type.RawKind() == DataKind.Int32 ? cur.GetGetter<int>(SchemaHelper._dc(i, cur)) : null).ToArray();
+                            ValueGetter<long>[] int8Getters = requiredIndexes.Select(i => sch[i].Type == NumberDataViewType.Int64 || sch[i].Type.RawKind() == DataKind.Int64 ? cur.GetGetter<long>(SchemaHelper._dc(i, cur)) : null).ToArray();
 
                             var cols = _args.columns == null ? null : new HashSet<string>(_args.columns);
                             var hists = _args.hists == null ? null : new HashSet<string>(_args.hists);

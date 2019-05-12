@@ -171,14 +171,9 @@ namespace Scikit.ML.PipelineLambdaTransforms
                     throw _view.Host.Except("Column index {0} does not exist.", col);
             }
 
-            private DataViewSchema.Column _dc(int i)
-            {
-                return new DataViewSchema.Column(null, i, false, null, null);
-            }
-
             protected ValueGetter<TDst> GetLambdaGetter()
             {
-                var getter = _inputCursor.GetGetter<TSrc>(_dc(_view._srcIndex));
+                var getter = _inputCursor.GetGetter<TSrc>(SchemaHelper._dc(_view._srcIndex, _inputCursor));
                 TSrc temp = default(TSrc);
                 return (ref TDst dst) =>
                 {

@@ -19,11 +19,6 @@ namespace TestMachineLearningExt
     [TestClass]
     public class TestMulticlass
     {
-        private static DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         #region MultiToBinary transform
 
         public static void TestMultiToBinaryTransform(MultiToBinaryTransform.MultiplicationAlgorithm algo, int max)
@@ -43,8 +38,8 @@ namespace TestMachineLearningExt
 
                 using (var cursor = multiplied.GetRowCursor(multiplied.Schema))
                 {
-                    var labelGetter = cursor.GetGetter<uint>(_dc(1));
-                    var binGetter = cursor.GetGetter<bool>(_dc(2));
+                    var labelGetter = cursor.GetGetter<uint>(SchemaHelper._dc(1, cursor));
+                    var binGetter = cursor.GetGetter<bool>(SchemaHelper._dc(2, cursor));
                     var cont = new List<Tuple<uint, bool>>();
                     bool bin = false;
                     while (cursor.MoveNext())
@@ -95,10 +90,10 @@ namespace TestMachineLearningExt
 
                 using (var cursor = multiplied.GetRowCursor(multiplied.Schema))
                 {
-                    var labelGetter = cursor.GetGetter<uint>(_dc(1));
-                    var labelVectorGetter = cursor.GetGetter<VBuffer<bool>>(_dc(1));
-                    var labelVectorFloatGetter = cursor.GetGetter<VBuffer<float>>(_dc(1));
-                    var binGetter = cursor.GetGetter<bool>(_dc(2));
+                    var labelGetter = cursor.GetGetter<uint>(SchemaHelper._dc(1, cursor));
+                    var labelVectorGetter = cursor.GetGetter<VBuffer<bool>>(SchemaHelper._dc(1, cursor));
+                    var labelVectorFloatGetter = cursor.GetGetter<VBuffer<float>>(SchemaHelper._dc(1, cursor));
+                    var binGetter = cursor.GetGetter<bool>(SchemaHelper._dc(2, cursor));
                     Contracts.CheckValue(binGetter, "Type mismatch.");
                     var cont = new List<Tuple<uint, bool>>();
                     bool bin = false;

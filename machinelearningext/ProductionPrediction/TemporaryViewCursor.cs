@@ -187,6 +187,8 @@ namespace Scikit.ML.ProductionPrediction
                 else
                     throw Contracts.ExceptNotSupp("Unable to create a vector getter.");
             }
+
+            public override int Count() { return 1; }
         }
     }
 
@@ -371,6 +373,8 @@ namespace Scikit.ML.ProductionPrediction
                     throw Contracts.ExceptNotSupp($"Getter must be specified.");
                 }
             }
+
+            public override int Count() { return 1; }
         }
     }
 

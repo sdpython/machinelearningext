@@ -312,6 +312,8 @@ namespace Scikit.ML.ProductionPrediction
                     value = new VBuffer<ReadOnlyMemory<char>>(t.Length, t.Count, t.Values.Select(c => c.str).ToArray(), t.Indices);
                 };
             }
+
+            public override int Count() { return 1; }
         }
     }
 

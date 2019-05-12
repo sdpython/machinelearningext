@@ -175,11 +175,6 @@ namespace Scikit.ML.RandomTransforms
                 return null;
         }
 
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
@@ -203,8 +198,9 @@ namespace Scikit.ML.RandomTransforms
             var cursor = getterCursor(columnsNeeded, rand);
 
             if (classColumn == -1)
-                return new ResampleCursor<float>(this, cursor, columnsNeeded, _args.lambda, _args.seed, rand, _cacheReplica, 
-                    new DataViewSchema.Column(null, classColumn, false, null, null), float.NaN);
+                return new ResampleCursor<float>(this, cursor, columnsNeeded, _args.lambda,
+                    _args.seed, rand, _cacheReplica, SchemaHelper._dc(classColumn, cursor),
+                    float.NaN);
 
             var newColumns = columnsNeeded.ToList();
             newColumns.Add(Schema.Where(c => c.Index == classColumn).First());
@@ -217,23 +213,27 @@ namespace Scikit.ML.RandomTransforms
                     if (!bool.TryParse(_args.classValue, out clbool))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return new ResampleCursor<bool>(this, cursor, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), clbool);
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, cursor), clbool);
                 case DataKind.UInt32:
                     uint cluint;
                     if (!uint.TryParse(_args.classValue, out cluint))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return new ResampleCursor<uint>(this, cursor, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), cluint);
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, cursor), cluint);
                 case DataKind.Single:
                     float clfloat;
                     if (!float.TryParse(_args.classValue, out clfloat))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return new ResampleCursor<float>(this, cursor, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), clfloat);
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, cursor), clfloat);
                 case DataKind.String:
                     var cltext = new ReadOnlyMemory<char>(_args.classValue.ToCharArray());
                     return new ResampleCursor<ReadOnlyMemory<char>>(this, cursor, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), cltext);
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, cursor), cltext);
                 default:
                     throw _host.Except("Unsupported type '{0}'", type);
             }
@@ -252,7 +252,9 @@ namespace Scikit.ML.RandomTransforms
             var cursors = _input.GetRowCursorSet(columnsNeeded, n, rand);
 
             if (classColumn == -1)
-                return cursors.Select(c => new ResampleCursor<float>(this, c, columnsNeeded, _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), float.NaN)).ToArray();
+                return cursors.Select(c => new ResampleCursor<float>(this,
+                    c, columnsNeeded, _args.lambda, _args.seed, rand, _cacheReplica,
+                    SchemaHelper._dc(classColumn, c), float.NaN)).ToArray();
 
             var newColumns = columnsNeeded.ToList();
             newColumns.Add(Schema.Where(c => c.Index == classColumn).First());
@@ -265,23 +267,27 @@ namespace Scikit.ML.RandomTransforms
                     if (!bool.TryParse(_args.classValue, out clbool))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return cursors.Select(c => new ResampleCursor<bool>(this, c, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), clbool)).ToArray();
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, c), clbool)).ToArray();
                 case DataKind.UInt32:
                     uint cluint;
                     if (!uint.TryParse(_args.classValue, out cluint))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return cursors.Select(c => new ResampleCursor<uint>(this, c, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), cluint)).ToArray();
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, c), cluint)).ToArray();
                 case DataKind.Single:
                     float clfloat;
                     if (!float.TryParse(_args.classValue, out clfloat))
                         throw _host.Except("Unable to parse '{0}'.", _args.classValue);
                     return cursors.Select(c => new ResampleCursor<float>(this, c, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), clfloat)).ToArray();
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, c), clfloat)).ToArray();
                 case DataKind.String:
                     var cltext = new ReadOnlyMemory<char>(_args.classValue.ToCharArray());
                     return cursors.Select(c => new ResampleCursor<ReadOnlyMemory<char>>(this, c, newColumns,
-                        _args.lambda, _args.seed, rand, _cacheReplica, _dc(classColumn), cltext)).ToArray();
+                        _args.lambda, _args.seed, rand, _cacheReplica,
+                        SchemaHelper._dc(classColumn, c), cltext)).ToArray();
                 default:
                     throw _host.Except("Unsupported type '{0}'", type);
             }
@@ -456,7 +462,9 @@ namespace Scikit.ML.RandomTransforms
                 }
                 _copy = -1;
                 _classValue = classValue;
-                _classGetter = classColumn.Index >= 0 ? _inputCursor.GetGetter<TClass>(classColumn) : null;
+                _classGetter = classColumn.Index >= 0 && classColumn.Index < int.MaxValue
+                    ? _inputCursor.GetGetter<TClass>(classColumn) 
+                    : null;
                 _classColumn = classColumn;
             }
 

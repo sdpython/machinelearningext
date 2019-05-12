@@ -928,11 +928,6 @@ namespace Scikit.ML.DataManipulation
             }
         }
 
-        private DataViewSchema.Column _dc(int i)
-        {
-            return new DataViewSchema.Column(null, i, false, null, null);
-        }
-
         /// <summary>
         /// Fills the value with values coming from a DataViewRowCursor.
         /// Called by the previous method.
@@ -1143,7 +1138,7 @@ namespace Scikit.ML.DataManipulation
                 ValueGetter<VBuffer<DType>> getter;
                 try
                 {
-                    getter = cursor.GetGetter<VBuffer<DType>>(_dc(col));
+                    getter = cursor.GetGetter<VBuffer<DType>>(SchemaHelper._dc(col, cursor));
                 }
                 catch (Exception e)
                 {
@@ -1174,7 +1169,7 @@ namespace Scikit.ML.DataManipulation
             {
                 try
                 {
-                    return cursor.GetGetter<DType>(_dc(col));
+                    return cursor.GetGetter<DType>(SchemaHelper._dc(col, cursor));
                 }
                 catch (InvalidOperationException e)
                 {
@@ -1182,7 +1177,7 @@ namespace Scikit.ML.DataManipulation
                     ValueGetter<ReadOnlyMemory<char>> getter;
                     try
                     {
-                        getter = cursor.GetGetter<ReadOnlyMemory<char>>(_dc(col));
+                        getter = cursor.GetGetter<ReadOnlyMemory<char>>(SchemaHelper._dc(col, cursor));
                     }
                     catch (InvalidOperationException)
                     {
@@ -1214,10 +1209,10 @@ namespace Scikit.ML.DataManipulation
         {
             var dt = cursor.Schema[col].Type;
             if (dt.IsVector())
-                return cursor.GetGetter<VBuffer<DType>>(_dc(col));
+                return cursor.GetGetter<VBuffer<DType>>(SchemaHelper._dc(col, cursor));
             else
             {
-                var getter = cursor.GetGetter<DType>(_dc(col));
+                var getter = cursor.GetGetter<DType>(SchemaHelper._dc(col, cursor));
                 var temp = defaultValue;
                 return (ref VBuffer<DType> value) =>
                 {
@@ -1538,7 +1533,11 @@ namespace Scikit.ML.DataManipulation
 
             public override ValueGetter<TValue> GetGetter<TValue>(DataViewSchema.Column col)
             {
-                col = _colsSet == null ? col : new DataViewSchema.Column(null, _colsSet[col.Index], false, null, null);
+                var name = _cont._names[col.Index];
+                var ctype = _cont._mapping[col.Index].Item1;
+                col = _colsSet == null
+                    ? col
+                    : new DataViewSchema.Column(name, _colsSet[col.Index], false, ctype, null);
                 var coor = _cont._mapping[col.Index];
                 if (coor.Item1.IsVector())
                 {
