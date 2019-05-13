@@ -107,8 +107,8 @@ after_test:
   - if not exist dist mkdir dist
   - if not exist dist\Release mkdir dist\Release
   - if not exist dist\Debug mkdir dist\Debug
-  - "%PYTHON%\\python -u copy_binaries.py Release dist\Release"
-  - "%PYTHON%\\python -u copy_binaries.py Debug dist\Debug"
+  - "%PYTHON%\\python -u copy_binaries.py Release dist\\Release"
+  - "%PYTHON%\\python -u copy_binaries.py Debug dist\\Debug"
   # benchmark
   - copy _tests\1.0.0.0\Release\TestScikitAPITrain\*.txt dist
 
