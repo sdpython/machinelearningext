@@ -26,7 +26,7 @@ using NearestNeighborsTransform = Scikit.ML.NearestNeighbors.NearestNeighborsTra
 
 namespace Scikit.ML.NearestNeighbors
 {
-    public class NearestNeighborsTransform : IDataTransformSingle
+    public class NearestNeighborsTransform : ADataTransform, IDataTransform
     {
         public const string LoaderSignature = "NearNeighborsTransform";  // Not more than 24 letters.
         public const string Summary = "Retrieves the closest neighbors among a set of points.";
@@ -92,14 +92,12 @@ namespace Scikit.ML.NearestNeighbors
             }
         }
 
-        IDataView _input;
         Arguments _args;
         IHost _host;
         DataViewSchema _extendedSchema;
         NearestNeighborsTrees _trees;
         object _lock;
 
-        public IDataView Source { get { return _input; } }
         public NearestNeighborsTrees Trees { get { return _trees; } }
 
         public NearestNeighborsTransform(IHostEnvironment env, Arguments args, IDataView input)
@@ -199,11 +197,6 @@ namespace Scikit.ML.NearestNeighbors
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(_input, c, r));
         }
 
         private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,

@@ -31,7 +31,7 @@ namespace Scikit.ML.Multiclass
     /// <summary>
     /// Multiplies rows to tranform a multi-class problem into a binary classification problem.
     /// </summary>
-    public class MultiToBinaryTransform : IDataTransformSingle
+    public class MultiToBinaryTransform : ADataTransform, IDataTransform
     {
         #region identification
 
@@ -121,8 +121,7 @@ namespace Scikit.ML.Multiclass
 
         #region internal members / accessors
 
-        IDataView _input;
-        IDataTransformSingle _transform;          // templated transform (not the serialized version)
+        IDataTransform _transform;          // templated transform (not the serialized version)
         IHost _host;
         Arguments _args;
 
@@ -188,7 +187,6 @@ namespace Scikit.ML.Multiclass
 
         #region IDataTransform API
 
-        public IDataView Source { get { return _input; } }
         public DataViewSchema Schema { get { return _transform.Schema; } }
         public bool CanShuffle { get { return _input.CanShuffle; } }
 
@@ -213,12 +211,6 @@ namespace Scikit.ML.Multiclass
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            _host.AssertValue(_transform, "_transform");
-            return CursorHelper.GetRowCursorSingle(_transform, columnsNeeded, rand);
-        }
-
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
@@ -229,7 +221,7 @@ namespace Scikit.ML.Multiclass
 
         #region transform own logic
 
-        private IDataTransformSingle CreateTemplatedTransform()
+        private IDataTransform CreateTemplatedTransform()
         {
             int labelIndex = SchemaHelper.GetColumnIndex(_input.Schema, _args.label);
             var typeLabel = _input.Schema[labelIndex].Type;
@@ -251,7 +243,7 @@ namespace Scikit.ML.Multiclass
             };
         }
 
-        private IDataTransformSingle CreateTemplatedTransform(ModelLoadContext ctx)
+        private IDataTransform CreateTemplatedTransform(ModelLoadContext ctx)
         {
             int labelIndex = SchemaHelper.GetColumnIndex(_input.Schema, _args.label);
             var typeLabel = _input.Schema[labelIndex].Type;
@@ -320,11 +312,10 @@ namespace Scikit.ML.Multiclass
         /// <summary>
         /// Templated transform which sorts rows based on one column.
         /// </summary>
-        public class MultiToBinaryState<TLabelC, TLabel> : IDataTransformSingle
+        public class MultiToBinaryState<TLabelC, TLabel> : ADataTransform, IDataTransform
             where TLabel : IEquatable<TLabel>
         {
             IHost _host;
-            IDataView _input;
             DataViewSchema _schema;
             Arguments _args;
             Dictionary<TLabel, float> _labelDistribution;
@@ -378,7 +369,6 @@ namespace Scikit.ML.Multiclass
 
             object _lock;
 
-            public IDataView Source { get { return _input; } }
             public DataViewSchema Schema { get { return _schema; } }
 
             public MultiToBinaryState(IHostEnvironment host, IDataView input, Arguments args)
@@ -657,11 +647,6 @@ namespace Scikit.ML.Multiclass
             public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(_input, c, r));
             }
 
             private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,

@@ -254,10 +254,9 @@ namespace Scikit.ML.Clustering
             }
         }
 
-        public class OpticsState : IDataTransformSingle
+        public class OpticsState : ADataTransform, IDataTransform
         {
             IHost _host;
-            IDataView _input;
             Arguments _args;
             OpticsTransform _parent;
             IList<Dictionary<int, ClusteringResult>> _Results;  // ClusteringResult: cluster of a point
@@ -275,7 +274,6 @@ namespace Scikit.ML.Clustering
 
             object _lock;
 
-            public IDataView Source { get { return _input; } }
             public DataViewSchema Schema { get { return _parent.OutputSchema; } }
 
             public OpticsState(IHostEnvironment host, OpticsTransform parent, IDataView input, Arguments args)
@@ -464,14 +462,6 @@ namespace Scikit.ML.Clustering
                 TrainTransform();
                 _host.AssertValue(_Results, "_Results");
                 var cursor = _input.GetRowCursor(columnsNeeded, rand);
-                return new OpticsCursor(this, cursor, _args.newColumnsNumber);
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                TrainTransform();
-                _host.AssertValue(_Results, "_Results");
-                var cursor = CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand);
                 return new OpticsCursor(this, cursor, _args.newColumnsNumber);
             }
 

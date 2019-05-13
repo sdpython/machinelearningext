@@ -28,7 +28,7 @@ namespace Scikit.ML.PipelineTransforms
     /// <summary>
     /// Multiplies features, build polynomial features x1, x1^2, x1x2, x2, x2^2...
     /// </summary>
-    public class ULabelToR4LabelTransform : IDataTransformSingle
+    public class ULabelToR4LabelTransform : ADataTransform, IDataTransform
     {
         #region identification
 
@@ -72,12 +72,9 @@ namespace Scikit.ML.PipelineTransforms
 
         #region internal members / accessors
 
-        IDataView _input;
         IDataTransform _transform;          // templated transform (not the serialized version)
         Arguments _args;
         IHost _host;
-
-        public IDataView Source { get { return _input; } }
 
         #endregion
 
@@ -158,13 +155,6 @@ namespace Scikit.ML.PipelineTransforms
             // Fun part we'll see later.
             _host.AssertValue(_transform, "_transform");
             return _transform.GetRowCursor(columnsNeeded, rand);
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            // Fun part we'll see later.
-            _host.AssertValue(_transform, "_transform");
-            return CursorHelper.GetRowCursorSingle(_transform, columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

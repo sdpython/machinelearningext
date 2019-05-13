@@ -14,7 +14,7 @@ namespace Scikit.ML.ProductionPrediction
 {
     #region interface
 
-    interface IInfiniteLoopViewCursorDataFrame
+    interface IInfiniteLoopViewCursorDataFrame : IDataViewSingleThreaded
     {
         void Set(DataFrame value, int position = 0);
     }

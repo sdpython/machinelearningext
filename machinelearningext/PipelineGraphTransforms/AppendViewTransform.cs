@@ -28,7 +28,7 @@ namespace Scikit.ML.PipelineGraphTransforms
     /// <summary>
     /// Concatenates two views.
     /// </summary>
-    public class AppendViewTransform : IDataTransformSingle
+    public class AppendViewTransform : ADataTransform, IDataTransform
     {
         #region identification
 
@@ -81,14 +81,11 @@ namespace Scikit.ML.PipelineGraphTransforms
 
         readonly Arguments _args;
         readonly IHost _host;
-        readonly IDataView _source;
         readonly IDataView _mergedView;
 
         #endregion
 
         #region API DataTransform
-
-        public IDataView Source { get { return _source; } }
 
         /// <summary>
         /// Create a AppendViewTransform transform.
@@ -100,7 +97,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _host.CheckValue(args, "args");
             _args = args;
             _host.CheckValue(args.tag, "Tag cannot be empty.");
-            _source = input;
+            _input = input;
             _mergedView = Setup(input);
         }
 
@@ -147,7 +144,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _host.CheckValue(ctx, "ctx");
             _args = new Arguments();
             _args.Read(ctx, _host);
-            _source = input;
+            _input = input;
             _mergedView = Setup(input);
         }
 
@@ -155,25 +152,19 @@ namespace Scikit.ML.PipelineGraphTransforms
         public bool CanShuffle { get { return _mergedView.CanShuffle; } }
         public long? GetRowCount()
         {
-            _host.AssertValue(_source, "_input");
+            _host.AssertValue(_input, "_input");
             return _mergedView.GetRowCount();
         }
 
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
-            _host.AssertValue(_source, "_source");
+            _host.AssertValue(_input, "_input");
             return _mergedView.GetRowCursor(columnsNeeded, rand);
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            _host.AssertValue(_source, "_source");
-            return CursorHelper.GetRowCursorSingle(_mergedView, columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
-            _host.AssertValue(_source, "_source");
+            _host.AssertValue(_input, "_input");
             return _mergedView.GetRowCursorSet(columnsNeeded, n, rand);
         }
 

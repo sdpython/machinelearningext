@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Runtime;
+using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 
 using LoadableClassAttribute = Microsoft.ML.LoadableClassAttribute;
@@ -28,7 +29,7 @@ namespace Scikit.ML.PipelineGraphTransforms
     /// <summary>
     /// Tags the source data view in order to reuse it later in the pipeline.
     /// </summary>
-    public class TagViewTransform : IDataTransformSingle, ITaggedDataView
+    public class TagViewTransform : ADataTransform, IDataTransform, ITaggedDataView
     {
         #region identification
 
@@ -73,7 +74,6 @@ namespace Scikit.ML.PipelineGraphTransforms
 
         readonly Arguments _args;
         readonly IHost _host;
-        readonly IDataView _source;
         readonly List<Tuple<string, ITaggedDataView>> _parallelViews;
         readonly IPredictor _taggedPredictor;
 
@@ -81,7 +81,6 @@ namespace Scikit.ML.PipelineGraphTransforms
 
         #region API DataTransform
 
-        public IDataView Source { get { return _source; } }
         public IPredictor TaggedPredictor { get { return _taggedPredictor; } }
 
         /// <summary>
@@ -96,7 +95,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _host = env.Register(RegistrationName);
             _host.CheckValue(args, "args");
             _args = args;
-            _source = input;
+            _input = input;
             _host.CheckValue(args.tag, "Tag cannot be empty.");
             if (TagHelper.EnumerateTaggedView(true, input).Where(c => c.Item1 == args.tag).Any())
                 throw _host.Except("Tag '{0}' is already used.", args.tag);
@@ -116,7 +115,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _host = env.Register(RegistrationName);
             _host.CheckValue(args, "args");
             _args = args;
-            _source = input;
+            _input = input;
             _host.CheckValue(args.tag, "Tag cannot be empty.");
             if (TagHelper.EnumerateTaggedView(true, input).Where(c => c.Item1 == args.tag).Any())
                 throw _host.Except("Tag '{0}' is already used.", args.tag);
@@ -129,7 +128,7 @@ namespace Scikit.ML.PipelineGraphTransforms
         {
             _host = env.Register(RegistrationName);
             _args = new Arguments { tag = "" };
-            _source = input;
+            _input = input;
             _parallelViews = TagHelper.Reconcile(addition);
             _taggedPredictor = null;
         }
@@ -167,7 +166,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _host = host;
             _host.CheckValue(input, "input");
             _host.CheckValue(ctx, "ctx");
-            _source = input;
+            _input = input;
             _args = new Arguments();
             _args.Read(ctx, _host);
             _host.CheckValue(_args.tag, "Tag cannot be empty.");
@@ -177,30 +176,24 @@ namespace Scikit.ML.PipelineGraphTransforms
             _parallelViews.Add(new Tuple<string, ITaggedDataView>(_args.tag, this));
         }
 
-        public DataViewSchema Schema { get { return _source.Schema; } }
-        public bool CanShuffle { get { return _source.CanShuffle; } }
+        public DataViewSchema Schema { get { return _input.Schema; } }
+        public bool CanShuffle { get { return _input.CanShuffle; } }
         public long? GetRowCount()
         {
-            _host.AssertValue(_source, "_input");
-            return _source.GetRowCount();
+            _host.AssertValue(_input, "_input");
+            return _input.GetRowCount();
         }
 
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
-            _host.AssertValue(_source, "_source");
-            return _source.GetRowCursor(columnsNeeded, rand);
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            _host.AssertValue(_source, "_source");
-            return CursorHelper.GetRowCursorSingle(_source, columnsNeeded, rand);
+            _host.AssertValue(_input, "_input");
+            return _input.GetRowCursor(columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
-            _host.AssertValue(_source, "_source");
-            return _source.GetRowCursorSet(columnsNeeded, n, rand);
+            _host.AssertValue(_input, "_input");
+            return _input.GetRowCursorSet(columnsNeeded, n, rand);
         }
 
         #endregion

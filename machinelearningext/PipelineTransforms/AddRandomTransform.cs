@@ -28,7 +28,7 @@ namespace Scikit.ML.PipelineTransforms
     /// <summary>
     /// Multiplies features, build polynomial features x1, x1^2, x1x2, x2, x2^2...
     /// </summary>
-    public class AddRandomTransform : IDataTransformSingle
+    public class AddRandomTransform : ADataTransform, IDataTransform
     {
         #region identification
 
@@ -77,13 +77,10 @@ namespace Scikit.ML.PipelineTransforms
 
         #region internal members / accessors
 
-        IDataView _input;
         Arguments _args;
         IHost _host;
         DataViewSchema _schema;
         Dictionary<int, DataViewSchema.Column> _columnMapping;
-
-        public IDataView Source { get { return _input; } }
 
         #endregion
 
@@ -183,14 +180,6 @@ namespace Scikit.ML.PipelineTransforms
             //var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
             var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Source.Schema);
             var cur = Source.GetRowCursor(cols);
-            return new AddRandomCursor(this, cur);
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            //var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-            var cols = SchemaHelper.ColumnsNeeded(columnsNeeded, Source.Schema);
-            var cur = CursorHelper.GetRowCursorSingle(Source, cols);
             return new AddRandomCursor(this, cur);
         }
 

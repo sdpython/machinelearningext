@@ -28,7 +28,7 @@ namespace Scikit.ML.FeaturesTransforms
     /// <summary>
     /// Normalizes columns with various stategies.
     /// </summary>
-    public class ScalerTransform : IDataTransformSingle, ITrainableTransform
+    public class ScalerTransform : ADataTransform, IDataTransform, ITrainableTransform
     {
         public const string LoaderSignature = "ScalerTransform";  // Not more than 24 letters.
         public const string Summary = "Rescales a column (only float).";
@@ -86,7 +86,6 @@ namespace Scikit.ML.FeaturesTransforms
             }
         }
 
-        IDataView _input;
         Arguments _args;
         Dictionary<string, List<ColumnStatObs>> _scalingStat;
         Dictionary<int, ScalingFactor> _scalingFactors;
@@ -94,8 +93,6 @@ namespace Scikit.ML.FeaturesTransforms
         IHost _host;
         DataViewSchema _extendedSchema;
         object _lock;
-
-        public IDataView Source { get { return _input; } }
 
         public ScalerTransform(IHostEnvironment env, Arguments args, IDataView input)
         {
@@ -216,16 +213,6 @@ namespace Scikit.ML.FeaturesTransforms
             var newColumnsNeeded = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
             var oldCols = SchemaHelper.ColumnsNeeded(newColumnsNeeded, _input.Schema);
             var cursor = _input.GetRowCursor(oldCols, rand);
-            return new ScalerCursor(cursor, this, newColumnsNeeded);
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            ComputeStatistics();
-            _host.AssertValue(_input, "_input");
-            var newColumnsNeeded = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-            var oldCols = SchemaHelper.ColumnsNeeded(newColumnsNeeded, _input.Schema);
-            var cursor = CursorHelper.GetRowCursorSingle(_input, oldCols, rand);
             return new ScalerCursor(cursor, this, newColumnsNeeded);
         }
 

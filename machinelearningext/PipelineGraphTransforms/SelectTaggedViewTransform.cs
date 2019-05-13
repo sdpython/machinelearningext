@@ -102,7 +102,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _host.CheckValue(args.tag, "tag");
             _host.CheckValue(args.selectTag, "selectTag");
             _args = args;
-            _sourcePipe = Create(_host, args, input, out _sourceCtx);
+            _sourcePipe = Create(_host, args, input, out _input);
         }
 
         protected override void DelayedInitialisationLockFree()
@@ -123,7 +123,7 @@ namespace Scikit.ML.PipelineGraphTransforms
         {
             _args = new Arguments();
             _args.Read(ctx, _host);
-            _sourcePipe = Create(_host, _args, input, out _sourceCtx);
+            _sourcePipe = Create(_host, _args, input, out _input);
         }
 
         public static SelectTaggedViewTransform Create(IHostEnvironment env, ModelLoadContext ctx, IDataView input)

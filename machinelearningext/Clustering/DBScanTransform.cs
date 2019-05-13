@@ -204,10 +204,9 @@ namespace Scikit.ML.Clustering
             }
         }
 
-        public class DBScanState : IDataTransformSingle
+        public class DBScanState : ADataTransform, IDataTransform
         {
             IHost _host;
-            IDataView _input;
             Arguments _args;
             DBScanTransform _parent;
             Dictionary<long, Tuple<int, float>> _reversedMapping;      // long: index of a point
@@ -219,7 +218,6 @@ namespace Scikit.ML.Clustering
 
             object _lock;
 
-            public IDataView Source { get { return _input; } }
             public DataViewSchema Schema { get { return _parent.OutputSchema; } }
 
             public DBScanState(IHostEnvironment host, DBScanTransform parent, IDataView input, Arguments args)
@@ -404,14 +402,6 @@ namespace Scikit.ML.Clustering
                 TrainTransform();
                 _host.AssertValue(_reversedMapping, "_reversedMapping");
                 var cursor = _input.GetRowCursor(columnsNeeded, rand);
-                return new DBScanCursor(this, cursor);
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                TrainTransform();
-                _host.AssertValue(_reversedMapping, "_reversedMapping");
-                var cursor = CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand);
                 return new DBScanCursor(this, cursor);
             }
 

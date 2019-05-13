@@ -71,7 +71,7 @@ namespace Scikit.ML.PipelineGraphTraining
             args.PostProcess();
             _args = args;
             _host.CheckValue(args.taggedPredictor, "taggedPredictor");
-            _sourcePipe = Create(_host, args, input, out _sourceCtx, null);
+            _sourcePipe = Create(_host, args, input, out _input, null);
             _host.Check(_predictor != null, "_predictor is null. It should not.");
         }
 
@@ -82,7 +82,7 @@ namespace Scikit.ML.PipelineGraphTraining
             args.PostProcess();
             _args = args;
             _host.Check(predictor != null || !string.IsNullOrEmpty(args.taggedPredictor), "taggedPredictor");
-            _sourcePipe = Create(_host, args, input, out _sourceCtx, predictor);
+            _sourcePipe = Create(_host, args, input, out _input, predictor);
             _host.Check(_predictor != null, "_predictor is null. It should not.");
         }
 
@@ -106,7 +106,7 @@ namespace Scikit.ML.PipelineGraphTraining
                 ctx.LoadModel<IPredictor, SignatureLoadModel>(_host, out _predictor, "predictor");
             else
                 _predictor = null;
-            _sourcePipe = Create(_host, _args, input, out _sourceCtx, _predictor);
+            _sourcePipe = Create(_host, _args, input, out _input, _predictor);
         }
 
         public new static TaggedPredictTransform Create(IHostEnvironment env, ModelLoadContext ctx, IDataView input)

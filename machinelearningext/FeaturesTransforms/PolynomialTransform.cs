@@ -28,7 +28,7 @@ namespace Scikit.ML.FeaturesTransforms
     /// <summary>
     /// Multiplies features, build polynomial features x1, x1^2, x1x2, x2, x2^2...
     /// </summary>
-    public class PolynomialTransform : IDataTransformSingle
+    public class PolynomialTransform : ADataTransform, IDataTransform
     {
         #region identification
 
@@ -115,12 +115,10 @@ namespace Scikit.ML.FeaturesTransforms
 
         #region internal members / accessors
 
-        IDataView _input;
-        IDataTransformSingle _transform;          // templated transform (not the serialized version)
+        IDataTransform _transform;          // templated transform (not the serialized version)
         Arguments _args;
         IHost _host;
 
-        public IDataView Source => _input;
         public IHost Host => _host;
 
         #endregion
@@ -212,13 +210,6 @@ namespace Scikit.ML.FeaturesTransforms
             return _transform.GetRowCursor(columnsNeeded, rand);
         }
 
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            // Fun part we'll see later.
-            _host.AssertValue(_transform, "_transform");
-            return _transform.GetRowCursorSingle(columnsNeeded, rand);
-        }
-
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
             _host.AssertValue(_transform, "_transform");
@@ -232,13 +223,13 @@ namespace Scikit.ML.FeaturesTransforms
         /// <summary>
         /// Create the internal transform (not serialized in the zip file).
         /// </summary>
-        private IDataTransformSingle CreateTemplatedTransform()
+        private IDataTransform CreateTemplatedTransform()
         {
             if (_args.columns.Length != 1)
                 throw _host.Except("Only one column allowed not '{0}'.", _args.columns.Length);
 
             // The column is a vector.
-            IDataTransformSingle transform = null;
+            IDataTransform transform = null;
             int index = -1;
             var schema = _input.Schema;
             foreach (var col in _args.columns)
@@ -275,10 +266,9 @@ namespace Scikit.ML.FeaturesTransforms
         /// Above is the serialized pipeline. Below the memory pipeline.
         /// TInput is a simple type (no vector).
         /// </summary>
-        public class PolynomialState<TInput> : IDataTransformSingle
+        public class PolynomialState<TInput> : ADataTransform, IDataTransform
         {
             IHost _host;
-            IDataView _input;
 
             readonly DataViewSchema _schema;
             readonly Arguments _args;
@@ -290,7 +280,6 @@ namespace Scikit.ML.FeaturesTransforms
             // requires the output of this one.
             // object _lock;
 
-            public IDataView Source => _input;
             public DataViewSchema Schema => _schema;
             public IHost Host => _host;
 
@@ -349,20 +338,6 @@ namespace Scikit.ML.FeaturesTransforms
                 else
                     // The new column is not required. We do not need to compute it. But we need to keep the same schema.
                     return new SameCursor(_input.GetRowCursor(columnsNeeded, rand), this.Schema);
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                if (columnsNeeded.Where(c => c.Index == _input.Schema.Count).Any())
-                {
-                    var newColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, Schema, _args.columns);
-                    var oldColumns = SchemaHelper.ColumnsNeeded(columnsNeeded, _input.Schema);
-                    var cursor = CursorHelper.GetRowCursorSingle(_input, oldColumns, rand);
-                    return new PolynomialCursor<TInput>(this, cursor, newColumns, _args, _inputCol, _multiplication);
-                }
-                else
-                    // The new column is not required. We do not need to compute it. But we need to keep the same schema.
-                    return new SameCursor(CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand), this.Schema);
             }
 
             public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

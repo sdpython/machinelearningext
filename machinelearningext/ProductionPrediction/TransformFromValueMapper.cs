@@ -15,12 +15,11 @@ namespace Scikit.ML.ProductionPrediction
     /// Converts a ValueMapper into a IDataTransform.
     /// Similar to a scorer but in a more explicit way.
     /// </summary>
-    public class TransformFromValueMapper : IDataTransformSingle, IValueMapper
+    public class TransformFromValueMapper : ADataTransform, IDataTransform, IValueMapper
     {
         #region members
 
-        readonly IDataTransformSingle _transform;
-        readonly IDataView _source;
+        readonly IDataTransform _transform;
         readonly IHostEnvironment _host;
         readonly IValueMapper _mapper;
         readonly string _inputColumn;
@@ -61,9 +60,9 @@ namespace Scikit.ML.ProductionPrediction
                 }
             }
 
-            _source = source;
+            _input = source;
             _mapper = mapper;
-            int index = SchemaHelper.GetColumnIndex(_source.Schema, inputColumn);
+            int index = SchemaHelper.GetColumnIndex(_input.Schema, inputColumn);
             _inputColumn = inputColumn;
             _outputColumn = outputColumn;
             _schema = ExtendedSchema.Create(new ExtendedSchema(source.Schema, new[] { outputColumn }, new[] { mapper.OutputType }));
@@ -75,19 +74,13 @@ namespace Scikit.ML.ProductionPrediction
         public string InputName { get { return _inputColumn; } }
         public string OutputName { get { return _outputColumn; } }
         public ValueMapper<TSrc, TDst> GetMapper<TSrc, TDst>() { return _mapper.GetMapper<TSrc, TDst>(); }
-        public IDataView Source { get { return _source; } }
-        public bool CanShuffle { get { return _source.CanShuffle; } }
-        public long? GetRowCount() { return _source.GetRowCount(); }
+        public bool CanShuffle { get { return _input.CanShuffle; } }
+        public long? GetRowCount() { return _input.GetRowCount(); }
         public DataViewSchema Schema { get { return _schema; } }
 
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return _transform.GetRowCursor(columnsNeeded, rand);
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            return _transform.GetRowCursorSingle(columnsNeeded, rand);
         }
 
         public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
@@ -105,7 +98,7 @@ namespace Scikit.ML.ProductionPrediction
 
         #region Cast
 
-        IDataTransformSingle CreateMemoryTransform()
+        IDataTransform CreateMemoryTransform()
         {
             if (InputType.IsVector())
             {
@@ -129,7 +122,7 @@ namespace Scikit.ML.ProductionPrediction
             }
         }
 
-        IDataTransformSingle CreateMemoryTransformIn<TSrc>()
+        IDataTransform CreateMemoryTransformIn<TSrc>()
         {
             if (OutputType.IsVector())
             {
@@ -157,7 +150,7 @@ namespace Scikit.ML.ProductionPrediction
             }
         }
 
-        IDataTransformSingle CreateMemoryTransformInOut<TSrc, TDst>()
+        IDataTransform CreateMemoryTransformInOut<TSrc, TDst>()
         {
             return new MemoryTransform<TSrc, TDst>(_host, this);
         }
@@ -166,7 +159,7 @@ namespace Scikit.ML.ProductionPrediction
 
         #region memory transform
 
-        class MemoryTransform<TSrc, TDst> : IDataTransformSingle
+        class MemoryTransform<TSrc, TDst> : IDataTransform
         {
             readonly IHostEnvironment _host;
             readonly TransformFromValueMapper _parent;
@@ -190,11 +183,6 @@ namespace Scikit.ML.ProductionPrediction
             public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
             {
                 return GetRowCursor(columnsNeeded, rand, (c, r) => Source.GetRowCursor(c, r));
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(Source, c, r));
             }
 
             private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Runtime;
 using Microsoft.ML.CommandLine;
+using Microsoft.ML.Data;
 using Scikit.ML.PipelineHelper;
 
 
@@ -18,18 +19,13 @@ namespace Scikit.ML.PipelineTransforms
     /// <summary>
     /// Common class to pass through transform.
     /// </summary>
-    public abstract class AbstractSimpleTransformTemplate : IDataTransformSingle
+    public abstract class AbstractSimpleTransformTemplate : ADataTransform, IDataTransform
     {
         public class Arguments
         {
             [Argument(ArgumentType.AtMostOnce, HelpText = "Delay the initialization when the first cursor is requested.", ShortName = "dinit")]
             public bool delayInit = false;
         }
-
-        /// <summary>
-        /// The secondary source. Received as an input but cursors will be created on _sourcePipe.
-        /// </summary>
-        protected IDataView _sourceCtx;
 
         /// <summary>
         /// The output source.
@@ -46,11 +42,6 @@ namespace Scikit.ML.PipelineTransforms
         /// Host.
         /// </summary>
         protected readonly IHost _host;
-
-        /// <summary>
-        /// The secondary source. Received as an input but cursors will be created on SourceEnd.
-        /// </summary>
-        public virtual IDataView Source { get { return _sourceCtx; } }
 
         /// <summary>
         /// The output source.
@@ -82,7 +73,7 @@ namespace Scikit.ML.PipelineTransforms
             _host = env.Register(name);
             _host.CheckValue(input, "input");
             _host.Check(!string.IsNullOrEmpty(name));
-            _sourceCtx = input;
+            _input = input;
             _sourcePipe = null;
             _lock = new object();
         }
@@ -101,7 +92,7 @@ namespace Scikit.ML.PipelineTransforms
             _host.CheckValue(ctx, "env");
             _host.CheckValue(input, "input");
             _host.Check(!string.IsNullOrEmpty(name));
-            _sourceCtx = input;
+            _input = input;
             _sourcePipe = null;
             _lock = new object();
         }
@@ -128,7 +119,7 @@ namespace Scikit.ML.PipelineTransforms
         public virtual bool CanShuffle { get { return _sourcePipe.CanShuffle; } }
         public virtual long? GetRowCount()
         {
-            _host.CheckValue(_sourceCtx, "_sourceCtx");
+            _host.CheckValue(_input, "_input");
             if (!IsInitialized())
             {
                 lock (_lock)
@@ -141,7 +132,7 @@ namespace Scikit.ML.PipelineTransforms
 
         public virtual DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
-            _host.CheckValue(_sourceCtx, "_sourceCtx");
+            _host.CheckValue(_input, "_input");
             if (!IsInitialized())
             {
                 lock (_lock)
@@ -152,22 +143,9 @@ namespace Scikit.ML.PipelineTransforms
             return _sourcePipe.GetRowCursor(columnsNeeded, rand);
         }
 
-        public virtual DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            _host.CheckValue(_sourceCtx, "_sourceCtx");
-            if (!IsInitialized())
-            {
-                lock (_lock)
-                    if (!IsInitialized())
-                        DelayedInitialisationLockFree();
-            }
-            _host.CheckValue(_sourcePipe, "_sourcePipe");
-            return CursorHelper.GetRowCursorSingle(_sourcePipe, columnsNeeded, rand);
-        }
-
         public virtual DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)
         {
-            _host.AssertValue(_sourceCtx, "_sourceCtx");
+            _host.AssertValue(_input, "_input");
             _host.AssertValue(_sourcePipe, "_sourcePipe");
             return _sourcePipe.GetRowCursorSet(columnsNeeded, n, rand);
         }

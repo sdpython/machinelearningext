@@ -13,7 +13,7 @@ namespace Scikit.ML.ProductionPrediction
 {
     #region interface
 
-    interface IInfiniteLoopViewCursor<TRepValue>
+    interface IInfiniteLoopViewCursor<TRepValue> : IDataViewSingleThreaded
     {
         void Set(in TRepValue value);
     }

@@ -293,12 +293,11 @@ namespace Scikit.ML.PipelineTransforms
         /// <summary>
         /// Templated transform which sorts rows based on one column.
         /// </summary>
-        public class SortInDataFrameState<TValue> : IDataTransformSingle
+        public class SortInDataFrameState<TValue> : ADataTransform, IDataTransform
             where TValue : IComparable<TValue>
         {
             DataFrame _autoView;
             IHost _host;
-            IDataView _source;
             readonly bool _reverse;
             readonly bool _canShuffle;
             readonly int? _numThreads;
@@ -306,14 +305,13 @@ namespace Scikit.ML.PipelineTransforms
 
             object _lock;
 
-            public IDataView Source { get { return _source; } }
-            public DataViewSchema Schema { get { return _source.Schema; } }
+            public DataViewSchema Schema { get { return _input.Schema; } }
 
             public SortInDataFrameState(IHostEnvironment host, IDataView input, int sortColumn, bool reverse, int? numThreads)
             {
                 _host = host.Register("SortInDataFrameState");
                 _host.CheckValue(input, "input");
-                _source = input;
+                _input = input;
                 _reverse = reverse;
                 _lock = new object();
                 _autoView = null;
@@ -329,7 +327,7 @@ namespace Scikit.ML.PipelineTransforms
                     if (!(_autoView is null))
                         return;
 
-                    _autoView = DataFrameIO.ReadView(_source, keepVectors: true, numThreads: _numThreads);
+                    _autoView = DataFrameIO.ReadView(_input, keepVectors: true, numThreads: _numThreads);
 
                     if (_sortColumn >= 0)
                     {
@@ -374,14 +372,6 @@ namespace Scikit.ML.PipelineTransforms
                 _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (1).");
                 _host.AssertValue(_autoView, "_autoView");
                 return _autoView.GetRowCursor(columnsNeeded, rand);
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                FillCacheIfNotFilled();
-                _host.Check(_canShuffle || rand == null, "Random access is not allowed on sorted data (1).");
-                _host.AssertValue(_autoView, "_autoView");
-                return CursorHelper.GetRowCursorSingle(_autoView, columnsNeeded, rand);
             }
 
             public DataViewRowCursor[] GetRowCursorSet(IEnumerable<DataViewSchema.Column> columnsNeeded, int n, Random rand = null)

@@ -103,7 +103,7 @@ namespace Scikit.ML.PipelineGraphTraining
             args.PostProcess();
             _args = args;
             _host.CheckValue(args.taggedPredictor, "taggedPredictor");
-            _sourcePipe = Create(_host, args, input, out _sourceCtx, null);
+            _sourcePipe = Create(_host, args, input, out _input, null);
             if (_scorer == null)
                 throw _host.Except("_scorer cannot be null.");
             if (_sourcePipe == null)
@@ -125,7 +125,7 @@ namespace Scikit.ML.PipelineGraphTraining
             _args = new Arguments();
             _args.Read(ctx, _host);
             ctx.LoadModel<IDataScorerTransform, SignatureLoadDataTransform>(_host, out _scorer, "scorer", input);
-            _sourcePipe = Create(_host, _args, input, out _sourceCtx, _scorer);
+            _sourcePipe = Create(_host, _args, input, out _input, _scorer);
         }
 
         public static TaggedScoreTransform Create(IHostEnvironment env, ModelLoadContext ctx, IDataView input)

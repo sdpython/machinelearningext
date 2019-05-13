@@ -100,7 +100,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
             _host.CheckValue(args, "args");
             args.PostProcess();
             _args = args;
-            _sourcePipe = Create(_host, args, input, out _sourceCtx, null);
+            _sourcePipe = Create(_host, args, input, out _input, null);
             _host.Check(_predictor != null, "_predictor is null. It should not.");
         }
 
@@ -110,7 +110,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
             _host.CheckValue(args, "args");
             args.PostProcess();
             _host.Check(predictor != null);
-            _sourcePipe = Create(_host, args, input, out _sourceCtx, predictor);
+            _sourcePipe = Create(_host, args, input, out _input, predictor);
             _host.Check(_predictor != null, "_predictor is null. It should not.");
         }
 
@@ -146,7 +146,7 @@ namespace Scikit.ML.PipelineLambdaTransforms
                 ctx.LoadModel<IPredictor, SignatureLoadModel>(_host, out _predictor, "predictor");
             else
                 _predictor = null;
-            _sourcePipe = Create(_host, _args, input, out _sourceCtx, _predictor);
+            _sourcePipe = Create(_host, _args, input, out _input, _predictor);
         }
 
         public static PredictTransform Create(IHostEnvironment env, ModelLoadContext ctx, IDataView input)

@@ -33,6 +33,8 @@ rep = [
      '/*internal*/public Column(string name, int index, bool isHidden, DataViewType type, Annotations annotations)'),
     ('[BestFriend]\n    internal interface IValueMapper',
      '/*[BestFriend]\n    internal*/ public interface IValueMapper'),
+    ('[BestFriend]\n    internal interface IDataTransformSource',
+     '/*[BestFriend]\n    internal*/ public interface IDataTransformSource'),
     ('[BestFriend]\n    internal delegate void ValueMapper<',
      '/*[BestFriend]\n    internal*/ public delegate void ValueMapper<'),
     ('[BestFriend]\n    internal abstract class Repository',

@@ -27,7 +27,7 @@ namespace Scikit.ML.RandomTransforms
     /// <summary>
     /// Randomly multiplies rows.
     /// </summary>
-    public class ResampleTransform : IDataTransformSingle
+    public class ResampleTransform : ADataTransform, IDataTransform
     {
         #region identification
 
@@ -94,13 +94,10 @@ namespace Scikit.ML.RandomTransforms
 
         #region internal members / accessors
 
-        IDataView _input;
         IDataTransform _transform;          // templated transform (not the serialized version)
         Arguments _args;
         IHost _host;
         Dictionary<DataViewRowId, int> _cacheReplica;
-
-        public IDataView Source { get { return _input; } }
 
         #endregion
 
@@ -178,11 +175,6 @@ namespace Scikit.ML.RandomTransforms
         public DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
         {
             return GetRowCursor(columnsNeeded, rand, (c, r) => _input.GetRowCursor(c, r));
-        }
-
-        public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-        {
-            return GetRowCursor(columnsNeeded, rand, (c, r) => CursorHelper.GetRowCursorSingle(_input, c, r));
         }
 
         private DataViewRowCursor GetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand,

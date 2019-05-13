@@ -13,14 +13,6 @@ namespace Scikit.ML.PipelineHelper
     public delegate DataViewRowCursor DelegateGetRowCursor(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand);
 
     /// <summary>
-    /// More options to creates cursors.
-    /// </summary>
-    public interface IDataTransformSingle : IDataTransform
-    {
-        DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null);
-    }
-
-    /// <summary>
     /// The transform is trainable: it must be trained on the training data.
     /// </summary>
     public interface ITrainableTransform
@@ -69,5 +61,22 @@ namespace Scikit.ML.PipelineHelper
         /// <param name="data">data + role</param>
         /// <returns>IDataScorerTransform</returns>
         IDataScorerTransform Predict(IHostEnvironment env, RoleMappedData data);
+    }
+
+    public abstract class ADataTransform : IDataTransformPropagateSingleThread, IDataTransformSource
+    {
+        protected IDataView _input = null;
+        public IDataView Source => _input;
+
+        public virtual bool SingleThread()
+        {
+            var tf = Source as TransformBase;
+            if (tf != null)
+                return tf.SingleThread();
+            var tf2 = Source as IDataTransformPropagateSingleThread;
+            if (tf2 != null)
+                return tf2.SingleThread();
+            return (Source as IDataViewSingleThreaded) != null;
+        }
     }
 }

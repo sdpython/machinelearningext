@@ -16,7 +16,7 @@ namespace Scikit.ML.ProductionPrediction
     /// <summary>
     /// Creates a view on one row/column.
     /// </summary>
-    public class TemporaryViewCursorColumn<TRepValue> : IDataView
+    public class TemporaryViewCursorColumn<TRepValue> : IDataView, IDataViewSingleThreaded
     {
         readonly int _column;
         readonly TRepValue _value;

@@ -217,10 +217,9 @@ namespace Scikit.ML.Clustering
             }
         }
 
-        public class OpticsOrderingState : IDataTransformSingle
+        public class OpticsOrderingState : ADataTransform, IDataTransform
         {
             IHost _host;
-            IDataView _input;
             Arguments _args;
             OpticsOrderingTransform _parent;
             OpticsOrderingResult[] _Results;              // OptictsOrderingResult: result of a point
@@ -238,7 +237,6 @@ namespace Scikit.ML.Clustering
 
             object _lock;
 
-            public IDataView Source { get { return _input; } }
             public DataViewSchema Schema { get { return _parent.OutputSchema; } }
 
             public OpticsOrderingState(IHostEnvironment host, OpticsOrderingTransform parent, IDataView input, Arguments args)
@@ -409,14 +407,6 @@ namespace Scikit.ML.Clustering
                 TrainTransform();
                 _host.AssertValue(_Results, "_Results");
                 var cursor = _input.GetRowCursor(columnsNeeded, rand);
-                return new OpticsOrderingCursor(this, cursor);
-            }
-
-            public DataViewRowCursor GetRowCursorSingle(IEnumerable<DataViewSchema.Column> columnsNeeded, Random rand = null)
-            {
-                TrainTransform();
-                _host.AssertValue(_Results, "_Results");
-                var cursor = CursorHelper.GetRowCursorSingle(_input, columnsNeeded, rand);
                 return new OpticsOrderingCursor(this, cursor);
             }
 

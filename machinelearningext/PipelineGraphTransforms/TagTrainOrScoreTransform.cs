@@ -113,7 +113,7 @@ namespace Scikit.ML.PipelineGraphTransforms
             _cali = null;
             _scorer = null;
             _predictor = null;
-            _sourcePipe = Create(_host, args, input, out _sourceCtx);
+            _sourcePipe = Create(_host, args, input, out _input);
         }
 
         protected override void SaveModel(ModelSaveContext ctx)
