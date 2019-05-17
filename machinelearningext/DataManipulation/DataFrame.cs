@@ -518,8 +518,21 @@ namespace Scikit.ML.DataManipulation
         /// It returns 0 if the difference is below the precision
         /// or the difference otherwise, Inf if shapes or schema are different.
         /// </summary>
-        public double AlmostEquals(DataFrame df, double precision = 1e-6f, bool exc = false, bool printDf = false)
+        public double AlmostEquals(DataFrame df, double precision = 1e-6f, bool exc = false,
+                                   bool printDf = false, string sortBy = null)
         {
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                if (!HasColumn(sortBy))
+                    throw Contracts.Except($"Unable to find column '{sortBy}'.");
+                if (!df.HasColumn(sortBy))
+                    throw Contracts.Except($"Unable to find column '{sortBy}'.");
+                var df1 = Copy();
+                df1.Sort(new[] { sortBy });
+                var df2 = df.Copy();
+                df2.Sort(new[] { sortBy });
+                return df1.AlmostEquals(df2, precision, exc, printDf);
+            }
             if (exc && printDf)
             {
                 try
@@ -707,6 +720,14 @@ namespace Scikit.ML.DataManipulation
         public NumericColumn GetColumn(string colname, int[] rows = null)
         {
             return new NumericColumn(_data.GetColumn(colname, rows));
+        }
+
+        /// <summary>
+        /// Tells if the dataframe contains one specific column.
+        /// </summary>
+        public bool HasColumn(string name)
+        {
+            return _data.HasColumn(name);
         }
 
         /// <summary>

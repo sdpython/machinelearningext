@@ -32,6 +32,7 @@ copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Mkl.Components\netstandard2
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Mkl.Components.StaticPipe\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.OnnxConverter\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.OnnxTransformer\netstandard2.0\*.dll machinelearning\dist\Release
+copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.OnnxTransformer.StaticPipe\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.PCA\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.PipelineInference\netstandard2.0\*.dll machinelearning\dist\Release
 copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.StandardTrainers\netstandard2.0\*.dll machinelearning\dist\Release
@@ -57,6 +58,7 @@ copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Mkl.Components\netstandard2.0
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Mkl.Components.StaticPipe\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.OnnxConverter\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.OnnxTransformer\netstandard2.0\*.dll machinelearning\dist\Debug
+copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.OnnxTransformer.StaticPipe\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.PCA\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.PipelineInference\netstandard2.0\*.dll machinelearning\dist\Debug
 copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.StandardTrainers\netstandard2.0\*.dll machinelearning\dist\Debug

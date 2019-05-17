@@ -169,6 +169,11 @@ namespace Scikit.ML.DataManipulation
         public int GetColumnIndex(string name) { return _naming[name]; }
 
         /// <summary>
+        /// Tells if the dataframe contains one specific column.
+        /// </summary>
+        public bool HasColumn(string name) { return _naming.ContainsKey(name); }
+
+        /// <summary>
         /// Returns the type of a column.
         /// </summary>
         public DataViewType GetDType(int col) { return _kinds[col]; }

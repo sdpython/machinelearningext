@@ -171,7 +171,7 @@ namespace TestMachineLearningExt
                 Assert.IsFalse(string.IsNullOrEmpty(txt));
                 var exp = "A,B,X.0,X.1,X.2,X.3,X.4\n1.0,2.0,1.0,2.0,1.0,2.0,4.0\n2.0,3.0,2.0,3.0,4.0,6.0,9.0\n10.0,11.0,10.0,11.0,100.0,110.0,121.0";
                 var dfexp = DataFrameIO.ReadStr(exp);
-                Assert.AreEqual(0, dfexp.AlmostEquals(res, exc: true, printDf: true));
+                Assert.AreEqual(0, dfexp.AlmostEquals(res, exc: true, printDf: true, sortBy: "A"));
             }
         }
 
@@ -202,7 +202,8 @@ namespace TestMachineLearningExt
                 new ExampleA0() { X = 1f },
                 new ExampleA0() { X = 2f }
             };
-            /*using (*/var host = EnvHelper.NewTestEnvironment();
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -217,7 +218,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 1, 10, 100 } },
                 new ExampleA() { X = new float[] { 2, 3, 5 } }
             };
-            /*using (*/var host = EnvHelper.NewTestEnvironment();
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -266,7 +268,8 @@ namespace TestMachineLearningExt
                 new ExampleASparse() { X = new VBuffer<float> (5, 3, new float[] { 1, 10, 100 }, new int[] { 0, 2, 4 }) },
                 new ExampleASparse() { X = new VBuffer<float> (5, 3, new float[] { 2, 3, 5 }, new int[] { 0, 1, 3 }) }
             };
-            /*using (*/var host = EnvHelper.NewTestEnvironment();
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 List<float[]> values;
@@ -292,7 +295,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_ScalerTransformSerialize()
         {
-            /*using (*/var host = EnvHelper.NewTestEnvironment();
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment();
             {
 
                 var inputs = new[] {
@@ -322,7 +326,8 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestI_ScalerTransformNumericValuesMeanVar()
         {
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var raw = DataFrameIO.ReadStr("A,B\n1.0,2.0\n2.0,3.0\n10.0,11.0");
                 raw.SetShuffle(false);
@@ -334,14 +339,15 @@ namespace TestMachineLearningExt
                 Assert.IsNotNull(txt);
                 var exp = "A,B,X.0,X.1\n1.0,2.0,-0.827605963,-0.827605963\n2.0,3.0,-0.5793242,-0.5793242\n10.0,11.0,1.40693,1.40693";
                 var dfexp = DataFrameIO.ReadStr(exp);
-                Assert.AreEqual(0, dfexp.AlmostEquals(res, exc: true, printDf: true));
+                Assert.AreEqual(0, dfexp.AlmostEquals(res, exc: true, printDf: true, sortBy: "A"));
             }
         }
 
         [TestMethod]
         public void TestI_ScalerTransformNumericValuesMinMax()
         {
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var raw = DataFrameIO.ReadStr("A,B\n1.0,2.0\n2.0,3.0\n10.0,11.0");
                 raw.SetShuffle(false);
@@ -352,7 +358,7 @@ namespace TestMachineLearningExt
                 var txt = res.ToString();
                 var exp = "A,B,X.0,X.1\n1.0,2.0,0.0,0.0\n2.0,3.0,0.11111111,0.11111111\n10.0,11.0,1.0,1.0";
                 var dfexp = DataFrameIO.ReadStr(exp);
-                Assert.AreEqual(0, dfexp.AlmostEquals(res, exc: true, printDf: true));
+                Assert.AreEqual(0, dfexp.AlmostEquals(res, exc: true, printDf: true, sortBy: "A"));
             }
         }
 
