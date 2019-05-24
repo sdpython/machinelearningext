@@ -9,6 +9,9 @@ virtualenv:
   
 install:
   - export
+  - cd machinelearning
+  - git reset --hard
+  - cd ..
   - git submodule update --init --recursive
   - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
   - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ csharpy>0.1.53 --extra-index-url=https://pypi.python.org/simple/\".split())"
@@ -92,7 +95,7 @@ install:
   - ls machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
 
 script:
-  - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP", CLEAN: "0" }
+  - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP", CLEAN: "0", TIMEOUT: 3600 }
 
 documentation:
   - if [ ${NAME} == "UT_CSHARP" ] then $PYINT -c "from sphinx import build_main;build_main(['-j2','-v','-T','-b','html','-d','docs/doctrees','docs/source','docs/build'])" fi
