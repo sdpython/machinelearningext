@@ -94,7 +94,7 @@ namespace TestMachineLearningExt
                     if (outValues.Count != 4)
                         throw new Exception("expected 4");
                     for (int i = 0; i < outValues.Count; ++i)
-                        if (Math.Abs(outValues[i]) > 5e-2)
+                        if (Math.Abs(outValues[i]) > 0.1)
                             throw new Exception(string.Format("Unexpected value {0}!={1}", outValues[i], 0));
                 }
             }
@@ -183,7 +183,7 @@ namespace TestMachineLearningExt
                     if (outValues.Count != 4)
                         throw new Exception("expected 4");
                     for (int i = 0; i < outValues.Count; ++i)
-                        if (Math.Abs(outValues[i]) > 1e-2)
+                        if (Math.Abs(outValues[i]) > 2e-2)
                             throw new Exception(string.Format("Unexpected value {0}", outValues[i]));
                 }
             }

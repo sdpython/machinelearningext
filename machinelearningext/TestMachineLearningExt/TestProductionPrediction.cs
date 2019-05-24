@@ -279,11 +279,7 @@ namespace TestMachineLearningExt
             public PredictionEngineExample(string modelName)
             {
                 _env = EnvHelper.NewTestEnvironment();
-
-                var view = DataViewConstructionUtils.CreateFromEnumerable(_env, new FloatVectorInput[] { });
-                var pipe = DataViewConstructionUtils.LoadPipeWithPredictor(_env, File.OpenRead(modelName),
-                                                        new EmptyDataView(_env, view.Schema));
-                var transformer = new TransformWrapper(_env, pipe);
+                var transformer = TransformerChain.LoadFromLegacy(_env, File.OpenRead(modelName));
                 var model = new ModelOperationsCatalog(_env);
                 _predictor = model.CreatePredictionEngine<FloatVectorInput, FloatOutput>(transformer);
             }
