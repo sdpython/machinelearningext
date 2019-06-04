@@ -31,7 +31,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { -2, -3, -5 } }
             };
 
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, host: host))
@@ -128,7 +129,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 3, 4, 7 } },
             };
 
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
@@ -177,7 +179,8 @@ namespace TestMachineLearningExt
             };
 
             string expected = null;
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
@@ -306,7 +309,8 @@ namespace TestMachineLearningExt
                 new ExampleA() { X = new float[] { 3, 4, 7 } },
             };
             DataFrame df1, df2, df3;
-            /*using (*/var host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            var host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);
                 var data2 = DataViewConstructionUtils.CreateFromEnumerable(host, inputs2);
@@ -315,7 +319,8 @@ namespace TestMachineLearningExt
                 df3 = DataFrameIO.ReadView(data2, env: host, keepVectors: true);
             }
 
-            /*using (*/ host = EnvHelper.NewTestEnvironment(conc: 1);
+            /*using (*/
+            host = EnvHelper.NewTestEnvironment(conc: 1);
             {
                 using (var pipe = new ScikitPipeline(new[] { "poly{col=X}" }, "km{k=2}", host))
                 {
@@ -372,18 +377,46 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestScikitAPI_MKL()
         {
-            Mkl.PptrfInternal(Mkl.Layout.ColMajor, Mkl.UpLo.Lo, 2, new double[] { 0.1, 0.3 });
+            try
+            {
+                Mkl.PptrfInternal(Mkl.Layout.ColMajor, Mkl.UpLo.Lo, 2, new double[] { 0.1, 0.3 });
+            }
+            catch (DllNotFoundException e)
+            {
+                var os = Environment.OSVersion;
+                if (os.Platform == PlatformID.Unix)
+                    Console.WriteLine("FAIL: TestScikitAPI_MKL due to {0}", e.ToString());
+                else
+                {
+                    Console.WriteLine("FAIL: TestScikitAPI_MKL, OS={0}", os.ToString());
+                    throw e;
+                }
+            }
         }
 
         [TestMethod]
-        public void TestScikitAPI_TrainingDiabete()
+        public void TestScikitAPIMKL_TrainingDiabete()
         {
             var diab = FileHelper.GetTestFile("diabete.csv");
             var cols = Enumerable.Range(0, 10).Select(c => NumberDataViewType.Single).ToArray();
             var colsName = string.Join(',', Enumerable.Range(0, 10).Select(c => $"F{c}"));
             var df = DataFrameIO.ReadCsv(diab, sep: ',', dtypes: cols);
             var pipe = new ScikitPipeline(new string[] { $"Concat{{col=Features:{colsName}}}" }, "ols");
-            pipe.Train(df, "Features", "Label");
+            try
+            {
+                pipe.Train(df, "Features", "Label");
+            }
+            catch (DllNotFoundException e)
+            {
+                var os = Environment.OSVersion;
+                if (os.Platform == PlatformID.Unix)
+                    Console.WriteLine("FAIL: TestScikitAPI_MKL due to {0}", e.ToString());
+                else
+                {
+                    Console.WriteLine("FAIL: TestScikitAPI_MKL, OS={0}", os.ToString());
+                    throw e;
+                }
+            }
             DataFrame pred = null;
             pipe.Predict(df, ref pred);
             Assert.AreEqual(pred.Shape, new ShapeType(83, 13));
