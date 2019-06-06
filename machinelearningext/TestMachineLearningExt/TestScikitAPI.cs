@@ -395,7 +395,7 @@ namespace TestMachineLearningExt
         }
 
         [TestMethod]
-        public void TestScikitAPIMKL_TrainingDiabete()
+        public void TestScikitAPI_MKL_TrainingDiabete()
         {
             var diab = FileHelper.GetTestFile("diabete.csv");
             var cols = Enumerable.Range(0, 10).Select(c => NumberDataViewType.Single).ToArray();
@@ -410,7 +410,10 @@ namespace TestMachineLearningExt
             {
                 var os = Environment.OSVersion;
                 if (os.Platform == PlatformID.Unix)
+                {
                     Console.WriteLine("FAIL: TestScikitAPI_MKL due to {0}", e.ToString());
+                    return;
+                }
                 else
                 {
                     Console.WriteLine("FAIL: TestScikitAPI_MKL, OS={0}", os.ToString());
