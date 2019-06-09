@@ -1,5 +1,6 @@
 alabaster
 csharpy>0.1.53
+nbsphinx
 pyquickhelper
 recommonmark
 sphinx
