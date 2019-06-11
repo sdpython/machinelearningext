@@ -397,32 +397,46 @@ namespace TestMachineLearningExt
         [TestMethod]
         public void TestScikitAPI_MKL_TrainingDiabete()
         {
-            var diab = FileHelper.GetTestFile("diabete.csv");
-            var cols = Enumerable.Range(0, 10).Select(c => NumberDataViewType.Single).ToArray();
-            var colsName = string.Join(',', Enumerable.Range(0, 10).Select(c => $"F{c}"));
-            var df = DataFrameIO.ReadCsv(diab, sep: ',', dtypes: cols);
-            var pipe = new ScikitPipeline(new string[] { $"Concat{{col=Features:{colsName}}}" }, "ols");
             try
             {
+                var diab = FileHelper.GetTestFile("diabete.csv");
+                var cols = Enumerable.Range(0, 10).Select(c => NumberDataViewType.Single).ToArray();
+                var colsName = string.Join(',', Enumerable.Range(0, 10).Select(c => $"F{c}"));
+                var df = DataFrameIO.ReadCsv(diab, sep: ',', dtypes: cols);
+                var pipe = new ScikitPipeline(new string[] { $"Concat{{col=Features:{colsName}}}" }, "ols");
                 pipe.Train(df, "Features", "Label");
+                DataFrame pred = null;
+                pipe.Predict(df, ref pred);
+                Assert.AreEqual(pred.Shape, new ShapeType(83, 13));
             }
             catch (DllNotFoundException e)
             {
                 var os = Environment.OSVersion;
                 if (os.Platform == PlatformID.Unix)
                 {
-                    Console.WriteLine("FAIL: TestScikitAPI_MKL due to {0}", e.ToString());
+                    Console.WriteLine("FAIL(1): TestScikitAPI_MKL due to {0}", e.ToString());
                     return;
                 }
                 else
                 {
-                    Console.WriteLine("FAIL: TestScikitAPI_MKL, OS={0}", os.ToString());
+                    Console.WriteLine("FAIL(1): TestScikitAPI_MKL, OS={0}", os.ToString());
                     throw e;
                 }
             }
-            DataFrame pred = null;
-            pipe.Predict(df, ref pred);
-            Assert.AreEqual(pred.Shape, new ShapeType(83, 13));
+            catch (NotSupportedException e)
+            {
+                var os = Environment.OSVersion;
+                if (os.Platform == PlatformID.Unix)
+                {
+                    Console.WriteLine("FAIL(2): TestScikitAPI_MKL due to {0}", e.ToString());
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("FAIL(2): TestScikitAPI_MKL, OS={0}", os.ToString());
+                    throw e;
+                }
+            }
         }
     }
 }
