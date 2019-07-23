@@ -9,8 +9,9 @@ using System.Text;
 using Google.Protobuf;
 using Microsoft.ML.Runtime;
 using Microsoft.ML.Data;
-using Microsoft.ML.Model.OnnxConverter;
+// using Microsoft.ML.Model.OnnxConverter;
 using Scikit.ML.PipelineHelper;
+using OnnxCSharpToProtoWrapper = Microsoft.ML.Model.OnnxConverter.OnnxCSharpToProtoWrapper;
 
 
 namespace Scikit.ML.OnnxHelper
