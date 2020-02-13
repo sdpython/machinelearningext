@@ -11,7 +11,7 @@ import csharpy
 # -- Project information -----------------------------------------------------
 
 project = 'Custom Extensions to ML.net'
-copyright = '2018'
+copyright = '2020'
 author = 'Xavier Dupré'
 version = '0.8.0'
 release = version

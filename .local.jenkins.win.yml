@@ -9,6 +9,7 @@ virtualenv:
   
 install:
   - git submodule update --init --recursive
+  - python -m pip install --upgrade pip
   - python -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
   - python -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ csharpy>0.1.53 --extra-index-url=https://pypi.python.org/simple/\".split())"
   - python -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
