@@ -14,9 +14,9 @@ install:
   - cd ..
   - git submodule update --init --recursive
   - $PYINT -m pip install --upgrade pip
-  - $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/
-  - $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ csharpy>0.1.53 --extra-index-url=https://pypi.python.org/simple/
-  - $PYINT -m pip install -r docs/requirements.txt
+  - $PYINT -m pip install --no-cache-dir --upgrade --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install --no-cache-dir --upgrade --no-deps --index http://localhost:8067/simple/ csharpy>0.1.53 --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install -r docs/requirements.tx t
   - $PYINT --version
   - $PYINT -m pip freeze
   - export DOTNET_CLI_TELEMETRY_OPTOUT=1
