@@ -1,12 +1,12 @@
-dist: trusty
-sudo: false
+dist: bionic
+sudo: true
 language: python
 git:
   submodules: true
   
 matrix:
   include:
-    - python: 3.6
+    - python: 3.7
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -36,11 +36,11 @@ before_install:
   - export LD_LIBRARY_PATH=$PY_LIBDIR:$LD_LIBRARY_PATH
   - export DOTNET_CLI_TELEMETRY_OPTOUT=1
   # dotnet
-  - wget -q https://packages.microsoft.com/config/ubuntu/14.04/packages-microsoft-prod.deb
+  - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
   - sudo dpkg -i packages-microsoft-prod.deb
   - sudo apt-get install apt-transport-https
   - sudo apt-get update
-  - sudo apt-get install dotnet-sdk-2.1
+  - sudo apt-get install dotnet-sdk-3.1
   - pip install pyquickhelper
 
 before_script:
@@ -56,10 +56,13 @@ before_script:
   - mkdir machinelearning/dist/Debug
   - mkdir machinelearning/dist/Release
   # check
+  - ls machinelearning/packages/
   - ls machinelearning/packages/google.protobuf/
   - ls machinelearning/packages/google.protobuf/3.5.1/
   - ls machinelearning/packages/google.protobuf/3.5.1/lib/
   - ls machinelearning/packages/google.protobuf/3.5.1/lib/netstandard1.0/
+  - ls machinelearning/bin/
+  - ls machinelearning/bin/AnyCPU.Release/Microsoft.ML.Ensemble/
   # machinelearning publish release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.Ensemble/netstandard2.0/*.dll machinelearning/dist/Release
   - cp machinelearning/bin/AnyCPU.Release/Microsoft.ML.FastTree/netstandard2.0/*.dll machinelearning/dist/Release

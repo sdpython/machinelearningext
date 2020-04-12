@@ -56,7 +56,7 @@ namespace Scikit.ML.PipelineGraphTransforms
                 SignatureType = typeof(SignatureCalibrator))]
             public IComponentFactory<ICalibratorTrainer> calibrator = new ScikitSubComponent<ICalibratorTrainer, SignatureCalibrator>("PlattCalibration");
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Number of instances to train the calibrator", ShortName = "numcali")]
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Number of instances to train the calibrator", ShortName = "numcali")]
             public int maxCalibrationExamples = 1000000000;
 
             [Argument(ArgumentType.Multiple, HelpText = "Scorer to use", NullName = "<Auto>",

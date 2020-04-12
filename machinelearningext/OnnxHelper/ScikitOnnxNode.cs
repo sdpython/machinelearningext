@@ -42,5 +42,7 @@ namespace Scikit.ML.OnnxHelper
             => OnnxUtils.NodeAddAttributes(_node, argName, value);
         public override void AddAttribute(string argName, bool value)
             => OnnxUtils.NodeAddAttributes(_node, argName, value);
+        public override void AddAttribute(string argName, Type value)
+            => OnnxUtils.NodeAddAttributes(_node, argName, value);
     }
 }

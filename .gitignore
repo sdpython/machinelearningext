@@ -28,3 +28,4 @@ diabetes_train.csv
 docs/source/logistic_regression.onnx
 docs/source/logistic_regression.cs
 .vscode/settings.json
+machinelearningext/TestHelper/TestHelper.csproj.user

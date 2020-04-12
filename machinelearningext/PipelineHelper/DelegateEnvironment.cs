@@ -382,10 +382,11 @@ namespace Scikit.ML.PipelineHelper
 
         public int VerboseLevel => _verbose;
 
-        public DelegateEnvironment(int? seed = null, int verbose = 0,
+        public DelegateEnvironment(HostEnvironmentBase<DelegateEnvironment> source,
+            int? seed = null, int verbose = 0,
             MessageSensitivity sensitivity = MessageSensitivity.All,
             ILogWriter outWriter = null, ILogWriter errWriter = null)
-            : this(RandomUtils.Create(seed), verbose, sensitivity, outWriter, errWriter)
+            : this(source, RandomUtils.Create(seed), verbose, sensitivity, outWriter, errWriter)
         {
             _elapsed = true;
         }
@@ -393,10 +394,10 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// This takes ownership of the random number generator.
         /// </summary>
-        public DelegateEnvironment(Random rand, int verbose = 0,
+        public DelegateEnvironment(HostEnvironmentBase<DelegateEnvironment> source, Random rand, int verbose = 0,
             MessageSensitivity sensitivity = MessageSensitivity.All,
             ILogWriter outWriter = null, ILogWriter errWriter = null)
-            : base(rand, verbose > 0, nameof(DelegateEnvironment))
+            : base(source, rand, verbose > 0, nameof(DelegateEnvironment))
         {
             Contracts.CheckValue(outWriter, nameof(outWriter));
             Contracts.CheckValue(errWriter, nameof(errWriter));
@@ -410,10 +411,29 @@ namespace Scikit.ML.PipelineHelper
         /// <summary>
         /// This takes ownership of the random number generator.
         /// </summary>
-        public DelegateEnvironment(Random rand, int verbose = 0,
+        public DelegateEnvironment(int? seed, int verbose = 0,
+            MessageSensitivity sensitivity = MessageSensitivity.All,
+            ILogWriter outWriter = null, ILogWriter errWriter = null)
+            : base(seed, verbose > 0, nameof(DelegateEnvironment))
+        {
+            Contracts.CheckValue(outWriter, nameof(outWriter));
+            Contracts.CheckValue(errWriter, nameof(errWriter));
+            Contracts.CheckParam(verbose >= 0 && verbose <= 4, nameof(verbose), "verbose must be in [[0, 4]]");
+            _outErrWriter = new OutErrLogWriter(this, outWriter, errWriter, verbose);
+            _sensitivityFlags = sensitivity;
+            _verbose = verbose;
+            AddListener<ChannelMessage>(PrintMessage);
+        }
+
+        /// <summary>
+        /// This takes ownership of the random number generator.
+        /// </summary>
+        public DelegateEnvironment(
+            HostEnvironmentBase<DelegateEnvironment> source,
+            Random rand, int verbose = 0,
             MessageSensitivity sensitivity = MessageSensitivity.All,
             WriteType outWriter = null, WriteType errWriter = null)
-            : base(rand, verbose > 0, nameof(DelegateEnvironment))
+            : base(source, rand, verbose > 0, nameof(DelegateEnvironment))
         {
             Contracts.CheckValueOrNull(outWriter);
             Contracts.CheckValueOrNull(errWriter);
@@ -488,7 +508,7 @@ namespace Scikit.ML.PipelineHelper
                 return new Pipe<TMessage>(parent, name, GetDispatchDelegate<TMessage>());
             }
 
-            protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName, 
+            protected override IHost RegisterCore(HostEnvironmentBase<DelegateEnvironment> source, string shortName,
                                                   string parentFullName, Random rand, bool verbose)
             {
                 return new Host(source, shortName, parentFullName, rand, verbose);

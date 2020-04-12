@@ -48,7 +48,7 @@ namespace Scikit.ML.NearestNeighbors
                       Visibility = ArgumentAttribute.VisibilityType.EntryPointsOnly)]
             public NormalizeOption NormalizeFeatures = NormalizeOption.Auto;
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Whether learner should cache input training data", ShortName = "cache",
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Whether learner should cache input training data", ShortName = "cache",
                       Visibility = ArgumentAttribute.VisibilityType.EntryPointsOnly)]
             public CachingOptions Caching = CachingOptions.Auto;
         }

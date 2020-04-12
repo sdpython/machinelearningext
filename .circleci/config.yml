@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.4
+      - image: circleci/python:3.7.6
     
     working_directory: ~/repo
     
@@ -65,7 +65,7 @@ jobs:
             sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
             sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
             sudo apt-get update
-            sudo apt-get install dotnet-sdk-2.1
+            sudo apt-get install dotnet-sdk-3.1
 
       - run:
           name: remove clang

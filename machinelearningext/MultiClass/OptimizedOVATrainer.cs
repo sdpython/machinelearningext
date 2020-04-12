@@ -48,13 +48,13 @@ namespace Scikit.ML.Multiclass
                 SignatureType = typeof(SignatureCalibrator))]
             public IComponentFactory<ICalibratorTrainer> calibratorType = new ScikitSubComponent<ICalibratorTrainer, SignatureCalibrator>("PlattCalibration");
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Number of instances to train the calibrator", ShortName = "numcali")]
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Number of instances to train the calibrator", ShortName = "numcali")]
             public int maxCalibrationExamples = 1000000000;
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Downsample the zero class. Training a multi-class leads to imbalanced data. Why downsampling it?", ShortName = "ds")]
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Downsample the zero class. Training a multi-class leads to imbalanced data. Why downsampling it?", ShortName = "ds")]
             public float downsampling = 0f;
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Drop missing labels.", ShortName = "na")]
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Drop missing labels.", ShortName = "na")]
             public bool dropNALabel = true;
 
             [Argument(ArgumentType.Multiple, HelpText = "Add a cache transform before training. That might required if cursor happen to be in an unstable state",

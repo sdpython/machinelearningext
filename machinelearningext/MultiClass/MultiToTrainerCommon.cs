@@ -47,7 +47,7 @@ namespace Scikit.ML.Multiclass
             [Argument(ArgumentType.AtMostOnce, HelpText = "Add one column for the label or one column per class.", ShortName = "sc")]
             public bool singleColumn = true;
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Drop missing labels.", ShortName = "na")]
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Drop missing labels.", ShortName = "na")]
             public bool dropNALabel = true;
 
             [Argument(ArgumentType.Multiple, HelpText = "Reclassification using output from the first tree", ShortName = "rp",

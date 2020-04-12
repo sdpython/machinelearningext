@@ -19,10 +19,12 @@ namespace Scikit.ML.OnnxHelper
     /// <summary>
     /// Contains methods to create ONNX models in protocol buffer.
     /// </summary>
+    /// <summary>
+    /// Contains methods to create ONNX models in protocol buffer.
+    /// </summary>
     internal static class OnnxUtils
     {
-        private static OnnxCSharpToProtoWrapper.TypeProto MakeType(OnnxCSharpToProtoWrapper.TypeProto typeProto,
-                                                                   OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType,
+        private static OnnxCSharpToProtoWrapper.TypeProto MakeType(OnnxCSharpToProtoWrapper.TypeProto typeProto, OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType,
             List<long> dims, List<bool> dimsParam)
         {
             Contracts.CheckValue(typeProto, nameof(typeProto));
@@ -30,7 +32,7 @@ namespace Scikit.ML.OnnxHelper
             if (typeProto.TensorType == null)
                 typeProto.TensorType = new OnnxCSharpToProtoWrapper.TypeProto.Types.Tensor();
 
-            typeProto.TensorType.ElemType = dataType;
+            typeProto.TensorType.ElemType = (int)dataType;
             if (dims != null)
             {
                 for (int index = 0; index < dims.Count; index++)
@@ -51,8 +53,7 @@ namespace Scikit.ML.OnnxHelper
             return typeProto;
         }
 
-        private static OnnxCSharpToProtoWrapper.ValueInfoProto MakeValue(OnnxCSharpToProtoWrapper.ValueInfoProto value, string name,
-                                                                         OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType,
+        private static OnnxCSharpToProtoWrapper.ValueInfoProto MakeValue(OnnxCSharpToProtoWrapper.ValueInfoProto value, string name, OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType,
             List<long> dims, List<bool> dimsParam)
         {
             Contracts.CheckValue(value, nameof(value));
@@ -72,6 +73,14 @@ namespace Scikit.ML.OnnxHelper
 
             var attribute = new OnnxCSharpToProtoWrapper.AttributeProto();
             attribute.Name = key;
+            return attribute;
+        }
+
+        private static OnnxCSharpToProtoWrapper.AttributeProto MakeAttribute(string key, OnnxCSharpToProtoWrapper.TensorProto.Types.DataType value)
+        {
+            OnnxCSharpToProtoWrapper.AttributeProto attribute = MakeAttribute(key);
+            attribute.Type = OnnxCSharpToProtoWrapper.AttributeProto.Types.AttributeType.Int;
+            attribute.I = (int)value;
             return attribute;
         }
 
@@ -216,6 +225,45 @@ namespace Scikit.ML.OnnxHelper
 
         public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, bool value)
             => node.Attribute.Add(MakeAttribute(argName, value));
+        public static void NodeAddAttributes(OnnxCSharpToProtoWrapper.NodeProto node, string argName, Type value)
+            => node.Attribute.Add(MakeAttribute(argName, ConvertToTensorProtoType(value)));
+
+        private static OnnxCSharpToProtoWrapper.TensorProto.Types.DataType ConvertToTensorProtoType(Type rawType)
+        {
+            var dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Undefined;
+
+            if (rawType == typeof(bool))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Bool;
+            else if (rawType == typeof(ReadOnlyMemory<char>))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
+            else if (rawType == typeof(sbyte))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int8;
+            else if (rawType == typeof(byte))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint8;
+            else if (rawType == typeof(short))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int16;
+            else if (rawType == typeof(ushort))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint16;
+            else if (rawType == typeof(int))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int32;
+            else if (rawType == typeof(uint))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint32;
+            else if (rawType == typeof(long))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
+            else if (rawType == typeof(ulong))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint64;
+            else if (rawType == typeof(float))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
+            else if (rawType == typeof(double))
+                dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Double;
+            else
+            {
+                string msg = "Unsupported type: " + rawType.ToString();
+                Contracts.Check(false, msg);
+            }
+
+            return dataType;
+        }
 
         private static ByteString StringToByteString(ReadOnlyMemory<char> str) => ByteString.CopyFrom(Encoding.UTF8.GetBytes(str.ToString()));
         private static IEnumerable<ByteString> StringToByteString(IEnumerable<ReadOnlyMemory<char>> str)
@@ -262,8 +310,8 @@ namespace Scikit.ML.OnnxHelper
             model.ProducerVersion = producerVersion;
             model.IrVersion = (long)OnnxCSharpToProtoWrapper.Version.IrVersion;
             model.ModelVersion = modelVersion;
-            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "ai.onnx.ml", Version = 1 });
-            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "", Version = 7 });
+            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "ai.onnx.ml", Version = 2 });
+            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "", Version = 11 });
             model.Graph = new OnnxCSharpToProtoWrapper.GraphProto();
             var graph = model.Graph;
             graph.Node.Add(nodes);
@@ -300,58 +348,12 @@ namespace Scikit.ML.OnnxHelper
             Contracts.CheckValue(type, nameof(type));
             Contracts.CheckNonEmpty(colName, nameof(colName));
 
-            OnnxCSharpToProtoWrapper.TensorProto.Types.DataType dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Undefined;
-            DataKind rawKind;
-            if (type.IsVector())
-                rawKind = type.AsVector().ItemType().RawKind();
-            else if (type.IsKey())
-                rawKind = type.AsKey().RawKind();
+            Type rawType;
+            if (type is VectorDataViewType vectorType)
+                rawType = vectorType.ItemType.RawType;
             else
-                rawKind = type.RawKind();
-
-            switch (rawKind)
-            {
-                case DataKind.Boolean:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
-                    break;
-                case DataKind.String:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
-                    break;
-                case DataKind.SByte:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int8;
-                    break;
-                case DataKind.Byte:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint8;
-                    break;
-                case DataKind.Int16:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int16;
-                    break;
-                case DataKind.UInt16:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint16;
-                    break;
-                case DataKind.Int32:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int32;
-                    break;
-                case DataKind.UInt32:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
-                    break;
-                case DataKind.Int64:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
-                    break;
-                case DataKind.UInt64:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Uint64;
-                    break;
-                case DataKind.Single:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
-                    break;
-                case DataKind.Double:
-                    dataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Double;
-                    break;
-                default:
-                    string msg = "Unsupported type: DataKind " + rawKind.ToString();
-                    Contracts.Check(false, msg);
-                    break;
-            }
+                rawType = type.RawType;
+            var dataType = ConvertToTensorProtoType(rawType);
 
             string name = colName;
             List<long> dimsLocal = null;
@@ -364,22 +366,28 @@ namespace Scikit.ML.OnnxHelper
             else
             {
                 dimsLocal = new List<long>();
-                if (type.ValueCount() == 0) //Unknown size.
+                int valueCount = type.GetValueCount();
+                if (valueCount == 0) //Unknown size.
                 {
                     dimsLocal.Add(1);
                     dimsParamLocal = new List<bool>() { false, true }; //false for batch size, true for dims.
                 }
-                else if (type.ValueCount() == 1)
+                else if (valueCount == 1)
                     dimsLocal.Add(1);
-                else if (type.ValueCount() > 1)
+                else if (valueCount > 1)
                 {
-                    var vec = type.AsVector();
-                    for (int i = 0; i < vec.DimCount(); i++)
-                        dimsLocal.Add(vec.GetDim(i));
+                    var vec = (VectorDataViewType)type;
+                    for (int i = 0; i < vec.Dimensions.Length; i++)
+                        dimsLocal.Add(vec.Dimensions[i]);
                 }
             }
-            //batch size.
-            dimsLocal?.Insert(0, 1);
+            // Set batch size to -1. The ONNX docs, https://github.com/onnx/onnx/blob/master/docs/IR.md#static-tensor-shapes, state that if
+            // dim_param is used instead of dim_value, that the size of the dimension "is not statically constrained to a particular number"
+            // "This is useful for declaring the interfaces that care about the number of dimensions, but not the exact size of each dimension"
+            // This file, https://github.com/onnx/onnx/blob/master/onnx/tools/update_model_dims.py, explains that if the dim value is negative
+            // than it treats that as a dim_param instead of a dim_value. This allows ML.NET to run 1 row at a time in a streaming fassion,
+            // but allows the ONNX model the flexibility to be run in batch mode if that is desired.
+            dimsLocal?.Insert(0, -1);
 
             return new ModelArgs(name, dataType, dimsLocal, dimsParamLocal);
         }
@@ -389,7 +397,7 @@ namespace Scikit.ML.OnnxHelper
         {
             var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
             tensor.Int64Data.Add(value);
             return tensor;
         }
@@ -399,8 +407,80 @@ namespace Scikit.ML.OnnxHelper
         {
             var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Int64;
             tensor.Int64Data.AddRange(values);
+            if (dims != null)
+                tensor.Dims.AddRange(dims);
+            else
+                tensor.Dims.Add(values.Count());
+            return tensor;
+        }
+
+        // Make int32 and smaller integer types scalar in ONNX from native C# number
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeInt32(string name, Type type, int value)
+        {
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
+            tensor.Name = name;
+            tensor.DataType = (int)ConvertToTensorProtoType(type);
+            tensor.Int32Data.Add(value);
+            return tensor;
+        }
+
+        // Make int32 and smaller integer types vector (i.e., 1-D tensor) with dims=null. Otherwise, dims is used as the shape of the produced tensor.
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeInt32s(string name, Type type, IEnumerable<int> values, IEnumerable<long> dims = null)
+        {
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
+            tensor.Name = name;
+            tensor.DataType = (int)ConvertToTensorProtoType(type);
+            tensor.Int32Data.AddRange(values);
+            if (dims != null)
+                tensor.Dims.AddRange(dims);
+            else
+                tensor.Dims.Add(values.Count());
+            return tensor;
+        }
+
+        // Make ulong and uint integer types scalar in ONNX from native C# number
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeUInt(string name, bool isUint64, ulong value)
+        {
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
+            tensor.Name = name;
+            tensor.DataType = (int)ConvertToTensorProtoType(isUint64 ? typeof(ulong) : typeof(uint));
+            tensor.Uint64Data.Add(value);
+            return tensor;
+        }
+
+        // Make ulong and uint integer vector (i.e., 1-D tensor) with dims=null. Otherwise, dims is used as the shape of the produced tensor.
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeUInts(string name, bool isUint64, IEnumerable<ulong> values, IEnumerable<long> dims = null)
+        {
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
+            tensor.Name = name;
+            tensor.DataType = (int)ConvertToTensorProtoType(isUint64 ? typeof(ulong) : typeof(uint));
+            tensor.Uint64Data.AddRange(values);
+            if (dims != null)
+                tensor.Dims.AddRange(dims);
+            else
+                tensor.Dims.Add(values.Count());
+            return tensor;
+        }
+
+        // Make int32 and smaller integer types scalar in ONNX from native C# number
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeDouble(string name, double value)
+        {
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
+            tensor.Name = name;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Double;
+            tensor.DoubleData.Add(value);
+            return tensor;
+        }
+
+        // Make double vector (i.e., 1-D tensor) with dims=null. Otherwise, dims is used as the shape of the produced tensor.
+        public static OnnxCSharpToProtoWrapper.TensorProto MakeDoubles(string name, IEnumerable<double> values, IEnumerable<long> dims = null)
+        {
+            var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
+            tensor.Name = name;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Double;
+            tensor.DoubleData.AddRange(values);
             if (dims != null)
                 tensor.Dims.AddRange(dims);
             else
@@ -413,7 +493,7 @@ namespace Scikit.ML.OnnxHelper
         {
             var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
             tensor.FloatData.Add(value);
             return tensor;
         }
@@ -423,7 +503,7 @@ namespace Scikit.ML.OnnxHelper
         {
             var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.Float;
             tensor.FloatData.AddRange(values);
             if (dims != null)
                 tensor.Dims.AddRange(dims);
@@ -437,7 +517,7 @@ namespace Scikit.ML.OnnxHelper
         {
             var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
             tensor.StringData.Add(StringToByteString(value));
             return tensor;
         }
@@ -447,7 +527,7 @@ namespace Scikit.ML.OnnxHelper
         {
             var tensor = new OnnxCSharpToProtoWrapper.TensorProto();
             tensor.Name = name;
-            tensor.DataType = OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
+            tensor.DataType = (int)OnnxCSharpToProtoWrapper.TensorProto.Types.DataType.String;
             tensor.StringData.AddRange(StringToByteString(values));
             if (dims != null)
                 tensor.Dims.AddRange(dims);

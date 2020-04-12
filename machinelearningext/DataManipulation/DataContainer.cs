@@ -913,7 +913,7 @@ namespace Scikit.ML.DataManipulation
             ILogWriter logerr = new LogWriter((string s) => { });
             int nth;
             bool dispose = env == null;
-            IHostEnvironment host = env ?? new DelegateEnvironment(outWriter: logout, errWriter: logerr, verbose: 1);
+            IHostEnvironment host = env ?? new DelegateEnvironment(seed: 0, outWriter: logout, errWriter: logerr, verbose: 1);
             var ch = host.Register("Estimate n threads");
             nth = numThreads.HasValue ? numThreads.Value : DataViewUtils.GetThreadCount(0, true);
             //if (dispose)

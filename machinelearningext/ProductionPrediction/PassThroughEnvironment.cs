@@ -68,14 +68,23 @@ namespace Scikit.ML.ProductionPrediction
 
         IHostEnvironment _parent;
 
+        public PassThroughEnvironment(HostEnvironmentBase<PassThroughEnvironment> source,
+                                    Random rand = null, bool verbose = false,
+                                    string shortName = null,
+                                    string parentFullName = null)
+            : base(source, rand, verbose, shortName, parentFullName)
+        {
+            _parent = source;
+        }
         public PassThroughEnvironment(IHostEnvironment source,
                                     Random rand = null, bool verbose = false,
                                     string shortName = null,
                                     string parentFullName = null)
-            : base(rand, verbose, shortName, parentFullName)
+            : base(source as HostEnvironmentBase<PassThroughEnvironment>, rand, verbose, shortName, parentFullName)
         {
             _parent = source;
         }
+
 
         protected override IChannel CreateCommChannel(ChannelProviderBase parent, string name)
         {

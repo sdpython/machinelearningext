@@ -49,9 +49,7 @@
   </ItemGroup>
     
   <ItemGroup>
-    <Compile Update="EnvHelper.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="EnvHelper.cs" />
   </ItemGroup>
 
 </Project>

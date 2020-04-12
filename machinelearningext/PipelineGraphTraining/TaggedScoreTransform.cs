@@ -48,7 +48,7 @@ namespace Scikit.ML.PipelineGraphTraining
             [Argument(ArgumentType.Required, HelpText = "Tag of the view which holds the predictor.", ShortName = "in")]
             public string taggedPredictor;
 
-            [Argument(ArgumentType.LastOccurenceWins, HelpText = "Column to use for features when scorer is not defined",
+            [Argument(ArgumentType.LastOccurrenceWins, HelpText = "Column to use for features when scorer is not defined",
                 ShortName = "feat")]
             public string featureColumn = DefaultColumnNames.Features;
 

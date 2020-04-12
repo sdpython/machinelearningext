@@ -120,7 +120,7 @@ namespace Scikit.ML.OnnxHelper
             if (host == null)
             {
                 /*using (*/
-                var env = new DelegateEnvironment();/*)*/
+                var env = new DelegateEnvironment(0);/*)*/
                 return ToOnnx(trans, ref inputs, ref outputs, name, producer, version, domain, onnxVersion, begin, env);
             }
             if (name == null)
