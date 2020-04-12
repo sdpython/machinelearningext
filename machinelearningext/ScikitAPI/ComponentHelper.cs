@@ -101,7 +101,18 @@ namespace Scikit.ML.ScikitAPI
         {
             var res = GetAssemblies();
             foreach (var a in res)
-                AddComponent(env, a);
+            {
+                try
+                {
+                    AddComponent(env, a);
+                }
+                catch (Exception e)
+                {
+                    if (a.FullName.Contains("TensorFlow"))
+                        continue;
+                    throw e;
+                }
+            }
         }
     }
 }

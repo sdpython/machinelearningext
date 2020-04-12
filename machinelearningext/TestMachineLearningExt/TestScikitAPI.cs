@@ -240,7 +240,7 @@ namespace TestMachineLearningExt
             });
 
             /*using (*/
-            var host = new DelegateEnvironment(outWriter: logout, errWriter: logerr, verbose: 3);
+            var host = new DelegateEnvironment(seed: 0, outWriter: logout, errWriter: logerr, verbose: 3);
             using (var ch = host.Start("Train Pipeline"))
             {
                 ComponentHelper.AddStandardComponents(host);
@@ -278,7 +278,7 @@ namespace TestMachineLearningExt
             ILogWriter logerr = new LogWriter(s => stderr.Add(s));
 
             /*using (*/
-            var host = new DelegateEnvironment(outWriter: logout, errWriter: logerr, verbose: 0);
+            var host = new DelegateEnvironment(seed: 0, outWriter: logout, errWriter: logerr, verbose: 0);
             {
                 ComponentHelper.AddStandardComponents(host);
                 var data = DataViewConstructionUtils.CreateFromEnumerable(host, inputs);

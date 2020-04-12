@@ -34,7 +34,7 @@ namespace TestMachineLearningExt
             ILogWriter stout = new LogWriter(s => bout.Append(s));
             ILogWriter sderr = new LogWriter(s => berr.Append(s));
             /*using (*/
-            var env = new DelegateEnvironment(outWriter: stout, errWriter: sderr, verbose: 3);
+            var env = new DelegateEnvironment(seed: 0, outWriter: stout, errWriter: sderr, verbose: 3);
             {
                 var cmd = "? MulticlassClassifierScorer";
                 MamlHelper.MamlScript(cmd, false, env);
@@ -54,7 +54,7 @@ namespace TestMachineLearningExt
                 ILogWriter stout = new LogWriter(s => bout.Append(s));
                 ILogWriter sderr = new LogWriter(s => berr.Append(s));
                 /*using (*/
-                var env = new DelegateEnvironment(outWriter: stout, errWriter: sderr, verbose: 3);
+                var env = new DelegateEnvironment(seed: 0, outWriter: stout, errWriter: sderr, verbose: 3);
                 {
                     var cmd = $"? {name}";
                     MamlHelper.MamlScript(cmd, false, env: env);

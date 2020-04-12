@@ -374,7 +374,7 @@ namespace TestMachineLearningExt
             ILogWriter logout = new LogWriter((string s) => { stdout.Append(s); });
             ILogWriter logerr = new LogWriter((string s) => { stdout.Append(s); });
             /*using (*/
-            var env = new DelegateEnvironment(verbose: 2, outWriter: logout, errWriter: logerr);
+            var env = new DelegateEnvironment(seed: 0, verbose: 2, outWriter: logout, errWriter: logerr);
             MamlHelper.MamlScript(cmd, false, env);
             var stout = stdout.ToString();
             if (string.IsNullOrEmpty(stout))

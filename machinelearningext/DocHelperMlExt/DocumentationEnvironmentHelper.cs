@@ -128,7 +128,16 @@ namespace Scikit.ML.DocHelperMlExt
             {
                 if (filter && ShouldSkipPath(path))
                     continue;
-                LoadAssembly(env, path);
+                try
+                {
+                    LoadAssembly(env, path);
+                }
+                catch (Exception e)
+                {
+                    if (path.Contains("TensorFlow"))
+                        continue;
+                    throw e;
+                }
             }
         }
 
@@ -308,7 +317,7 @@ namespace Scikit.ML.DocHelperMlExt
                     else
                         Console.Error.Write(s);
                 });
-                env = new DelegateEnvironment(verbose: 2, outWriter: logout, errWriter: logerr);
+                env = new DelegateEnvironment(seed: 0, verbose: 2, outWriter: logout, errWriter: logerr);
                 //dispose = true;
             }
 

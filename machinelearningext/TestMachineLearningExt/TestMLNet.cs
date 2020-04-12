@@ -120,7 +120,7 @@ namespace TestMachineLearningExt
             cmd = cmd.Replace("__OUTPUT__", output);
 
             /*using (*/
-            var env = new DelegateEnvironment(outWriter: stout, errWriter: sderr, verbose: 3);
+            var env = new DelegateEnvironment(seed: 0, outWriter: stout, errWriter: sderr, verbose: 3);
             {
                 MamlHelper.MamlScript(cmd, false, env);
                 var sout = bout.ToString();

@@ -62,7 +62,7 @@ namespace Scikit.ML.DocHelperMlExt
                 else
                     Console.Error.Write(s);
             });
-            var env = new DelegateEnvironment(verbose: verbose, outWriter: logout, errWriter: logerr);
+            var env = new DelegateEnvironment(seed: 0, verbose: verbose, outWriter: logout, errWriter: logerr);
             return MamlScript(script, catch_output, env);
         }
 
