@@ -111,10 +111,16 @@ rep = [
      '/*[BestFriend]\n    internal*/ public abstract class RowToRowTransformBase'),
     ('Contracts.Check(!IsCollection || AllowMultiple, "Collection arguments must allow multiple");',
      '// Contracts.Check(!IsCollection || AllowMultiple, "Collection arguments must allow multiple");'),
+    #
+    ('[BestFriend]\n    internal interface ICommand',
+     '/*[BestFriend]\n    internal*/ public interface ICommand'),     
+    #
 ]
 
 for name in explore_folder_iterfile(folder, pattern=".*[.]cs$"):
     if "ArrayUtils.cs" in name:
+        continue
+    if "OnnxMl.cs" in name:
         continue
     try:
         with open(name, 'r', encoding="utf-8") as f:

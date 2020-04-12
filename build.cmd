@@ -1,19 +1,26 @@
 @echo off
 
 @echo [build.cmd] build machinelearning
-cd machinelearning
 if "%1"=="ml" goto compileml:
-if exist bin\x64.Release goto mldeb:
+if exist machinelearning\bin\x64.Release goto mldeb:
 :compileml:
-git submodule update --init
+cd machinelearning
+git submodule update --init --recursive
+if %errorlevel% neq 0 exit /b %errorlevel%
+cd ..
 
 :clean_source:
 python -u clean_source.py
+if %errorlevel% neq 0 exit /b %errorlevel%
 
+cd machinelearning
 cmd /C build.cmd
+if %errorlevel% neq 0 exit /b %errorlevel%
 cmd /C build.cmd -Release
-:mldeb:
+if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..
+
+:mldeb:
 
 if "%1"=="ml" goto docopy:
 if not exist machinelearning\bin\x64.Debug goto end:
@@ -73,18 +80,23 @@ copy machinelearning\bin\x64.Debug\Native\*.dll machinelearning\dist\Debug
 
 @echo [build.cmd] build machinelearningext
 cd machinelearningext
+if %errorlevel% neq 0 exit /b %errorlevel%
 cmd /C dotnet build -c Debug
+if %errorlevel% neq 0 exit /b %errorlevel%
 cmd /C dotnet build -c Release
+if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..
 
 :finalcopy:
 copy machinelearning\bin\x64.Debug\Native\*.dll machinelearningext\bin\AnyCPU.Debug\TestProfileBenchmark\netcoreapp2.1
 copy machinelearning\bin\x64.Debug\Native\*.dll machinelearningext\bin\AnyCPU.Debug\TestMachineLearningExt\netcoreapp2.1
 copy machinelearning\bin\x64.Debug\Native\*.dll machinelearningext\bin\AnyCPU.Debug\DocHelperMlExt\netstandard2.0
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 copy machinelearning\bin\x64.Release\Native\*.dll machinelearningext\bin\AnyCPU.Release\TestProfileBenchmark\netcoreapp2.1
 copy machinelearning\bin\x64.Release\Native\*.dll machinelearningext\bin\AnyCPU.Release\TestMachineLearningExt\netcoreapp2.1
 copy machinelearning\bin\x64.Release\Native\*.dll machinelearningext\bin\AnyCPU.Release\DocHelperMlExt\netstandard2.0
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 rem 4.5.0 or 4.4.0...
 copy machinelearning\packages\system.codedom\4.5.0\lib\netstandard2.0\*.dll machinelearningext\bin\AnyCPU.Release\DocHelperMlExt\netstandard2.0
