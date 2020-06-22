@@ -335,7 +335,7 @@ namespace Scikit.ML.Multiclass
             // re-fetched by the utils code when needed.
             bool identity;
             Delegate del;
-            if (!Conversions.Instance.TryGetStandardConversion(typeSrc.ItemType(), itemType, out del, out identity))
+            if (!Conversions.DefaultInstance.TryGetStandardConversion(typeSrc.ItemType(), itemType, out del, out identity))
             {
                 if (typeSrc.ItemType().RawKind() == itemType.RawKind())
                 {
@@ -557,7 +557,7 @@ namespace Scikit.ML.Multiclass
             else
             {
                 var getter = row.GetGetter<TSrc>(col);
-                var conv = Conversions.Instance.GetStandardConversion<TSrc, TDst>(typeSrc, typeDst, out identity);
+                var conv = Conversions.DefaultInstance.GetStandardConversion<TSrc, TDst>(typeSrc, typeDst, out identity);
                 if (identity)
                 {
                     Contracts.Assert(typeof(TSrc) == typeof(TDst));

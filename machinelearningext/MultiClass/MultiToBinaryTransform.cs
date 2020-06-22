@@ -446,7 +446,7 @@ namespace Scikit.ML.Multiclass
                 {
                     var typeLabel = _input.Schema[_colLabel].Type;
                     bool identity;
-                    ValueMapper<long, TLabel> mapper = Conversions.Instance.GetStandardConversion<long, TLabel>(NumberDataViewType.Int64, typeLabel, out identity);
+                    ValueMapper<long, TLabel> mapper = Conversions.DefaultInstance.GetStandardConversion<long, TLabel>(NumberDataViewType.Int64, typeLabel, out identity);
 
                     _labelDistribution = new Dictionary<TLabel, float>();
                     for (int i = 0; i < nb; ++i)

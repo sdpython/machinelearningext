@@ -9,7 +9,7 @@ using Microsoft.ML.Data;
 using Microsoft.ML.CommandLine;
 using Microsoft.ML.Data.Conversion;
 using Microsoft.ML.Runtime;
-
+using System.Xml.Serialization;
 
 namespace Scikit.ML.PipelineHelper
 {
@@ -672,8 +672,6 @@ namespace Scikit.ML.PipelineHelper
 
         public static ValueMapper<TLabel, TDest> GetConverter<TLabel, TDest>(out bool identity)
         {
-            var col1 = GetColumnType<TLabel>();
-            var col2 = GetColumnType<TDest>();
             if (typeof(TLabel) == typeof(float))
             {
                 if (typeof(TDest) == typeof(uint))
@@ -697,7 +695,13 @@ namespace Scikit.ML.PipelineHelper
                     return temp as ValueMapper<TLabel, TDest>;
                 }
             }
-            return Conversions.Instance.GetStandardConversion<TLabel, TDest>(col1, col2, out identity);
+            var col1 = GetColumnType<TLabel>();
+            var col2 = GetColumnType<TDest>();
+            ValueMapper<TLabel, TDest> conv;
+            if (Conversions.DefaultInstance.TryGetStandardConversion<TLabel, TDest>(col1, col2, out conv, out identity))
+                return conv;
+            throw new System.Exception(string.Format(
+                "Unable to convert from {0} to {1}.", col1.ToString(), col2.ToString()));
         }
 
         public static DataViewType GetColumnType(ISchema schema, string name)

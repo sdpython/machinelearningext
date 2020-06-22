@@ -505,8 +505,15 @@ namespace Scikit.ML.DocHelperMlExt
                             else
                             {
                                 var asse = args.GetType().Assembly;
-
-                                var parsedArgs = CmdParser.GetArgInfo(args.GetType(), args).Args;
+                                CmdParser.ArgInfo.Arg[] parsedArgs;
+                                try
+                                {
+                                    parsedArgs = CmdParser.GetArgInfo(args.GetType(), args).Args;
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    continue;
+                                }
                                 var arguments = new List<ComponentDescription.Argument>();
                                 foreach (var arg in parsedArgs)
                                 {

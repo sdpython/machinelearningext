@@ -291,7 +291,7 @@ namespace Scikit.ML.OnnxHelper
         }
 
         public static OnnxCSharpToProtoWrapper.ModelProto MakeModel(List<OnnxCSharpToProtoWrapper.NodeProto> nodes, string producerName, string name,
-            string domain, string producerVersion, long modelVersion, List<ModelArgs> inputs,
+            string domain, string producerVersion, long modelVersion, int opSetVersion, List<ModelArgs> inputs,
             List<ModelArgs> outputs, List<ModelArgs> intermediateValues, List<OnnxCSharpToProtoWrapper.TensorProto> initializers)
         {
             Contracts.CheckValue(nodes, nameof(nodes));
@@ -311,7 +311,7 @@ namespace Scikit.ML.OnnxHelper
             model.IrVersion = (long)OnnxCSharpToProtoWrapper.Version.IrVersion;
             model.ModelVersion = modelVersion;
             model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "ai.onnx.ml", Version = 2 });
-            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "", Version = 11 });
+            model.OpsetImport.Add(new OnnxCSharpToProtoWrapper.OperatorSetIdProto() { Domain = "", Version = opSetVersion });
             model.Graph = new OnnxCSharpToProtoWrapper.GraphProto();
             var graph = model.Graph;
             graph.Node.Add(nodes);

@@ -54,6 +54,9 @@
     <Reference Include="Microsoft.ML.KMeansClustering">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.KMeansClustering.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.LightGbm">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.LightGbm.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ML.Maml">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Maml.dll</HintPath>
     </Reference>
@@ -63,29 +66,11 @@
     <Reference Include="Microsoft.ML.Mkl.Components.StaticPipe">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Mkl.Components.StaticPipe.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ML.PCA">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.PCA.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ML.StandardTrainers">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.StandardTrainers.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ML.Transforms">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ML.LightGbm">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.LightGbm.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ML.OnnxConverter">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxConverter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ML.OnnxTransformer">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxTransformer.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ML.TensorFlow">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.TensorFlow.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ML.TimeSeries">
-      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.TimeSeries.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ML.OnnxConverter">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxConverter.dll</HintPath>
@@ -93,8 +78,23 @@
     <Reference Include="Microsoft.ML.OnnxTransform">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.OnnxTransform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.PCA">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.PCA.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.StandardTrainers">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.StandardTrainers.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ML.Sweeper">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Sweeper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.Transforms">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.TimeSeries">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.TimeSeries.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.TensorFlow">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.TensorFlow.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -2,14 +2,17 @@
 
 @echo [build.cmd] build machinelearning
 if "%1"=="ml" goto compileml:
+@echo [build.cmd] build ml
 if exist machinelearning\bin\x64.Release goto mldeb:
 :compileml:
 cd machinelearning
+@echo [build.cmd] submodule update --init --recursive
 git submodule update --init --recursive
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..
 
 :clean_source:
+@echo [build.cmd] clean_source.py
 python -u clean_source.py
 if %errorlevel% neq 0 exit /b %errorlevel%
 

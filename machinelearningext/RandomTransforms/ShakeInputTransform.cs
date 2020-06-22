@@ -373,7 +373,11 @@ namespace Scikit.ML.RandomTransforms
             {
                 bool identity;
                 var ty = _input.Schema[_inputCol.Index].Type;
-                var conv = Conversions.Instance.GetStandardConversion<ReadOnlyMemory<char>, TInput>(TextDataViewType.Instance, ty.AsVector().ItemType(), out identity);
+                ValueMapper<ReadOnlyMemory<char>, TInput> conv;
+                if (!Conversions.DefaultInstance.TryGetStandardConversion<ReadOnlyMemory<char>, TInput>(
+                        TextDataViewType.Instance, ty.AsVector().ItemType(), out conv, out identity))
+                    throw new System.Exception(string.Format(
+                        "Unable to convert from {0} to {1}.", typeof(ReadOnlyMemory<char>), typeof(TInput)));
                 if (string.IsNullOrEmpty(_args.values))
                     throw _host.ExceptParam("_args.values cannot be null.");
                 string[][] values = _args.values.Split(';').Select(c => c.Split(',')).ToArray();

@@ -17,6 +17,7 @@
     <PackageReference Include="System.CodeDom" Version="$(SystemCodeDomPackageVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
     <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemCodeDomPackageVersion)" />
+    <PackageReference Include="TensorFlow.NET" Version="$(TensorflowDotNETVersion)" />
     </ItemGroup>
 
   <ItemGroup>
@@ -63,11 +64,17 @@
     <Reference Include="Microsoft.ML.FastTree">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.FastTree.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.TimeSeries">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.TimeSeries.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ML.Transforms">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.Transforms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ML.StandardTrainers">
       <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.StandardTrainers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.TensorFlow">
+      <HintPath>..\..\machinelearning\dist\$(Configuration)\Microsoft.ML.TensorFlow.dll</HintPath>
     </Reference>
   </ItemGroup>
   
