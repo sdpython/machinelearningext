@@ -10,13 +10,13 @@
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
     <ParquetDotNetPackageVersion>2.1.3</ParquetDotNetPackageVersion>
     <PublishSymbolsPackageVersion>1.0.0-beta-62824-02</PublishSymbolsPackageVersion>
-    <SystemCodeDomPackageVersion>4.5.0</SystemCodeDomPackageVersion>
+    <SystemCodeDomPackageVersion>4.5.0</SystemCodeDomPackageVersion>  <!-- 4.4.0 ? -->
     <SystemCollectionsImmutableVersion>1.5.0</SystemCollectionsImmutableVersion>
     <SystemComponentModelCompositionVersion>4.5.0</SystemComponentModelCompositionVersion>
     <SystemCompositionVersion>1.2.0</SystemCompositionVersion>
     <SystemDrawingCommonPackageVersion>4.5.0</SystemDrawingCommonPackageVersion>
     <SystemIOFileSystemAccessControl>4.5.0</SystemIOFileSystemAccessControl>
-    <SystemMemoryVersion>4.5.2</SystemMemoryVersion>
+    <SystemMemoryVersion>4.5.2</SystemMemoryVersion>  <!-- 4.5.1 ? -->
     <SystemReflectionEmitLightweightPackageVersion>4.3.0</SystemReflectionEmitLightweightPackageVersion>
     <SystemSecurityPrincipalWindows>4.5.0</SystemSecurityPrincipalWindows>
     <SystemThreadingTasksDataflowPackageVersion>4.8.0</SystemThreadingTasksDataflowPackageVersion>

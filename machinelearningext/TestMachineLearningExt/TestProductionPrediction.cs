@@ -18,7 +18,7 @@ using Scikit.ML.ProductionPrediction;
 using Scikit.ML.DataManipulation;
 using Scikit.ML.DocHelperMlExt;
 using Scikit.ML.PipelineHelper;
-
+using System.Reflection;
 
 namespace TestMachineLearningExt
 {
@@ -47,12 +47,14 @@ namespace TestMachineLearningExt
                                             {
                                                 dst.X = new float[] { src.X[0] + 1f, src.X[1] - 1f };
                                             }, (EnvHelper.EmptyState state) => { });
+                var trvtf = trv as IDataTransform;
+                Assert.IsNotNull(trvtf);
 
                 var ino = new InputOutput { X = new float[] { -5, -5 }, Y = 3 };
                 var inob = new VBuffer<float>(2, ino.X);
                 var ans = new VBuffer<float>();
 
-                using (var valueMapper = new ValueMapperFromTransformFloat<VBuffer<float>>(host, trv, "X", "X", ignoreOtherColumn: true))
+                using (var valueMapper = new ValueMapperFromTransformFloat<VBuffer<float>>(host, trvtf, "X", "X", ignoreOtherColumn: true))
                 {
                     var mapper = valueMapper.GetMapper<VBuffer<float>, VBuffer<float>>();
 
@@ -113,12 +115,14 @@ namespace TestMachineLearningExt
                                             {
                                                 dst.Xout = new float[] { src.X[0] + 1f, src.X[1] - 1f };
                                             }, (EnvHelper.EmptyState state) => { });
+                var trvtf = trv as IDataTransform;
+                Assert.IsNotNull(trvtf);
 
                 var ino = new InputOutput { X = new float[] { -5, -5 }, Y = 3 };
                 var inob = new VBuffer<float>(2, ino.X);
                 var ans = new VBuffer<float>();
 
-                using (var valueMapper = new ValueMapperFromTransformFloat<VBuffer<float>>(host, trv, "X", "Xout", ignoreOtherColumn: true))
+                using (var valueMapper = new ValueMapperFromTransformFloat<VBuffer<float>>(host, trvtf, "X", "Xout", ignoreOtherColumn: true))
                 {
                     var mapper = valueMapper.GetMapper<VBuffer<float>, VBuffer<float>>();
 
@@ -178,12 +182,14 @@ namespace TestMachineLearningExt
                                             {
                                                 dst.X2 = new float[] { src.X[0] + 1f, src.X[1] - 1f };
                                             }, (state) => { });
+                var trvtf = trv as IDataTransform;
+                Assert.IsNotNull(trvtf);
 
                 var inos = new InputOutput[] {new InputOutput { X = new float[] { -5, -5 }, Y = 3 },
                 new InputOutput { X = new float[] { -6, -6 }, Y = 30 } };
                 var ans = new VBuffer<float>();
 
-                using (var valueMapper = new ValueMapperFromTransformFloat<VBuffer<float>>(host, trv, "X", "X2", ignoreOtherColumn: true))
+                using (var valueMapper = new ValueMapperFromTransformFloat<VBuffer<float>>(host, trvtf, "X", "X2", ignoreOtherColumn: true))
                 {
                     var mapper = valueMapper.GetMapper<VBuffer<float>, VBuffer<float>>();
 
