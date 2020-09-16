@@ -70,7 +70,7 @@ component_template = """
     {% endif %}
     {% if ScikitML %}
     The documentation is generated based on the sources available at
-    :epkg:`xadupre/machinelearningext` and released under :epkg:`MIT License`.
+    :epkg:`sdpython/machinelearningext` and released under :epkg:`MIT License`.
     {% endif %}
 
 .. only:: md

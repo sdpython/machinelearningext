@@ -49,7 +49,7 @@ html_logo = "project_ico.png"
 
 # -- Shortcuts ---------------------------------------------------------------
 
-owner = "xadupre"
+owner = "sdpython"
 
 epkg_dictionary = {
     'AVX': 'https://fr.wikipedia.org/wiki/Advanced_Vector_Extensions',
@@ -84,6 +84,7 @@ epkg_dictionary = {
     'python': 'https://www.python.org/',
     'R': 'https://www.r-project.org/',
     'scikit-learn': 'http://scikit-learn.org/',
+    'sdpython/machinelearningext': 'https://github.com/sdpython/machinelearningext',
     'xadupre/machinelearningext': 'https://github.com/xadupre/machinelearningext',
 }
 

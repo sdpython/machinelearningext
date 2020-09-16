@@ -12,7 +12,7 @@ itself taken from the main repository or automatically
 built from it extended with custom code or experiments.
 These extensions are not yet available as a nuget package
 but the source can obtained by forking
-`xadupre/machinelearningext <https://github.com/xadupre/machinelearningext>`_.
+`sdpython/machinelearningext <https://github.com/sdpython/machinelearningext>`_.
 
 .. toctree::
     :maxdepth: 2
@@ -38,7 +38,7 @@ The documentation was generating on:
 
 The nuget package
 `Scikit.ML.DataFrame <https://www.nuget.org/packages/Scikit.ML.DataFrame/>`_
-(`github <https://github.com/xadupre/machinelearning_dataframe>`_)
+(`github <https://github.com/sdpython/machinelearning_dataframe>`_)
 was built from an early version of this patchwork
 which still includes
 :ref:`Scikit.ML.DataManipulation.DataFrame <l-dataframe-cs>`.
@@ -52,12 +52,3 @@ which still includes
     :alt: Build Status Windows
 .. image:: https://circleci.com/gh/sdpython/machinelearningext/tree/master.svg?style=svg
     :target: https://circleci.com/gh/sdpython/machinelearningext/tree/master
-
-.. image:: https://travis-ci.org/xadupre/machinelearningext.svg?branch=master
-    :target: https://travis-ci.org/xadupre/machinelearningext
-    :alt: Build status
-.. image:: https://ci.appveyor.com/api/projects/status/cb0xos4p3xe1bqmg?svg=true
-    :target: https://ci.appveyor.com/project/xadupre/machinelearningext
-    :alt: Build Status Windows
-.. image:: https://circleci.com/gh/xadupre/machinelearningext/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/xadupre/machinelearningext/tree/master

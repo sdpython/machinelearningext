@@ -5,10 +5,6 @@ This project proposes some extension to
 written in C#.
 Work in progress.
 
-[![TravisCI](https://travis-ci.org/xadupre/machinelearningext.svg?branch=master)](https://travis-ci.org/xadupre/machinelearningext)
-[![Build status](https://ci.appveyor.com/api/projects/status/cb0xos4p3xe1bqmg?svg=true)](https://ci.appveyor.com/project/xadupre/machinelearningext)
-[![CircleCI](https://circleci.com/gh/xadupre/machinelearningext.svg?style=svg)](https://circleci.com/gh/xadupre/machinelearningext)
-
 [![TravisCI](https://travis-ci.org/sdpython/machinelearningext.svg?branch=master)](https://travis-ci.org/sdpython/machinelearningext)
 [![Build status](https://ci.appveyor.com/api/projects/status/uwanivg3b5qibncs?svg=true)](https://ci.appveyor.com/project/sdpython/machinelearningext)
 [![CircleCI](https://circleci.com/gh/sdpython/machinelearningext.svg?style=svg)](https://circleci.com/gh/sdpython/machinelearningext)
@@ -79,7 +75,7 @@ using (var ch = env.Start("test"))
 ```
 
 The current interface of
-[DataFrame](https://github.com/xadupre/machinelearningext/blob/master/machinelearningext/DataManipulation/DataFrame.cs)
+[DataFrame](https://github.com/sdpython/machinelearningext/blob/master/machinelearningext/DataManipulation/DataFrame.cs)
 is not rich. It will improve in the future.
 
 ### Example 2: Inner API like Scikit-Learn

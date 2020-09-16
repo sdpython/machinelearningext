@@ -8,7 +8,7 @@ This repository includes :epkg:`ML.net` as a submodule,
 it does not directly points to the main repository but
 to modified version of it which will be eventually merged.
 The submodule points to branch *ext* from
-`xadupre/machinelearning <https://github.com/xadupre/machinelearning/tree/ext>`_.
+`sdpython/machinelearning <https://github.com/sdpython/machinelearning/tree/ext>`_.
 Many changes changes were introduced and the custom extensions probably 
 would be compile against the current nuget package 
 `Microoft.ML <https://www.nuget.org/packages/Microsoft.ML/>`_
@@ -23,7 +23,7 @@ Warning as errors
 
 The compilation failed due to a couple of warnings treated as error
 on appveyor and Visual Studio 2015. The option was removed:
-`Remove option /WX for native libraries <https://github.com/xadupre/machinelearning/commit/a7eb9efb54a0849bb76279a807ab4fef7b8752d2>`_.
+`Remove option /WX for native libraries <https://github.com/sdpython/machinelearning/commit/a7eb9efb54a0849bb76279a807ab4fef7b8752d2>`_.
 
 Internal to public
 ==================

@@ -17,7 +17,7 @@ and it becomes quite convenient to manipulate it
 with pseudo *SQL* methods. That's what the class
 :ref:`l-cs-dataframe` implements.
 Many examples can be found in unit test
-`TestDataManipulation.cs <https://github.com/xadupre/machinelearningext/blob/master/machinelearningext/TestMachineLearningExt/TestDataManipulation.cs>`_.
+`TestDataManipulation.cs <https://github.com/sdpython/machinelearningext/blob/master/machinelearningext/TestMachineLearningExt/TestDataManipulation.cs>`_.
 
 StreamingDataFrame
 ==================

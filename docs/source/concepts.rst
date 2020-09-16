@@ -54,7 +54,7 @@ in `ML.net <https://github.com/dotnet/machinelearning>`_ and the next
 step in the pipeline requires this transform to be instantiated.
 The transforms in this extension postpones the training step
 until some cursors are created:
-`GetRowCursor <https://github.com/xadupre/machinelearningext/blob/master/machinelearningext/FeaturesTransforms/ScalerTransform.cs#L206>`_.
+`GetRowCursor <https://github.com/sdpython/machinelearningext/blob/master/machinelearningext/FeaturesTransforms/ScalerTransform.cs#L206>`_.
 Pipeline instanciation happens following the blue arrow (forward).
 Computing the prediction requires to get cursor
 from every step and it follows the red path (backward).
