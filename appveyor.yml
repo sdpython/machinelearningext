@@ -35,7 +35,7 @@ before_test:
   - cmd /C build.cmd -Release
   - cd ..
   # copy release
-  - mkdir machinelearning\dist\Release
+  - if not exist machinelearning\dist\Release mkdir machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\AnyCPU.Release\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\Release
@@ -56,7 +56,7 @@ before_test:
   - copy machinelearning\packages\system.codedom\4.5.0\lib\netstandard2.0\*.dll machinelearning\dist\Release
   - copy machinelearning\bin\x64.Release\Native\*.dll machinelearning\dist\Release
   # copy debug
-  - mkdir machinelearning\dist\Debug
+  - if not exist machinelearning\dist\Debug mkdir machinelearning\dist\Debug
   - copy machinelearning\packages\lightgbm\2.2.3\runtimes\win-x64\native machinelearning\bin\x64.Debug\Native
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\Debug
   - copy machinelearning\bin\AnyCPU.Debug\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\Debug
