@@ -1,0 +1,24 @@
+set reldeb=Debug
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.Ensemble\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.FastTree\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.KMeansClustering\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.Legacy\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.LightGbm\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.ImageAnalytics\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.Maml\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.Mkl.Components\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.Mkl.Components.StaticPipe\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.OnnxConverter\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.OnnxTransformer\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.OnnxTransformer.StaticPipe\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.PCA\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.PipelineInference\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.StandardTrainers\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.Sweeper\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.TimeSeries\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\AnyCPU.%reldeb%\Microsoft.ML.TensorFlow\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\packages\lightgbm\2.2.3\runtimes\win-x64\native machinelearning\bin\x64.%reldeb%\Native
+copy machinelearning\packages\google.protobuf\3.5.1\lib\netstandard1.0 machinelearning\bin\x64.%reldeb%\Native
+copy machinelearning\packages\mlnetmkldeps\0.0.0.9\runtimes\win-x64\native machinelearning\bin\x64.%reldeb%\Native
+copy machinelearning\packages\system.codedom\4.5.0\lib\netstandard2.0\*.dll machinelearning\dist\%reldeb%
+copy machinelearning\bin\x64.%reldeb%\Native\*.dll machinelearning\dist\%reldeb%

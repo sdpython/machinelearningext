@@ -19,6 +19,7 @@
     <SystemMemoryVersion>4.5.2</SystemMemoryVersion>  <!-- 4.5.1 ? -->
     <SystemReflectionEmitLightweightPackageVersion>4.3.0</SystemReflectionEmitLightweightPackageVersion>
     <SystemSecurityPrincipalWindows>4.5.0</SystemSecurityPrincipalWindows>
+    <SystemThreadingChannelsPackageVersion>4.7.1</SystemThreadingChannelsPackageVersion>
     <SystemThreadingTasksDataflowPackageVersion>4.8.0</SystemThreadingTasksDataflowPackageVersion>
     <TensorFlowVersion>1.14.0</TensorFlowVersion>
     <TensorFlowMajorVersion>1</TensorFlowMajorVersion>
