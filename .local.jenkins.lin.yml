@@ -96,7 +96,7 @@ install:
   - ls machinelearningext/bin/AnyCPU.Release/TestMachineLearningExt/netcoreapp2.1
 
 script:
-  - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP", CLEAN: "0", TIMEOUT: 3600 }
+  - { CMD: "cd machinelearningext;dotnet test -c Debug TestMachineLearningExt -v n;dotnet test -c Release TestMachineLearningExt -v n;cd ..", NAME: "UT_CSHARP", CLEAN: "0", TIMEOUT: 3600, SCHEDULER: "H H(1-2) 28 * *" }
 
 documentation:
   - if [ ${NAME} == "UT_CSHARP" ] then $PYINT -c "from sphinx.cmd.build import build_main;build_main(['-j2','-v','-T','-b','html','-d','docs/doctrees','docs/source','docs/build'])" fi
